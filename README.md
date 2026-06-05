@@ -15,19 +15,22 @@ Categories of units for conversion.
 - Volume (dry)
 - Weight (mass)
 - Force
-- Moment (torque)*
-- Uniform Load
+- Moment (torque)¹
+- Uniform Load²
 - Pressure
 - Temperature
 - Speed
 - Acceleration
-- Stiffness
-- Flow Rate
+- Stiffness²
+- Mass Flow Rate
+- Volumetric Flow Rate
 - Power
-- Energy*
+- Energy¹
 - Density
 
-\* Although energy and torque are ultimately the same unit we treat them differently.
+Equivalent Units Notes:
+1. Energy and Torque are ultimately the same SI units but are treated differently.
+2. Uniform loads and stiffness are the same SI units but are treated differently.
 
 
 # Contributing
