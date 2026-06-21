@@ -24,7 +24,8 @@ enum class Category {
     VOL_FLOW,
     POWER,
     ENERGY,
-    DENSITY;
+    DENSITY,
+    TIME;
 
 
     fun baseUnits(): String {
@@ -47,6 +48,7 @@ enum class Category {
             POWER -> "W"
             ENERGY -> "J"
             DENSITY -> "kg/m³"
+            TIME -> "s"
         }
     }
 }

@@ -16,10 +16,10 @@
     <string name="yard">Yard</string>
     <string name="foot">Foot</string>
     <string name="inch">Inch</string>
-    <string name="thou">Thou</string>
+    <string name="thou">Thousandth of an Inch</string>
     <string name="nautical_mile">Nautical Mile</string>
     <string name="furlong">Furlong</string>
-    <string name="light_year">Light Year</string>
+    <string name="light_year">Light-Year</string>
 
     <!-- Temperature -->
     <string name="centigrade">Centigrade</string>
@@ -43,5 +43,13 @@
     <!--  Vol Flow  --> 
     <!--  Power  --> 
     <!--  Energy  --> 
-    <!--  Density  --> 
+    <!--  Density  -->
+    <!-- Time -->
+    <string name="minute">Minute</string>
+    <string name="hour">Hour</string>
+    <string name="day">Day</string>
+    <string name="year">Year</string>
+    <string name="millisecond">Millisecond</string>
+    <string name="microsecond">Microsecond</string>
+    <string name="nanosecond">Nanosecond</string>
 </resources>

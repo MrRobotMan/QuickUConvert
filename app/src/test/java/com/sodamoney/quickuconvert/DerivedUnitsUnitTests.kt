@@ -19,6 +19,13 @@ class DerivedUnitsUnitTests {
     }
 
     @Test
+    fun lengthConvertBetweenSystems() {
+        val expected = 38.1
+        val actual = Inch.convertTo(1.5, Millimeter)
+        assertEquals(expected, actual,1E-6)
+    }
+
+    @Test
     fun convertBetweenUnitTypes_isBad() {
         assertThrows(
             "Can't convert from LENGTH to FORCE. Base units are mismatched m and N",

@@ -20,7 +20,7 @@ open class Units (
 
     /**
      * The formula to convert to a standard (base) unit.
-     * 1 BASE UNIT = X UNITS
+     * 1 UNIT = X BASE UNITS
      */
     val standardize: (Double) -> Double,
 
