@@ -5,6 +5,14 @@
     <string name="second">Second</string>
     <string name="kilogram">Kilogram</string>
     <string name="kelvin">Kelvin</string>
+    <!--  Acceleration  -->
+    <!-- Area -->
+    <!-- Density -->
+    <!-- Energy -->
+
+    <!--  Force  -->
+    <string name="newton">Newton</string>
+    <string name="kilogram_force">Kilogram-Force</string>
 
     <!-- Length -->
     <string name="kilometer">Kilometer</string>
@@ -21,29 +29,19 @@
     <string name="furlong">Furlong</string>
     <string name="light_year">Light-Year</string>
 
+    <!-- Mass -->
+    <!-- Mass Flow -->
+    <!-- Moment -->
+    <!-- Power -->
+    <!-- Pressure -->
+    <!-- Speed -->
+    <!-- Stiffness / Uniform Load -->
+
     <!-- Temperature -->
     <string name="centigrade">Centigrade</string>
     <string name="fahrenheit">Fahrenheit</string>
     <string name="rankine">Rankine</string>
 
-    <!--  Area  --> 
-    <!--  Wet Volume  --> 
-    <!--  Dry Volume  --> 
-    <!--  Mass  --> 
-    <!--  Force  -->
-    <string name="newton">Newton</string>
-    <string name="kilogram_force">Kilogram-Force</string>
-    <!--  Moment  --> 
-    <!--  Pressure  --> 
-    <!--  Uniform Load / Stiffness --> 
-    <!--  Speed  --> 
-    <!--  Acceleration  --> 
-    <!--  Stiffness  --> 
-    <!--  Mass Flow  --> 
-    <!--  Vol Flow  --> 
-    <!--  Power  --> 
-    <!--  Energy  --> 
-    <!--  Density  -->
     <!-- Time -->
     <string name="minute">Minute</string>
     <string name="hour">Hour</string>
@@ -52,4 +50,7 @@
     <string name="millisecond">Millisecond</string>
     <string name="microsecond">Microsecond</string>
     <string name="nanosecond">Nanosecond</string>
+
+    <!-- Volume -->
+    <!-- Volumetric Flow -->
 </resources>

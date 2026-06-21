@@ -7,48 +7,48 @@ package com.sodamoney.quickuconvert
  */
 
 enum class Category {
-    LENGTH,
-    AREA,
-    WET_VOLUME,
-    DRY_VOLUME,
-    MASS,
-    FORCE,
-    MOMENT,
-    PRESSURE,
-    UNIFORM_LOAD,
-    TEMPERATURE,
-    SPEED,
     ACCELERATION,
-    STIFFNESS,
-    MASS_FLOW,
-    VOL_FLOW,
-    POWER,
-    ENERGY,
+    AREA,
     DENSITY,
-    TIME;
+    DRY_VOLUME,
+    ENERGY,
+    FORCE,
+    LENGTH,
+    MASS,
+    MASS_FLOW,
+    MOMENT,
+    POWER,
+    PRESSURE,
+    SPEED,
+    STIFFNESS,
+    TEMPERATURE,
+    TIME,
+    UNIFORM_LOAD,
+    VOL_FLOW,
+    WET_VOLUME;
 
 
     fun baseUnits(): String {
         return when (this) {
-            LENGTH -> "m"
-            AREA -> "m²"
-            WET_VOLUME -> "m³"
-            DRY_VOLUME -> "m³"
-            MASS -> "kg"
-            FORCE -> "N"
-            MOMENT -> "Nm"
-            PRESSURE -> "Pa"
-            UNIFORM_LOAD -> "N/mm"
-            TEMPERATURE -> "K"
-            SPEED -> "m/s"
             ACCELERATION -> "m/s²"
-            STIFFNESS -> "N/mm"
-            MASS_FLOW -> "kg/s"
-            VOL_FLOW -> "m³/hr"
-            POWER -> "W"
-            ENERGY -> "J"
+            AREA -> "m²"
             DENSITY -> "kg/m³"
+            DRY_VOLUME -> "m³"
+            ENERGY -> "J"
+            FORCE -> "N"
+            LENGTH -> "m"
+            MASS -> "kg"
+            MASS_FLOW -> "kg/s"
+            MOMENT -> "Nm"
+            POWER -> "W"
+            PRESSURE -> "Pa"
+            SPEED -> "m/s"
+            STIFFNESS -> "N/mm"
+            TEMPERATURE -> "K"
             TIME -> "s"
+            UNIFORM_LOAD -> "N/mm"
+            VOL_FLOW -> "m³/hr"
+            WET_VOLUME -> "m³"
         }
     }
 }
