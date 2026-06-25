@@ -8,29 +8,36 @@ import androidx.annotation.StringRes
  * Collection of Derived to be used.
  */
 
+const val Kilo = 1_000
+const val Mega = Kilo * Kilo
+const val Giga = Kilo * Mega
+
 // Time
-val Millisecond = Units("Millisecond", R.string.millisecond, "ms", { it / 1_000 }, Category.TIME)
+val Millisecond = Units("Millisecond", R.string.millisecond, "ms", { it / Kilo }, Category.TIME)
 val Microsecond =
-    Units("Microsecond", R.string.microsecond, "μs", { it / 1_000_000 }, Category.TIME)
+    Units("Microsecond", R.string.microsecond, "μs", { it / Mega }, Category.TIME)
 val Nanosecond =
-    Units("Nanosecond", R.string.nanosecond, "ns", { it / 1_000_000_000 }, Category.TIME)
+    Units("Nanosecond", R.string.nanosecond, "ns", { it / Giga }, Category.TIME)
 val Minute = Units("Minute", R.string.minute, "m", { it * 60 }, Category.TIME)
 val Hour = Units("Hour", R.string.hour, "hr", { Minute.standardize(it) * 60 }, Category.TIME)
 val Day = Units("Day", R.string.day, "d", { Hour.standardize(it) * 24 }, Category.TIME)
 val Year = Units("Year", R.string.year, "yr", { Day.standardize(it) * 365.25 }, Category.TIME)
-
+val Week = Units("Week", R.string.week, "wk", {Day.standardize(it) * 7}, Category.TIME)
+val Month = Units("Month", R.string.month, "mo", {Year.standardize(it) / 12}, Category.TIME)
+val Decade = Units("Decade", R.string.decade, "dec", {Year.standardize(it) * 10}, Category.TIME)
+val Century = Units("Century", R.string.century, "cen", {Year.standardize(it) * 100}, Category.TIME)
 // Lengths
-val Kilometer = Units("Kilometer", R.string.kilogram, "km", { it * 1_000 }, Category.LENGTH)
+val Kilometer = Units("Kilometer", R.string.kilogram, "km", { it * Kilo }, Category.LENGTH)
 val Centimeter = Units("Centimeter", R.string.centimeter, "cm", { it / 100 }, Category.LENGTH)
-val Millimeter = Units("Millimeter", R.string.millimeter, "mm", { it / 1_000 }, Category.LENGTH)
-val Micrometer = Units("Micrometer", R.string.micrometer, "μm", { it / 1_000_000 }, Category.LENGTH)
+val Millimeter = Units("Millimeter", R.string.millimeter, "mm", { it / Kilo }, Category.LENGTH)
+val Micrometer = Units("Micron", R.string.micron, "μm", { it / Mega }, Category.LENGTH)
 val Nanometer =
-    Units("Nanometer", R.string.nanometer, "nm", { it / 1_000_000_000 }, Category.LENGTH)
+    Units("Nanometer", R.string.nanometer, "nm", { it / Giga }, Category.LENGTH)
 val Inch = Units("Inch", R.string.inch, "in", { it * 0.0254 }, Category.LENGTH)
 val Foot = Units("Foot", R.string.foot, "ft", { it * 0.3048 }, Category.LENGTH)
 val Yard = Units("Yard", R.string.yard, "yd", { it * 0.3048 / 3 }, Category.LENGTH)
 val Mile = Units("Mile", R.string.mile, "mi", { it * 0.3048 / 5_280 }, Category.LENGTH)
-val Thou = Units("Thou", R.string.thou, "thou", { it * 0.0254 / 1_000 }, Category.LENGTH)
+val Thou = Units("Thou", R.string.thou, "thou", { it * 0.0254 / Kilo }, Category.LENGTH)
 val Furlong =
     Units("Furlong", R.string.furlong, "fur", { Yard.standardize(it) / 220 }, Category.LENGTH)
 val NauticalMile =

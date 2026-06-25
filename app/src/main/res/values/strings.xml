@@ -5,9 +5,30 @@
     <string name="second">Second</string>
     <string name="kilogram">Kilogram</string>
     <string name="kelvin">Kelvin</string>
+
     <!--  Acceleration  -->
+    <string name="in_per_second_squared">Inch per Second per Second</string>
+    <string name="ft_per_second_squared">Foot per Second per Second</string>
+    <string name="meter_per_second_squared">Meter per Second per Second</string>
+    <string name="cm_per_second_squared">Centimeter per Second per Second</string>
+    <string name="mm_per_second_squared">Millimeter per Second per Second</string>
+    <string name="stardard_earth_gravity">Earth Gravity</string>
+
     <!-- Area -->
+    <string name="square_inch">Square Inch</string>
+    <string name="square_mile">Square Mile</string>
+    <string name="square_kilometer">Square Kilometer</string>
+    <string name="square_foot">Square Foot</string>
+    <string name="square_millimeter">Square Millimeter</string>
+    <string name="square_yard">Square Yard</string>
+    <string name="square_centimeter">Square Centimeter</string>
+    <string name="square_meter">Square Meter</string>
+    <string name="hectare">Hectare</string>
+    <string name="acre">Acre</string>
+
     <!-- Density -->
+    <string name="pound_per_cu_in">Pound per Cubic Inch</string>
+    
     <!-- Energy -->
 
     <!--  Force  -->
@@ -18,7 +39,7 @@
     <string name="kilometer">Kilometer</string>
     <string name="centimeter">Centimeter</string>
     <string name="millimeter">Millimeter</string>
-    <string name="micrometer">Micrometer</string>
+    <string name="micron">Micrometer</string>
     <string name="nanometer">Nanometer</string>
     <string name="mile">Mile</string>
     <string name="yard">Yard</string>
@@ -30,11 +51,17 @@
     <string name="light_year">Light-Year</string>
 
     <!-- Mass -->
+    
     <!-- Mass Flow -->
+    
     <!-- Moment -->
+    
     <!-- Power -->
+    
     <!-- Pressure -->
+    
     <!-- Speed -->
+
     <!-- Stiffness / Uniform Load -->
 
     <!-- Temperature -->
@@ -50,6 +77,10 @@
     <string name="millisecond">Millisecond</string>
     <string name="microsecond">Microsecond</string>
     <string name="nanosecond">Nanosecond</string>
+    <string name="week">Week</string>
+    <string name="month">Month</string>
+    <string name="decade">Decade</string>
+    <string name="century">Century</string>
 
     <!-- Volume -->
     <!-- Volumetric Flow -->
