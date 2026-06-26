@@ -64,6 +64,7 @@ All units first convert to SI then to the chosen unit. Conversion errors may com
 - [ ] kg/m^3
 - [ ] kg/cm^3
 - [ ] g/cm^3
+- [ ] mg/dL
 
 
 ### Energy

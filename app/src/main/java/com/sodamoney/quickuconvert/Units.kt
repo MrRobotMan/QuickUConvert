@@ -4,16 +4,6 @@ import androidx.annotation.StringRes
 
 open class Units (
     /**
-     * The (US) name of the unit
-     */
-    val name: String,
-
-    /**
-     * Localization string resource ID.
-     */
-    @StringRes val stringId: Int,
-
-    /**
      * Symbol used in equations
      */
     val symbol: String,
