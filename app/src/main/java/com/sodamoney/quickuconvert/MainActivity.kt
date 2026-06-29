@@ -227,7 +227,11 @@ fun updateValues(index: Int, items: Array<out Units>, states: Array<TextFieldSta
         if (ind == index) {
             continue
         }
-        state.setTextAndPlaceCursorAtEnd(convertedOrInvalid(value, items[index], items[ind]))
+        if (ind >= items.size) {
+            break
+        }
+        val converted = convertedOrInvalid(value, items[index], items[ind])
+        state.setTextAndPlaceCursorAtEnd(converted)
 
     }
 

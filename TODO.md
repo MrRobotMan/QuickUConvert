@@ -1,5 +1,5 @@
 # Issues to fix
-1. Some conversions are crashing the app (looking at you accelerations)
+1. ~Some conversions are crashing the app (looking at you accelerations)~
 1. Add unit test for every unit to the base unit
 1. Add remaining other units
 1. Fix UI so it doesn't look like 💩
