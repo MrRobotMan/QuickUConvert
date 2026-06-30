@@ -1,5 +1,6 @@
 package com.sodamoney.quickuconvert
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,20 +15,31 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,14 +49,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sodamoney.quickuconvert.ui.theme.QuickUConvertTheme
+import kotlinx.coroutines.delay
 import java.text.DecimalFormat
 import kotlin.enums.EnumEntries
 
@@ -58,9 +74,102 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-val inputWidth = 130.dp
-val unitWidth = 50.dp
+@Composable
+fun Convert() {
+    val context = LocalContext.current
+    val repo = remember {
+        SettingsRepository(
+            context.getSharedPreferences(SettingsRepository.PREFS_NAME, Context.MODE_PRIVATE)
+        )
+    }
+    var themeMode by remember { mutableStateOf(repo.themeMode) }
+    var settingsOpen by remember { mutableStateOf(false) }
+    var category by remember { mutableStateOf(Category.LENGTH) }
 
+    val maxCount = AllUnits.values.maxOf { it.size }
+    val states = Array(maxCount) { rememberTextFieldState("") }
+
+    LaunchedEffect(Unit) {
+        resetValues(states, repo.visibleUnits(category))
+    }
+
+    QuickUConvertTheme(themeMode = themeMode) {
+        if (settingsOpen) {
+            SettingsScreen(
+                repo = repo,
+                onThemeChange = { themeMode = it },
+                onBack = {
+                    resetValues(states, repo.visibleUnits(category))
+                    settingsOpen = false
+                }
+            )
+        } else {
+            MainContent(
+                repo = repo,
+                category = category,
+                states = states,
+                onCategoryChange = { newCat ->
+                    resetValues(states, repo.visibleUnits(newCat))
+                    category = newCat
+                },
+                onSettingsClick = { settingsOpen = true }
+            )
+        }
+    }
+}
+
+@Composable
+fun MainContent(
+    repo: SettingsRepository,
+    category: Category,
+    states: Array<TextFieldState>,
+    onCategoryChange: (Category) -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        val visibleItems = repo.visibleUnits(category)
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "QuickConvert",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+                IconButton(onClick = onSettingsClick) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings"
+                    )
+                }
+            }
+            CategorySelect(
+                categories = Category.entries,
+                cur = category,
+                onChange = onCategoryChange,
+                valid = AllUnits.keys
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            ConvertItem(
+                items = visibleItems,
+                states = states,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+        }
+    }
+}
 
 @Composable
 fun ConvertItem(
@@ -68,16 +177,30 @@ fun ConvertItem(
     states: Array<TextFieldState>,
     modifier: Modifier = Modifier
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
-        (items.indices step 2).forEach {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                UnitsField(states[it], items[it].symbol, { updateValues(it, items, states) })
-                if (it < items.size - 1) {
-                    Spacer(modifier = Modifier.size(30.dp))
-                    UnitsField(
-                        states[it + 1],
-                        items[it + 1].symbol,
-                        { updateValues(it + 1, items, states) })
+    Column(
+        modifier = modifier.verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        (items.indices step 2).forEach { i ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                UnitCard(
+                    state = states[i],
+                    symbol = items[i].symbol,
+                    onUpdate = { updateValues(i, items, states) },
+                    modifier = Modifier.weight(1f)
+                )
+                if (i + 1 < items.size) {
+                    UnitCard(
+                        state = states[i + 1],
+                        symbol = items[i + 1].symbol,
+                        onUpdate = { updateValues(i + 1, items, states) },
+                        modifier = Modifier.weight(1f)
+                    )
+                } else {
+                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
         }
@@ -85,36 +208,78 @@ fun ConvertItem(
 }
 
 @Composable
-fun UnitsField(
+fun UnitCard(
     state: TextFieldState,
     symbol: String,
     onUpdate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
-    TextField(
-        state = state,
-        keyboardOptions = KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done
-        ),
-        onKeyboardAction = { onUpdate() },
-        lineLimits = TextFieldLineLimits.SingleLine,
-        modifier = modifier
-            .width(inputWidth)
-            .focusRequester(focusRequester)
-            .onFocusChanged {
-                if (it.isFocused) {
-                    state.clearText()
+    val clipboardManager = LocalClipboardManager.current
+    var copied by remember { mutableStateOf(false) }
+
+    LaunchedEffect(copied) {
+        if (copied) {
+            delay(1500)
+            copied = false
+        }
+    }
+
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 4.dp, top = 10.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            BasicTextField(
+                state = state,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                onKeyboardAction = { onUpdate() },
+                lineLimits = TextFieldLineLimits.SingleLine,
+                textStyle = MaterialTheme.typography.titleMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier
+                    .weight(1f)
+                    .focusRequester(focusRequester)
+                    .onFocusChanged { if (it.isFocused) state.clearText() }
+            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = symbol,
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                IconButton(
+                    onClick = {
+                        clipboardManager.setText(AnnotatedString(state.text.toString()))
+                        copied = true
+                    },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = if (copied) Icons.Default.Check else Icons.Default.ContentCopy,
+                        contentDescription = if (copied) "Copied" else "Copy",
+                        modifier = Modifier.size(16.dp),
+                        tint = if (copied) Color(0xFF2E7D32) else MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                    )
                 }
             }
-    )
-    Text(
-        text = symbol,
-        modifier = modifier
-            .width(unitWidth)
-            .padding(start = 5.dp)
-    )
+        }
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
+    }
 }
 
 @Composable
@@ -125,84 +290,66 @@ fun CategorySelect(
     valid: Set<Category>
 ) {
     var expanded by remember { mutableStateOf(false) }
-    Box(modifier = Modifier.padding(5.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = true },
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            Text(text = stringResource(cur.resource()))
-            Icon(imageVector = arrow_drop_down, stringResource(R.string.drop_down_arrow))
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false })
-        {
-            categories.forEach {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(it.resource()),
-                            style = if (it in valid) {
-                                TextStyle.Default
-                            } else {
-                                TextStyle(textDecoration = TextDecoration.LineThrough)
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        tonalElevation = 1.dp
+    ) {
+        Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = true }
+                    .padding(vertical = 8.dp)
+            ) {
+                Text(
+                    text = "Category",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = cur.name.lowercase().replaceFirstChar { it.uppercase() },
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Icon(
+                        imageVector = arrow_drop_down,
+                        contentDescription = "Drop down arrow",
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                categories.forEach {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = it.name.lowercase().replaceFirstChar { c -> c.uppercase() },
+                                style = if (it in valid) {
+                                    TextStyle.Default
+                                } else {
+                                    TextStyle(textDecoration = TextDecoration.LineThrough)
+                                }
+                            )
+                        },
+                        onClick = {
+                            if (it != cur && it in valid) {
+                                onChange(it)
                             }
-                        )
-                    },
-                    onClick = {
-                        if (it != cur && it in valid) {
-                            onChange(it)
+                            expanded = false
                         }
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Composable
-fun Convert() {
-    QuickUConvertTheme {
-        Scaffold(modifier = Modifier) { innerPadding ->
-            var category by remember { mutableStateOf(Category.LENGTH) }
-            var onOpen by remember { mutableStateOf(true) }
-
-            val allItems = mapOf(
-                Category.ACCELERATION to Accelerations,
-                Category.FORCE to Forces,
-                Category.TEMPERATURE to Temperatures,
-                Category.TIME to Times,
-                Category.LENGTH to Lengths
-            )
-            val maxCount = allItems.values.maxOf { it.size }
-            val states = Array(maxCount) { rememberTextFieldState("") }
-            if (onOpen) {
-                resetValues(states, allItems[category]!!)
-            }
-            onOpen = false
-            Column(modifier = Modifier.fillMaxSize()) {
-                Spacer(modifier = Modifier.size(50.dp))
-                CategorySelect(Category.entries, category, {
-                    resetValues(states, allItems[it]!!)
-                    category = it
-                }, allItems.keys)
-                Spacer(modifier = Modifier.size(5.dp))
-                ConvertItem(
-                    items = allItems[category]!!,
-                    states = states,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                )
+                    )
+                }
             }
         }
     }
@@ -224,17 +371,10 @@ fun resetValues(states: Array<TextFieldState>, items: Array<out Units>) {
 fun updateValues(index: Int, items: Array<out Units>, states: Array<TextFieldState>) {
     val value = states[index].text.toString().toDoubleOrNull() ?: 0.0
     for ((ind, state) in states.withIndex()) {
-        if (ind == index) {
-            continue
-        }
-        if (ind >= items.size) {
-            break
-        }
-        val converted = convertedOrInvalid(value, items[index], items[ind])
-        state.setTextAndPlaceCursorAtEnd(converted)
-
+        if (ind == index) continue
+        if (ind >= items.size) break
+        state.setTextAndPlaceCursorAtEnd(convertedOrInvalid(value, items[index], items[ind]))
     }
-
 }
 
 fun convertedOrInvalid(value: Double, from: Units, to: Units): String {

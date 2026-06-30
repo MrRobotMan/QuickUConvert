@@ -35,13 +35,16 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun QuickUConvertTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    themeMode: com.sodamoney.quickuconvert.ThemeMode = com.sodamoney.quickuconvert.ThemeMode.SYSTEM,
     content: @Composable () -> Unit
 ) {
+    val darkTheme = when (themeMode) {
+        com.sodamoney.quickuconvert.ThemeMode.LIGHT  -> false
+        com.sodamoney.quickuconvert.ThemeMode.DARK   -> true
+        com.sodamoney.quickuconvert.ThemeMode.SYSTEM -> isSystemInDarkTheme()
+    }
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }

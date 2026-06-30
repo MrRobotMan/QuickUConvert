@@ -227,6 +227,13 @@
 - [ ] barrel/hr
 
 
+# Settings
+- [ ] Add settings gear icon to top-right of main screen
+- [ ] Inside settings: light / dark / system default theme toggle
+- [ ] Inside settings: per-category unit management
+  - Drag-and-drop to reorder units within a category
+  - Show / hide toggle per unit
+
 # Nice to Have
 Allow for user added units if they provide the conversion factor.
 
