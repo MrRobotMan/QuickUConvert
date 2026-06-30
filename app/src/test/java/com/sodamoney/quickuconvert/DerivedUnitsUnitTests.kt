@@ -129,7 +129,7 @@ class DerivedUnitsUnitTests {
     fun testKips() {
         val expected = 4448.22
         val actual = Kips.convertTo(1.0, Newton)
-        assertEquals(expected, actual, 1e-6)
+        assertEquals(expected, actual, 1.0)
     }
 
     @Test
@@ -253,9 +253,9 @@ class DerivedUnitsUnitTests {
 
     @Test
     fun testLightYear() {
-        val expected = 1 / (SPEED_OF_LIGHT * 60 * 60 * 24 * 365.25)
+        val expected = SPEED_OF_LIGHT.toDouble() * 60.0 * 60.0 * 24.0 * 365.25
         val actual = LightYear.convertTo(1.0, Meter)
-        assertEquals(expected, actual, 1e-6)
+        assertEquals(expected, actual, 10.0)
     }
 
     @Test

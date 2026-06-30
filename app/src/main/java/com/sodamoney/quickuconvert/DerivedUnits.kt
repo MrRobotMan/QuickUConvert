@@ -75,7 +75,7 @@ val Fathom = Units("fathom", { Foot.standardize(it) * 6}, Category.LENGTH)
 val Rod = Units("rd", { Foot.standardize(it) * 16.5}, Category.LENGTH)
 val Chain = Units("ch", { Rod.standardize(it) * 4}, Category.LENGTH)
 val Furlong = Units("fur", { Mile.standardize(it) / 8}, Category.LENGTH)
-val Angstrom = Units("Å", { it / 1E-10 }, Category.LENGTH)	
+val Angstrom = Units("Å", { it * 1E-10 }, Category.LENGTH)
 val LightYear =
     Units(
         "ly",
