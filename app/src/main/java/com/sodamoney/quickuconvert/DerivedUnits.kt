@@ -12,15 +12,13 @@ const val Giga = Kilo * Mega
 
 // region Acceleration
 val InchPerSecondSquared =
-    Units("in/s²", { Meter.convertTo( it, Inch) }, Category.ACCELERATION)
+    Units("in/s²", { Inch.convertTo( it, Meter) }, Category.ACCELERATION)
 val FootPerSecondSquared =
-    Units("ft/s²", { Meter.convertTo( it, Foot) }, Category.ACCELERATION)
-val MeterPerSecondSquared =
-    Units("m/s²", { it  }, Category.ACCELERATION)
+    Units("ft/s²", { Foot.convertTo( it, Meter) }, Category.ACCELERATION)
 val CentimeterPerSecondSquared =
-    Units("cm/s²", { Meter.convertTo( it, Centimeter)  }, Category.ACCELERATION)
+    Units("cm/s²", { Centimeter.convertTo( it, Meter)  }, Category.ACCELERATION)
 val MillimeterPerSecondSquared =
-    Units("mm/s²", { Meter.convertTo( it, Millimeter)  }, Category.ACCELERATION)
+    Units("mm/s²", { Millimeter.convertTo( it, Meter)  }, Category.ACCELERATION)
 val EarthGravity =
     Units("g", { EARTH_GRAVITY * it }, Category.ACCELERATION)
 val Accelerations = arrayOf(
@@ -34,15 +32,14 @@ val Accelerations = arrayOf(
 // endregion
 
 // region Forces
-val Newton = Units("N", { it }, Category.FORCE)
-val Kilonewton = Units("kN", { Newton.standardize(it) / Kilo }, Category.FORCE)
+val Kilonewton = Units("kN", { Newton.standardize(it) * Kilo }, Category.FORCE)
 val KilogramForce =
     Units(
         "kgf",
         { it * EARTH_GRAVITY },
         Category.FORCE
     )
-val Dyne = Units("dyn", { Newton.standardize(it) * 100_000 }, Category.FORCE)
+val Dyne = Units("dyn", { Newton.standardize(it) / 100_000 }, Category.FORCE)
 val PoundForce =
     Units("lbf", { it * (EARTH_GRAVITY * PoundMass.standardize(1.0)) }, Category.FORCE)
 val Kips = Units("kip", { PoundForce.standardize(it) * Kilo }, Category.FORCE)
