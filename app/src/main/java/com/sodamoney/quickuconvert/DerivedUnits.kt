@@ -45,7 +45,7 @@ val PoundForce =
 val Kips = Units("kip", { PoundForce.standardize(it) * Kilo }, Category.FORCE)
 val Poundal = Units(
     "pdl",
-    { PoundForce.standardize(it) / FootPerSecondSquared.standardize(1.0) },
+    { PoundMass.standardize(it) * FootPerSecondSquared.standardize(1.0) },
     Category.FORCE
 )
 val Forces = arrayOf(
@@ -118,8 +118,8 @@ class TemperatureUnits(
     standardize,
     Category.TEMPERATURE
 ) {
-    fun convertTo(inputValue: Double, other: TemperatureUnits): Double {
-        if (this.category != other.category) {
+    override fun convertTo(inputValue: Double, other: Units): Double {
+        if (other !is TemperatureUnits ) {
             throw IllegalConversionException(
                 "Can't convert from ${this.symbol} to ${other.symbol}. Base units are mismatched ${this.category.baseUnits()} and ${other.category.baseUnits()}"
             )

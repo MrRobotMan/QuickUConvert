@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.sodamoney.quickuconvert.ui.theme.QuickUConvertTheme
 import java.text.DecimalFormat
 import kotlin.enums.EnumEntries
+import kotlin.math.abs
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -240,10 +241,11 @@ fun updateValues(index: Int, items: Array<out Units>, states: Array<TextFieldSta
 fun convertedOrInvalid(value: Double, from: Units, to: Units): String {
     return try {
         val converted = from.convertTo(value, to)
-        if (converted < 10_000.0 && converted > 0.00001) {
-            DecimalFormat("#,###.####").format(converted)
-        } else {
-            DecimalFormat("#.####E0").format(converted)
+        val absConv = abs(converted)
+        when {
+            converted == 0.0 -> "0"
+            absConv < 10_000.0 && absConv > 0.0001 -> DecimalFormat("#,###.####").format(converted)
+            else -> DecimalFormat("#.####E0").format(converted)
         }
     } catch (_: IllegalConversionException) {
         "Invalid"

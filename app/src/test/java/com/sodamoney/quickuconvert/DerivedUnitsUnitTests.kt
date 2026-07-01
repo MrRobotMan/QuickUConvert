@@ -134,7 +134,7 @@ class DerivedUnitsUnitTests {
 
     @Test
     fun testPoundal() {
-        val expected = 0.13825
+        val expected = 0.138_254_954_376
         val actual = Poundal.convertTo(1.0, Newton)
         assertEquals(expected, actual, 1e-6)
     }
@@ -267,7 +267,7 @@ class DerivedUnitsUnitTests {
 
     @Test
     fun testFahrenheit() {
-        val expected = 255.9278
+        val expected = 255.9277777777
         val actual = Fahrenheit.convertTo(1.0, Kelvin)
         assertEquals(expected, actual, 1e-6)
     }
