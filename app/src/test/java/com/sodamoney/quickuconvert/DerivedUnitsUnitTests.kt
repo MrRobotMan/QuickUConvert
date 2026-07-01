@@ -14,7 +14,7 @@ class DerivedUnitsUnitTests {
         assertThrows(
             "Can't convert from LENGTH to FORCE. Base units are mismatched m and N",
             IllegalConversionException::class.java,
-            ) { Meter.convertTo(10.0, Newton) }
+        ) { Meter.convertTo(10.0, Newton) }
     }
 
     @Test
@@ -22,23 +22,16 @@ class DerivedUnitsUnitTests {
         assertThrows(
             "Can't convert from LENGTH to FORCE. Base units are mismatched m and N",
             IllegalConversionException::class.java,
-            ) { Kelvin.convertTo(10.0, Kilogram) }
+        ) { Kelvin.convertTo(10.0, Kilogram) }
         assertThrows(
             "Can't convert from LENGTH to FORCE. Base units are mismatched m and N",
             IllegalConversionException::class.java,
-            ) { Kilogram.convertTo(10.0, Kelvin) }
+        ) { Kilogram.convertTo(10.0, Kelvin) }
     }
 
-    @Test
-    fun temperatureConversion() {
-        val expected = 104.0
-        val kelvin = 313.15
-        assertEquals(kelvin, Centigrade.standardize(40.0) ,1E-6)
-        assertEquals(kelvin, Fahrenheit.standardize(104.0), 1E-6)
-        val actual = Centigrade.convertTo(40.0, Fahrenheit)
-        assertEquals(expected, actual, 1E-6)
-    }
+}
 
+class AccelerationTests {
     @Test
     fun testInchPerSecondSquared() {
         val expected = 0.0254
@@ -73,7 +66,9 @@ class DerivedUnitsUnitTests {
         val actual = EarthGravity.convertTo(1.0, MeterPerSecondSquared)
         assertEquals(expected, actual, 1e-6)
     }
+}
 
+class ForceTests {
     @Test
     fun testKilonewton() {
         val expected = 1000.0
@@ -116,6 +111,9 @@ class DerivedUnitsUnitTests {
         assertEquals(expected, actual, 1e-6)
     }
 
+}
+
+class LengthTests {
     @Test
     fun testKilometer() {
         val expected = 1000.0
@@ -235,6 +233,9 @@ class DerivedUnitsUnitTests {
         assertEquals(expected, actual, 10.0)
     }
 
+}
+
+class TemperatureTests {
     @Test
     fun testFromCentigrade() {
         val expected = 274.15
@@ -272,11 +273,23 @@ class DerivedUnitsUnitTests {
 
     @Test
     fun testToRankine() {
-        val expected = 180.0 
+        val expected = 180.0
         val actual = Kelvin.convertTo(100.0, Rankine)
         assertEquals(expected, actual, 1e-6)
     }
 
+    @Test
+    fun temperatureConversion() {
+        val expected = 104.0
+        val kelvin = 313.15
+        assertEquals(kelvin, Centigrade.standardize(40.0), 1E-6)
+        assertEquals(kelvin, Fahrenheit.standardize(104.0), 1E-6)
+        val actual = Centigrade.convertTo(40.0, Fahrenheit)
+        assertEquals(expected, actual, 1E-6)
+    }
+}
+
+class TimeTests {
     @Test
     fun testMillisecond() {
         val expected = 0.001
@@ -351,6 +364,72 @@ class DerivedUnitsUnitTests {
     fun testCentury() {
         val expected = 3_155_760_000.0
         val actual = Century.convertTo(1.0, Second)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+}
+
+class AreaTests{
+    @Test
+    fun testSquareKilometer() {
+        val expected = 1_000_000.0
+        val actual = SquareKilometer.convertTo(1.0, SquareMeter)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testSquareCentimeter() {
+        val expected = 1E-4
+        val actual = SquareCentimeter.convertTo(1.0, SquareMeter)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testSquareMillimeter() {
+        val expected = 1E-6
+        val actual = SquareMillimeter.convertTo(1.0, SquareMeter)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testSquareMile() {
+        val expected = 2589988.110336
+        val actual = SquareMile.convertTo(1.0, SquareMeter)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testSquareYard() {
+        val expected = 0.8361274
+        val actual = SquareYard.convertTo(1.0, SquareMeter)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testSquareFoot() {
+        val expected = 0.092903
+        val actual = SquareFoot.convertTo(1.0, SquareMeter)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testSquareInch() {
+        val expected = 0.0006452
+        val actual = SquareInch.convertTo(1.0, SquareMeter)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testHectare() {
+        val expected = 10_000.0
+        val actual = Hectare.convertTo(1.0, SquareMeter)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testAcre() {
+        val expected = 4046.8564224
+        val actual = Acre.convertTo(1.0, SquareMeter)
         assertEquals(expected, actual, 1e-6)
     }
 }

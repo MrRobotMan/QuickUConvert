@@ -2,9 +2,9 @@
 ~Some conversions are crashing the app (looking at you accelerations)~
 1. Add unit test for every unit to the base unit
 1. Add remaining other units
-1. Fix UI so it doesn't look like 💩
-1. Figure out how to make it not full screen
-1. Auto layout for landscape / portrait / wider screens
+~1. Fix UI so it doesn't look like 💩~ El Dupe!
+~1. Figure out how to make it not full screen~
+~1. Auto layout for landscape / portrait / wider screens~
 
 # Units to add
 ### Acceleration
@@ -16,16 +16,16 @@
 - [x] g
 
 ### Area
-- [ ] sq in
-- [ ] sq mi
-- [ ] sq km
-- [ ] sq ft
-- [ ] sq mm
-- [ ] sq yd
-- [ ] sq cm
-- [ ] sq m
-- [ ] hectare
-- [ ] acre
+- [x] sq in
+- [x] sq mi
+- [x] sq km
+- [x] sq ft
+- [x] sq mm
+- [x] sq yd
+- [x] sq cm
+- [x] sq m
+- [x] hectare
+- [x] acre
 
 ### Density
 - [ ] lbm/in^3

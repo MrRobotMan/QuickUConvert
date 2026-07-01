@@ -12,7 +12,8 @@ val AllUnits: Map<Category, Array<out Units>> = mapOf(
     Category.FORCE        to Forces,
     Category.TEMPERATURE  to Temperatures,
     Category.TIME         to Times,
-    Category.LENGTH       to Lengths
+    Category.LENGTH       to Lengths,
+    Category.AREA         to Areas,
 )
 
 class SettingsRepository(private val prefs: SharedPreferences) {

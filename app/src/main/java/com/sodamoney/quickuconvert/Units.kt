@@ -7,15 +7,16 @@ open class Units (
     val symbol: String,
 
     /**
+     * The category of unit for conversion.
+     */
+    val category: Category,
+
+    /**
      * The formula to convert to a standard (base) unit.
      * 1 UNIT = X BASE UNITS
      */
     val standardize: (Double) -> Double,
 
-    /**
-     * The category of unit for conversion.
-     */
-    val category: Category
 ){
     /**
      * Convert from one unit to another
