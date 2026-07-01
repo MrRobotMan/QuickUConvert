@@ -8,11 +8,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -26,9 +29,12 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -40,11 +46,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,10 +61,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -90,7 +103,8 @@ fun Convert() {
     }
     var themeMode by remember { mutableStateOf(repo.themeMode) }
     var settingsOpen by remember { mutableStateOf(false) }
-    var category by remember { mutableStateOf(Category.LENGTH) }
+    var showIntro by remember { mutableStateOf(!repo.hasSeenIntro) }
+    var category by rememberSaveable { mutableStateOf(Category.LENGTH) }
 
     val maxCount = AllUnits.values.maxOf { it.size }
     val states = Array(maxCount) { rememberTextFieldState("") }
@@ -120,6 +134,12 @@ fun Convert() {
                 },
                 onSettingsClick = { settingsOpen = true }
             )
+        }
+        if (showIntro) {
+            IntroDialog(onDismiss = {
+                repo.hasSeenIntro = true
+                showIntro = false
+            })
         }
     }
 }
@@ -183,30 +203,31 @@ fun ConvertItem(
     states: Array<TextFieldState>,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        (items.indices step 2).forEach { i ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                UnitCard(
-                    state = states[i],
-                    symbol = items[i].symbol,
-                    onUpdate = { updateValues(i, items, states) },
-                    modifier = Modifier.weight(1f)
-                )
-                if (i + 1 < items.size) {
-                    UnitCard(
-                        state = states[i + 1],
-                        symbol = items[i + 1].symbol,
-                        onUpdate = { updateValues(i + 1, items, states) },
-                        modifier = Modifier.weight(1f)
-                    )
-                } else {
-                    Spacer(modifier = Modifier.weight(1f))
+    BoxWithConstraints(modifier = modifier) {
+        val targetCardWidth = 150.dp
+        val columns = ((maxWidth + 10.dp) / (targetCardWidth + 10.dp)).toInt().coerceAtLeast(2)
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            (items.indices step columns).forEach { i ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    for (j in 0 until columns) {
+                        val idx = i + j
+                        if (idx < items.size) {
+                            UnitCard(
+                                state = states[idx],
+                                symbol = items[idx].symbol,
+                                onUpdate = { updateValues(idx, items, states) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                    }
                 }
             }
         }
@@ -298,7 +319,11 @@ fun UnitCard(
                     text = symbol,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable {
+                        clipboardManager.setText(AnnotatedString("${state.text} $symbol"))
+                        copied = true
+                    }
                 )
                 IconButton(
                     onClick = {
@@ -327,18 +352,27 @@ fun CategorySelect(
     valid: Set<Category>
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val arrowRotation by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        label = "arrow"
+    )
+    var anchorWidth by remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
+
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .onSizeChanged { anchorWidth = it.width },
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.secondaryContainer,
         tonalElevation = 1.dp
     ) {
-        Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+        Box {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { expanded = true }
-                    .padding(vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 Text(
                     text = "Category",
@@ -358,34 +392,58 @@ fun CategorySelect(
                     )
                     Icon(
                         imageVector = arrow_drop_down,
-                        contentDescription = "Drop down arrow",
-                        tint = MaterialTheme.colorScheme.secondary
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.rotate(arrowRotation)
                     )
                 }
             }
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                shape = RoundedCornerShape(12.dp),
+                offset = DpOffset(x = 4.dp, y = 0.dp),
+                modifier = Modifier.width(with(density) { anchorWidth.toDp() } - 8.dp)
             ) {
-                categories.forEach {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = it.name.lowercase().replaceFirstChar { c -> c.uppercase() },
-                                style = if (it in valid) {
-                                    TextStyle.Default
-                                } else {
-                                    TextStyle(textDecoration = TextDecoration.LineThrough)
+                categories.chunked(2).forEach { pair ->
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        pair.forEach { cat ->
+                            val isSelected = cat == cur
+                            val isValid = cat in valid
+                            DropdownMenuItem(
+                                modifier = Modifier.weight(1f),
+                                text = {
+                                    Text(
+                                        text = cat.name.lowercase().replaceFirstChar { it.uppercase() },
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                                        textDecoration = if (!isValid) TextDecoration.LineThrough else null,
+                                        color = when {
+                                            isSelected -> MaterialTheme.colorScheme.primary
+                                            !isValid   -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                                            else       -> MaterialTheme.colorScheme.onSurface
+                                        }
+                                    )
+                                },
+                                trailingIcon = if (isSelected) {
+                                    {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                } else null,
+                                onClick = {
+                                    if (!isSelected && isValid) onChange(cat)
+                                    expanded = false
                                 }
                             )
-                        },
-                        onClick = {
-                            if (it != cur && it in valid) {
-                                onChange(it)
-                            }
-                            expanded = false
                         }
-                    )
+                        if (pair.size == 1) Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }
@@ -411,6 +469,51 @@ fun updateValues(index: Int, items: Array<out Units>, states: Array<TextFieldSta
         if (ind == index) continue
         if (ind >= items.size) break
         state.setTextAndPlaceCursorAtEnd(convertedOrInvalid(value, items[index], items[ind]))
+    }
+}
+
+@Composable
+fun IntroDialog(onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Welcome to QuickConvert") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                IntroTip(
+                    icon = Icons.Default.Edit,
+                    text = "Tap any unit box and type a number — all other units update instantly."
+                )
+                IntroTip(
+                    icon = Icons.Default.ContentCopy,
+                    text = "The copy icon on each card puts that value on your clipboard."
+                )
+                IntroTip(
+                    icon = Icons.Default.Settings,
+                    text = "Open Settings to choose a theme or reorder and show/hide units."
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Got it")
+            }
+        }
+    )
+}
+
+@Composable
+private fun IntroTip(icon: ImageVector, text: String) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(20.dp).padding(top = 2.dp)
+        )
+        Text(text = text, style = MaterialTheme.typography.bodyMedium)
     }
 }
 
