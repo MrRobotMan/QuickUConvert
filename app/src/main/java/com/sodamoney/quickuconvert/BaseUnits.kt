@@ -9,10 +9,11 @@ package com.sodamoney.quickuconvert
 const val EARTH_GRAVITY = 9.80655 // m/s^2
 const val SPEED_OF_LIGHT = 299_792_458 // m/s
 
-val Meter = Units("m", {it}, category=Category.LENGTH)
-val Second = Units("s", {it}, category=Category.TIME)
-val Kilogram = Units("kg", {it}, category=Category.MASS)
-val Kelvin = TemperatureUnits("K", {it}, fromStandard = {it})
+val bit = Units("bit", { it }, Category.DIGITAL_STORAGE)
+val Meter = Units("m", { it }, Category.LENGTH)
+val Second = Units("s", { it }, Category.TIME)
+val Kilogram = Units("kg", { it }, Category.MASS)
+val Kelvin = TemperatureUnits("K", { it }, { it })
 val Newton = Units("N", { it }, Category.FORCE)
 val MeterPerSecondSquared =
     Units("m/s²", { it  }, Category.ACCELERATION)

@@ -4,6 +4,7 @@
     <!-- Categories -->
     <string name="acceleration">Acceleration</string>
     <string name="area">Area</string>
+    <string name="digital_storage">Digital Storage</string>
     <string name="density">Density</string>
     <string name="energy">Energy</string>
     <string name="force">Force</string>

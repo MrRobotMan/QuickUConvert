@@ -64,6 +64,7 @@ import kotlinx.coroutines.delay
 import java.text.DecimalFormat
 import kotlin.enums.EnumEntries
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -221,7 +222,7 @@ fun UnitCard(
 
     LaunchedEffect(copied) {
         if (copied) {
-            delay(1500)
+            delay(1500.milliseconds)
             copied = false
         }
     }

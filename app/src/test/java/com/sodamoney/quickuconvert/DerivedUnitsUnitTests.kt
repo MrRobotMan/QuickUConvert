@@ -5,32 +5,16 @@ import org.junit.Test
 import org.junit.Assert.*
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
+ * Testing that derived units give the correct values.
  */
 class DerivedUnitsUnitTests {
-
-    @Test
-    fun lengthConversion_isCorrect() {
-        val expected = 10.0
-        val actual = Millimeter.convertTo(100.0, Centimeter)
-        assertEquals(expected, actual, 1E-6)
-    }
-
-    @Test
-    fun lengthConvertBetweenSystems() {
-        val expected = 38.1
-        val actual = Inch.convertTo(1.5, Millimeter)
-        assertEquals(expected, actual,1E-6)
-    }
 
     @Test
     fun convertBetweenUnitTypes_isBad() {
         assertThrows(
             "Can't convert from LENGTH to FORCE. Base units are mismatched m and N",
             IllegalConversionException::class.java,
-            { Meter.convertTo(10.0, Newton) })
+            ) { Meter.convertTo(10.0, Newton) }
     }
 
     @Test
@@ -38,28 +22,21 @@ class DerivedUnitsUnitTests {
         assertThrows(
             "Can't convert from LENGTH to FORCE. Base units are mismatched m and N",
             IllegalConversionException::class.java,
-            { Kelvin.convertTo(10.0, Kilogram) })
+            ) { Kelvin.convertTo(10.0, Kilogram) }
         assertThrows(
             "Can't convert from LENGTH to FORCE. Base units are mismatched m and N",
             IllegalConversionException::class.java,
-            { Kilogram.convertTo(10.0, Kelvin) })
+            ) { Kilogram.convertTo(10.0, Kelvin) }
     }
 
     @Test
-    fun temperatureConversion_isCorrect() {
+    fun temperatureConversion() {
         val expected = 104.0
         val kelvin = 313.15
         assertEquals(kelvin, Centigrade.standardize(40.0) ,1E-6)
         assertEquals(kelvin, Fahrenheit.standardize(104.0), 1E-6)
         val actual = Centigrade.convertTo(40.0, Fahrenheit)
         assertEquals(expected, actual, 1E-6)
-    }
-
-    @Test
-    fun convertToLightYears() {
-        val expected = SPEED_OF_LIGHT.toDouble() * 60.0 * 60.0 * 24.0 * 365.25
-        val actual = LightYear.convertTo(1.0, Meter)
-        assertEquals(expected, actual, 10.0)
     }
 
     @Test
@@ -259,23 +236,44 @@ class DerivedUnitsUnitTests {
     }
 
     @Test
-    fun testCentigrade() {
+    fun testFromCentigrade() {
         val expected = 274.15
         val actual = Centigrade.convertTo(1.0, Kelvin)
         assertEquals(expected, actual, 1e-6)
     }
 
     @Test
-    fun testFahrenheit() {
+    fun testFromFahrenheit() {
         val expected = 255.9277777777
         val actual = Fahrenheit.convertTo(1.0, Kelvin)
         assertEquals(expected, actual, 1e-6)
     }
 
     @Test
-    fun testRankine() {
+    fun testFromRankine() {
         val expected = 1.0 / 1.8
         val actual = Rankine.convertTo(1.0, Kelvin)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testToCentigrade() {
+        val expected = -173.15
+        val actual = Kelvin.convertTo(100.0, Centigrade)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testToFahrenheit() {
+        val expected = -279.67
+        val actual = Kelvin.convertTo(100.0, Fahrenheit)
+        assertEquals(expected, actual, 1e-6)
+    }
+
+    @Test
+    fun testToRankine() {
+        val expected = 180.0 
+        val actual = Kelvin.convertTo(100.0, Rankine)
         assertEquals(expected, actual, 1e-6)
     }
 

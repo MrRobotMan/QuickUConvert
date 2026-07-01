@@ -40,6 +40,12 @@
 - [ ] mg/dL
 
 
+### Digital Storage
+- [ ] 1-Zeta Bytes
+- [ ] 1-Zeta Bits
+- [ ] 1-Zebi Bytes
+- [ ] 1-Zebi Bits
+
 ### Energy
 - [ ] calorie
 - [ ] btu
