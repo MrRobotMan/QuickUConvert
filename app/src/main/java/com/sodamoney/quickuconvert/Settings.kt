@@ -59,8 +59,13 @@ class SettingsRepository(private val prefs: SharedPreferences) {
     private fun orderKey(cat: Category) = "unit_order_${cat.name}"
     private fun hiddenKey(cat: Category) = "unit_hidden_${cat.name}"
 
+    var hasSeenIntro: Boolean
+        get() = prefs.getBoolean(KEY_INTRO_SEEN, false)
+        set(value) = prefs.edit { putBoolean(KEY_INTRO_SEEN, value) }
+
     companion object {
         private const val KEY_THEME = "theme_mode"
+        private const val KEY_INTRO_SEEN = "intro_seen"
         const val PREFS_NAME = "quickconvert_settings"
     }
 }
