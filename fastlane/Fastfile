@@ -1,0 +1,28 @@
+default_platform(:android)
+
+platform :android do
+
+  desc "Build and upload a new release to Google Play"
+  lane :deploy do |options|
+    track = options[:track] || "internal"
+
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      print_command: false
+    )
+
+    upload_to_play_store(
+      track: track,
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      mapping: "app/build/outputs/mapping/release/mapping.txt",
+      release_status: "completed",
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+end
