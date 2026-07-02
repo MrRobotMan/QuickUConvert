@@ -1,5 +1,7 @@
 package com.sodamoney.quickuconvert
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.DragHandle
+import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.SettingsBrightness
 import androidx.compose.material3.DropdownMenu
@@ -44,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +60,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
@@ -74,6 +79,7 @@ fun SettingsScreen(
     var themeMode by remember { mutableStateOf(repo.themeMode) }
     var selectedCategory by remember { mutableStateOf(AllUnits.keys.first()) }
     var unitPrefs by remember(selectedCategory) { mutableStateOf(repo.getUnitPrefs(selectedCategory)) }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -162,10 +168,33 @@ fun SettingsScreen(
                 }
             )
 
+            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+
+            SectionLabel("Support")
+
+            OutlinedButton(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(FEEDBACK_FORM_URL))
+                    context.startActivity(intent)
+                },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Feedback,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Request feature / report issue")
+            }
+
             Spacer(Modifier.height(16.dp))
         }
     }
 }
+
+private const val FEEDBACK_FORM_URL =
+    "https://docs.google.com/forms/d/e/1FAIpQLSen7yNw3E_autrxvBm0icjCFQH975TyqmW-kVeje6OW75uPgw/viewform?usp=dialog"
 
 @Composable
 private fun ThreePositionSwitch(
@@ -281,79 +310,106 @@ private fun ReorderableUnitList(
 ) {
     val rowHeightDp = 56.dp
     val rowHeightPx = with(LocalDensity.current) { rowHeightDp.toPx() }
+    val scope = rememberCoroutineScope()
 
-    var draggingIdx by remember { mutableStateOf<Int?>(null) }
-    var dragDelta by remember { mutableStateOf(0f) }
+    var draggingSymbol by remember { mutableStateOf<String?>(null) }
+    val dragOffset = remember { Animatable(0f) }
 
-    val targetIdx = draggingIdx?.let { di ->
-        (di + (dragDelta / rowHeightPx).roundToInt()).coerceIn(0, units.lastIndex)
+    val draggingIdx = draggingSymbol?.let { sym ->
+        units.indexOfFirst { it.symbol == sym }.takeIf { it >= 0 }
     }
+    val targetIdx = draggingIdx?.let { di ->
+        (di + (dragOffset.value / rowHeightPx).roundToInt()).coerceIn(0, units.lastIndex)
+    }
+    val targetIdxState = rememberUpdatedState(targetIdx)
+    val draggingIdxState = rememberUpdatedState(draggingIdx)
 
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
         units.forEachIndexed { idx, unit ->
-            val lifted = idx == draggingIdx
-            val shiftTarget = when {
-                targetIdx == null || draggingIdx == null -> 0f
-                else -> {
-                    val di = draggingIdx!!; val ti = targetIdx
-                    when {
-                        di < ti && idx in (di + 1)..ti -> -rowHeightPx
-                        di > ti && idx in ti until di  ->  rowHeightPx
-                        else -> 0f
+            key(unit.symbol) {
+                val lifted = unit.symbol == draggingSymbol
+                val shiftTarget = when {
+                    targetIdx == null || draggingIdx == null -> 0f
+                    else -> {
+                        val di = draggingIdx; val ti = targetIdx
+                        when {
+                            di < ti && idx in (di + 1)..ti -> -rowHeightPx
+                            di > ti && idx in ti until di  ->  rowHeightPx
+                            else -> 0f
+                        }
                     }
                 }
-            }
-            val animShift by animateFloatAsState(targetValue = shiftTarget, label = "shift$idx")
+                val animShift by animateFloatAsState(targetValue = shiftTarget, label = "shift")
+                val elevation by animateFloatAsState(targetValue = if (lifted) 8f else 0f, label = "elevation")
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(rowHeightDp)
-                    .zIndex(if (lifted) 1f else 0f)
-                    .graphicsLayer {
-                        translationY = if (lifted) dragDelta else animShift
-                        shadowElevation = if (lifted) 8f else 0f
-                    }
-                    .background(
-                        if (lifted) MaterialTheme.colorScheme.surfaceContainerHighest
-                        else MaterialTheme.colorScheme.surface
-                    )
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.DragHandle,
-                    contentDescription = "Drag to reorder",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                Row(
                     modifier = Modifier
-                        .size(24.dp)
-                        .pointerInput(idx) {
-                            detectDragGesturesAfterLongPress(
-                                onDragStart = { draggingIdx = idx; dragDelta = 0f },
-                                onDrag = { change, delta ->
-                                    change.consume()
-                                    dragDelta += delta.y
-                                },
-                                onDragEnd = {
-                                    val ti = targetIdx
-                                    if (ti != null && ti != draggingIdx) onReorder(draggingIdx!!, ti)
-                                    draggingIdx = null; dragDelta = 0f
-                                },
-                                onDragCancel = { draggingIdx = null; dragDelta = 0f }
-                            )
+                        .fillMaxWidth()
+                        .height(rowHeightDp)
+                        .zIndex(if (lifted) 1f else 0f)
+                        .graphicsLayer {
+                            translationY = if (lifted) dragOffset.value else animShift
+                            shadowElevation = elevation
                         }
-                )
-                Spacer(Modifier.width(16.dp))
-                Text(
-                    text = unit.symbol,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.weight(1f)
-                )
-                Switch(
-                    checked = unit.visible,
-                    onCheckedChange = { onToggle(idx, it) }
-                )
+                        .background(
+                            if (lifted) MaterialTheme.colorScheme.surfaceContainerHighest
+                            else MaterialTheme.colorScheme.surface
+                        )
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DragHandle,
+                        contentDescription = "Drag to reorder",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .pointerInput(unit.symbol) {
+                                detectDragGesturesAfterLongPress(
+                                    onDragStart = {
+                                        draggingSymbol = unit.symbol
+                                        scope.launch { dragOffset.snapTo(0f) }
+                                    },
+                                    onDrag = { change, delta ->
+                                        change.consume()
+                                        scope.launch { dragOffset.snapTo(dragOffset.value + delta.y) }
+                                    },
+                                    onDragEnd = {
+                                        val ti = targetIdxState.value
+                                        val di = draggingIdxState.value
+                                        scope.launch {
+                                            if (ti != null && di != null && ti != di) {
+                                                onReorder(di, ti)
+                                                // Rest position moved by (ti - di) rows; compensate
+                                                // so the settle animation starts from the same
+                                                // visual spot instead of jumping.
+                                                dragOffset.snapTo(dragOffset.value - (ti - di) * rowHeightPx)
+                                            }
+                                            dragOffset.animateTo(0f)
+                                            draggingSymbol = null
+                                        }
+                                    },
+                                    onDragCancel = {
+                                        scope.launch {
+                                            dragOffset.animateTo(0f)
+                                            draggingSymbol = null
+                                        }
+                                    }
+                                )
+                            }
+                    )
+                    Spacer(Modifier.width(16.dp))
+                    Text(
+                        text = unit.symbol,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        checked = unit.visible,
+                        onCheckedChange = { onToggle(idx, it) }
+                    )
+                }
             }
         }
     }
