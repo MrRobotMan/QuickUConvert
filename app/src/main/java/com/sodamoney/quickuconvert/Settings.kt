@@ -11,7 +11,7 @@ val AllUnits: Map<Category, Array<out Units>> = mapOf(
     Category.ACCELERATION    to Accelerations,
     Category.AREA            to Areas,
     Category.DENSITY         to Densities,
-    Category.DIGITAL_STORAGE to DigitialStorage,
+    Category.DIGITAL_STORAGE to DigitalStorage,
     Category.FORCE           to Forces,
     Category.LENGTH          to Lengths,
     Category.MASS            to Masses,

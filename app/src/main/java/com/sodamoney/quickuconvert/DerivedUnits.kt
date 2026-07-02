@@ -61,10 +61,10 @@ val PoundPerCubicYard = Units("lb/yd³", Category.DENSITY) {
     PoundMass.standardize(1.0) / CubicYard.standardize(1.0) * it
  }
 val PoundPerCubicGallon = Units("lb/gal", Category.DENSITY) {
-    PoundMass.standardize(1.0) / CubicGallon.standardize(1.0) * it
+    PoundMass.standardize(1.0) / Gallon.standardize(1.0) * it
  }
 val OuncePerCubicGallon = Units("oz/gal", Category.DENSITY) {
-    Ounce.standardize(1.0) / CubicGallon.standardize(1.0) * it
+    Ounce.standardize(1.0) / Gallon.standardize(1.0) * it
  }
 
 val Densities = arrayOf(
@@ -109,7 +109,7 @@ val ExbiBit = Units("Eibit", Category.DIGITAL_STORAGE) { it * (1024 shl 50)}
 val DigitalStorage = arrayOf(
     Byte, KiloByte, MegaByte, GigaByte, TeraByte, PetaByte, ExaByte, 
     KibiByte, MebiByte, GibiByte, TebiByte, PebiByte, ExbiByte, 
-    Bit, KiloBit, MegaBit, GigaBit, TeraBit, PetaBit, ExaBit, 
+    bit, KiloBit, MegaBit, GigaBit, TeraBit, PetaBit, ExaBit,
     KibiBit, MebiBit, GibiBit, TebiBit, PebiBit, ExbiBit 
 )
 // endregion
@@ -175,7 +175,7 @@ val Carat = Units("ct", Category.MASS) { it * 0.0002 }
 
 val Masses = arrayOf(
     Kilogram, Gram, Milligram, PoundMass, Ounce,
-    Stone, ShortHundredweight, LongHundredweight,
+    Stone, HundredweightShort, HundredweightLong,
     ShortTon, LongTon, Tonne, Grain, Carat
 )
 // endregion
