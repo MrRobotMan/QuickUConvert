@@ -6,6 +6,9 @@ package com.sodamoney.quickuconvert
  * Collection of Derived to be used.
  */
 
+inline fun Double.squared(): Double = this * this
+inline fun Double.cubed(): Double = this * this * this
+
 // region Acceleration
 val InchPerSecondSquared = Units("in/s²", Category.ACCELERATION) { Inch.convertTo(it, Meter) }
 val FootPerSecondSquared = Units("ft/s²", Category.ACCELERATION) { Foot.convertTo(it, Meter) }
@@ -14,6 +17,7 @@ val CentimeterPerSecondSquared =
 val MillimeterPerSecondSquared =
     Units("mm/s²", Category.ACCELERATION) { Millimeter.convertTo(it, Meter) }
 val EarthGravity = Units("g", Category.ACCELERATION) { EARTH_GRAVITY * it }
+
 val Accelerations = arrayOf(
     EarthGravity,
     MeterPerSecondSquared,
@@ -25,27 +29,16 @@ val Accelerations = arrayOf(
 // endregion
 
 //region Areas
-val SquareInch = Units("in²", Category.AREA) {
-    val c = Inch.standardize( 1.0 )
-    c * c * it
-}
-val SquareFoot = Units("ft²", Category.AREA) {
-    val c = Foot.standardize( 1.0 )
-    c * c * it
-}
-val SquareYard = Units("yd²", Category.AREA) {
-    val c = Yard.standardize( 1.0 )
-    c * c * it
-}
-val SquareMile = Units("mi²", Category.AREA) {
-    val c = Mile.standardize( 1.0 )
-    c * c * it
-}
+val SquareInch = Units("in²", Category.AREA) { Inch.standardize( 1.0 ).squared() * it }
+val SquareFoot = Units("ft²", Category.AREA) { Foot.standardize( 1.0 ).squared() * it }
+val SquareYard = Units("yd²", Category.AREA) { Yard.standardize( 1.0 ).squared() * it }
+val SquareMile = Units("mi²", Category.AREA) { Mile.standardize( 1.0 ).squared() * it }
 val SquareKilometer = Units("km²", Category.AREA) { it * Mega }
 val SquareCentimeter = Units("cm²", Category.AREA) { it / 10_000 }
 val SquareMillimeter = Units("mm²", Category.AREA) { it / Mega }
 val Hectare = Units("ha", Category.AREA) { it * 10_000 }
 val Acre = Units("ac", Category.AREA) { 4840 * SquareYard.standardize( it) }
+
 val Areas = arrayOf(
     SquareKilometer, SquareMeter, SquareCentimeter, SquareMillimeter,
     SquareMile, SquareYard, SquareFoot, SquareInch,
@@ -62,6 +55,7 @@ val Kips = Units("kip", Category.FORCE) { PoundForce.standardize(it) * Kilo }
 val Poundal = Units(
     "pdl", Category.FORCE
 ) { PoundMass.standardize(it) * FootPerSecondSquared.standardize(1.0) }
+
 val Forces = arrayOf(
     Newton, Kilonewton, KilogramForce, Dyne, PoundForce, Kips, Poundal
 )
@@ -89,24 +83,10 @@ val LightYear = Units("ly", Category.LENGTH) {
 }
 
 val Lengths = arrayOf(
-    Kilometer,
-    Meter,
-    Centimeter,
-    Millimeter,
-    Micrometer,
-    Nanometer,
-    Inch,
-    Thou,
-    Foot,
-    Yard,
-    Mile,
-    Rod,
-    Chain,
-    Furlong,
-    NauticalMile,
-    Fathom,
-    Angstrom,
-    LightYear
+    Kilometer, Meter, Centimeter, Millimeter, Micrometer,
+    Nanometer, Inch, Thou, Foot, Yard,
+    Mile, Rod, Chain, Furlong, NauticalMile,
+    Fathom, Angstrom, LightYear
 )
 // endregion
 
@@ -133,6 +113,7 @@ class TemperatureUnits(
 val Centigrade = TemperatureUnits("°C", { 273.15 + it }, { it - 273.15 })
 val Fahrenheit = TemperatureUnits("°F", { (459.67 + it) / 1.8 }, { (it * 1.8) - 459.67 })
 val Rankine = TemperatureUnits("°R", { it / 1.8 }, { it * 1.8 })
+
 val Temperatures = arrayOf(Centigrade, Fahrenheit, Kelvin, Rankine)
 // endregion
 
@@ -148,18 +129,40 @@ val Week = Units("wk", Category.TIME) { Day.standardize(it) * 7 }
 val Month = Units("mo", Category.TIME) { Year.standardize(it) / 12 }
 val Decade = Units("dec", Category.TIME) { Year.standardize(it) * 10 }
 val Century = Units("cen", Category.TIME) { Year.standardize(it) * 100 }
+
 val Times = arrayOf(
-    Nanosecond,
-    Microsecond,
-    Millisecond,
-    Second,
-    Minute,
-    Hour,
-    Day,
-    Week,
-    Month,
-    Year,
-    Decade,
-    Century
+    Nanosecond, Microsecond, Millisecond, Second, Minute, Hour,
+    Day, Week, Month, Year, Decade, Century
+)
+// endregion
+
+// region Volume
+val Liter = Units("L", Category.VOLUME) { it / 1_000 }
+val Deciliter = Units("dL", Category.VOLUME) { it  / 10_000 }
+val CubicCentimeter = Units("CC/mL", Category.VOLUME) { it / Mega }
+val CubicMillimeter = Units("mm³", Category.VOLUME) { it / Giga }
+val CubicInch = Units("in³", Category.VOLUME) { Inch.standardize(1.0).cubed() * it }
+val CubicFoot = Units("ft³", Category.VOLUME) { Foot.standardize(1.0).cubed() * it }
+val CubicYard = Units("yd³", Category.VOLUME) { Yard.standardize(1.0).cubed() * it }
+val AcreFoot = Units("acre⋅ft", Category.VOLUME) { CubicFoot.standardize(it) * 43_560 }
+val Gallon = Units("gal", Category.VOLUME) { CubicInch.standardize(it) * 231 }
+val WetBarrel = Units("bbl (wet)", Category.VOLUME) { Gallon.standardize(it) * 31.5 }
+val WetQuart = Units("qt (wet)", Category.VOLUME) { Gallon.standardize(it) / 4 }
+val WetPint = Units("pt (wet)", Category.VOLUME) { Gallon.standardize(it) / 8 }
+val Cup = Units("cu", Category.VOLUME) { Gallon.standardize(it) / 16 }
+val FluidOunce = Units("fl oz", Category.VOLUME) { Gallon.standardize(it) / 128 }
+val Tablespoon = Units("gal", Category.VOLUME) { FluidOunce.standardize(it) / 2 }
+val Teaspoon = Units("gal", Category.VOLUME) { FluidOunce.standardize(it) / 6 }
+val DryPint = Units("pt (dry)", Category.VOLUME) { CubicInch.standardize(it) * 33.600_312_5 }
+val DryQuart = Units("qt (dry)", Category.VOLUME) { DryPint.standardize(it) * 2 }
+val Peck = Units("bu", Category.VOLUME) { DryQuart.standardize(it) * 8 }
+val Bushel = Units("bu", Category.VOLUME) { Peck.standardize(it) * 4 }
+val DryBarrel = Units("bbl (dry)", Category.VOLUME) { CubicInch.standardize(it) * 7056 }
+
+val Volumes = arrayOf(
+    CubicMeter, Liter, Deciliter, CubicCentimeter, CubicMillimeter,
+    CubicInch, CubicFoot, CubicYard, AcreFoot,
+    Gallon, WetBarrel, WetQuart, WetPint, Cup, FluidOunce, Tablespoon, Teaspoon,
+    DryPint, DryQuart, Peck, Bushel, DryBarrel,
 )
 // endregion

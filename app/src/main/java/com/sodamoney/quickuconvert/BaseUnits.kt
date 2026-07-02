@@ -23,3 +23,5 @@ val Kelvin = TemperatureUnits("K", { it }, { it })
 val Newton = Units("N", Category.FORCE) { it }
 val MeterPerSecondSquared = Units("m/s²", Category.ACCELERATION) { it }
 val SquareMeter = Units("m²", Category.AREA) { it }
+val CubicMeter = Units("m³", Category.VOLUME) { it }
+val KilogramPerMeterCubed = Units("kg/m³", Category.DENSITY) { it }

@@ -28,13 +28,13 @@
 - [x] acre
 
 ### Density
-- [ ] lbm/in^3
-- [ ] lbm/ft^3
+- [x] lbm/in^3
+- [x] lbm/ft^3
 - [ ] lbm/yd^3
 - [ ] lbm/gal
 - [ ] oz/gal
 - [ ] kg/L
-- [ ] kg/m^3
+- [x] kg/m^3
 - [ ] kg/cm^3
 - [ ] g/cm^3
 - [ ] mg/dL
@@ -205,21 +205,27 @@
 - [ ] N/m
 
 ### Volume
-- [ ] cu in
-- [ ] quart (dry)
-- [ ] cu cm
-- [ ] cu ft
-- [ ] peck (dry)
-- [ ] cu m
-- [ ] cu yd
-- [ ] bushel (dry)
-- [ ] liter
-- [ ] pint (dry)
-- [ ] cu mm
-- [ ] quart (wet)
-- [ ] fl oz (wet)
-- [ ] gallon (wet)
-- [ ] barrel (wet)
+- [x] cu in
+- [x] cu cm
+- [x] cu ft
+- [x] peck
+- [x] cu m
+- [x] cu yd
+- [x] bushel
+- [x] liter
+- [x] pint (dry)
+- [x] pint (wet)
+- [x] cu mm
+- [x] quart (dry)
+- [x] quart (wet)
+- [x] fl oz
+- [x] gallon
+- [x] barrel (dry)
+- [x] barrel (wet)
+- [x] acre-foot
+- [x] tsp
+- [x] tbsp
+- [x] cu
 
 ### Volumetric Flow rate
 - [ ] cu.ft/min

@@ -9,11 +9,12 @@ data class UnitPref(val symbol: String, val visible: Boolean)
 
 val AllUnits: Map<Category, Array<out Units>> = mapOf(
     Category.ACCELERATION to Accelerations,
+    Category.AREA         to Areas,
     Category.FORCE        to Forces,
+    Category.LENGTH       to Lengths,
     Category.TEMPERATURE  to Temperatures,
     Category.TIME         to Times,
-    Category.LENGTH       to Lengths,
-    Category.AREA         to Areas,
+    Category.VOLUME       to Volumes,
 )
 
 class SettingsRepository(private val prefs: SharedPreferences) {
