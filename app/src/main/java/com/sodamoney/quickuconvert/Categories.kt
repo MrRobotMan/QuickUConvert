@@ -9,8 +9,8 @@ package com.sodamoney.quickuconvert
 enum class Category {
     ACCELERATION,
     AREA,
-    DIGITAL_STORAGE,
     DENSITY,
+    DIGITAL_STORAGE,
     ENERGY,
     FORCE,
     LENGTH,
@@ -32,8 +32,8 @@ enum class Category {
         return when (this) {
             ACCELERATION -> "m/s²"
             AREA -> "m²"
-            DIGITAL_STORAGE -> "bit"
             DENSITY -> "kg/m³"
+            DIGITAL_STORAGE -> "bit"
             ENERGY -> "J"
             FORCE -> "N"
             LENGTH -> "m"
@@ -56,8 +56,8 @@ enum class Category {
         return when (this) {
             ACCELERATION -> R.string.acceleration
             AREA -> R.string.area
-            DIGITAL_STORAGE -> R.string.digital_storage
             DENSITY -> R.string.density
+            DIGITAL_STORAGE -> R.string.digital_storage
             ENERGY -> R.string.energy
             FORCE -> R.string.force
             LENGTH -> R.string.length

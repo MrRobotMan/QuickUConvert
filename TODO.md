@@ -124,9 +124,9 @@
 
 ### Power
 - [ ] cal / sec           4.1868
-- [ ] joule / sec         1.0
+- [ ] W                   1.0
 - [ ] erg / sec           1.0E-7
-- [ ] kW (kJ/s)       1_000.0
+- [ ] kW              1_000.0
 - [ ] BTU / sec        1055.0558526
 - [ ] ft-lb / min         0.022597
 - [ ] hp - British (HP) 745.6998716 (550ft-lb/s)
