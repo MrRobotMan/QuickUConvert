@@ -41,10 +41,10 @@
 
 
 ### Digital Storage
-- [ ] 1-Exabytes
-- [ ] 1-Exabits
-- [ ] 1-Exbibytes
-- [ ] 1-Exbibits
+- [x] 1-Exabytes
+- [x] 1-Exabits
+- [x] 1-Exbibytes
+- [x] 1-Exbibits
 
 ### Energy
 - [ ] calorie      4.1868

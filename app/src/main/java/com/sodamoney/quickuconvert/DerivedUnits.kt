@@ -74,6 +74,47 @@ val Densities = arrayOf(
 )
 // endregion
 
+// region Digital Storage
+// k * k = m
+// k * m = g
+// m * m = t
+// m * g = p
+// g * g = e
+val Byte = Units("B", Category.DIGITAL_STORAGE) { it * 8 }
+val KiloByte = Units("kB", Category.DIGITAL_STORAGE) { it * Kilo * 8 }
+val MegaByte = Units("MB", Category.DIGITAL_STORAGE) { it * Mega * 8 }
+val GigaByte = Units("GB", Category.DIGITAL_STORAGE) { it * Giga * 8 }
+val TeraByte = Units("TB", Category.DIGITAL_STORAGE) { it  * Mega * Mega * 8 }
+val PetaByte = Units("PB", Category.DIGITAL_STORAGE) { it * Mega * Giga * 8 }
+val ExaByte = Units("EB", Category.DIGITAL_STORAGE) { it * Giga * Giga * 8 }
+val KibiByte = Units("KiB", Category.DIGITAL_STORAGE) { it * 1024 * 8 }
+val MebiByte = Units("MiB", Category.DIGITAL_STORAGE) { it * (1024 shl 10) * 8 }
+val GibiByte = Units("GiB", Category.DIGITAL_STORAGE) { it * (1024 shl 20) * 8 }
+val TebiByte = Units("TiB", Category.DIGITAL_STORAGE) { it * (1024 shl 30) * 8 }
+val PebiByte = Units("PiB", Category.DIGITAL_STORAGE) { it * (1024 shl 40) * 8 }
+val ExbiByte = Units("EiB", Category.DIGITAL_STORAGE) { it * (1024 shl 50) * 8 }
+val KiloBit = Units("kbit", Category.DIGITAL_STORAGE) { it * Kilo }
+val MegaBit = Units("Mbit", Category.DIGITAL_STORAGE) { it * Mega }
+val GigaBit = Units("Gbit", Category.DIGITAL_STORAGE) { it * Giga }
+val TeraBit = Units("Tbit", Category.DIGITAL_STORAGE) { it  * Mega * Mega }
+val PetaBit = Units("Pbit", Category.DIGITAL_STORAGE) { it * Mega * Giga }
+val ExaBit = Units("Ebit", Category.DIGITAL_STORAGE) { it * Giga * Giga }
+val KibiBit = Units("Kibit", Category.DIGITAL_STORAGE) { it * 1024 }
+val MebiBit = Units("Mibit", Category.DIGITAL_STORAGE) { it * (1024 shl 10)}
+val GibiBit = Units("Gibit", Category.DIGITAL_STORAGE) { it * (1024 shl 20)}
+val TebiBit = Units("Tibit", Category.DIGITAL_STORAGE) { it * (1024 shl 30)}
+val PebiBit = Units("Pibit", Category.DIGITAL_STORAGE) { it * (1024 shl 40)}
+val ExbiBit = Units("Eibit", Category.DIGITAL_STORAGE) { it * (1024 shl 50)}
+
+val DigitalStorage = arrayOf(
+    Byte, KiloByte, MegaByte, GigaByte, TeraByte, PetaByte, ExaByte, 
+    KibiByte, MebiByte, GibiByte, TebiByte, PebiByte, ExbiByte, 
+    Bit, KiloBit, MegaBit, GigaBit, TeraBit, PetaBit, ExaBit, 
+    KibiBit, MebiBit, GibiBit, TebiBit, PebiBit, ExbiBit 
+)
+// endregion
+
+
 // region Forces
 val Kilonewton = Units("kN", Category.FORCE) { Newton.standardize(it) * Kilo }
 val KilogramForce = Units("kgf", Category.FORCE) { it * EARTH_GRAVITY }

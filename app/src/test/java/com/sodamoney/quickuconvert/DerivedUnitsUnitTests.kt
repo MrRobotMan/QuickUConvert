@@ -730,3 +730,180 @@ class DensityTests() {
     
 }
     
+class DigitalStorageTests {
+    
+    @Test
+    fun testByte() {
+        val expected = 8.0
+        val actual = Byte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testKiloByte() {
+        val expected = 8_000.0
+        val actual = KiloByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testMegaByte() {
+        val expected = 8_000_000.0
+        val actual = MegaByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testGigaByte() {
+        val expected = 8_000_000_000.0
+        val actual = GigaByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testTeraByte() {
+        val expected = 8_000_000_000_000.0
+        val actual = TeraByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testPetaByte() {
+        val expected = 8_000_000_000_000_000.0
+        val actual = PetaByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testExaByte() {
+        val expected = 8_000_000_000_000_000_000.0
+        val actual = ExaByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testKibiByte() {
+        val expected = (1024 shl 10).toDouble() * 8.0
+        val actual = KibiByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testMebiByte() {
+        val expected = (1024 shl 20).toDouble() * 8.0
+        val actual = MebiByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testGibiByte() {
+        val expected = (1024 shl 30).toDouble() * 8.0
+        val actual = GibiByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testTebiByte() {
+        val expected = (1024 shl 50).toDouble() * 8.0
+        val actual = TebiByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testPebiByte() {
+        val expected = (1024 shl 50).toDouble() * 8.0
+        val actual = PebiByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testExbiByte() {
+        val expected = 8.0
+        val actual = ExbiByte.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testKiloBit() {
+        val expected = 1_000.0
+        val actual = KiloBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testMegaBit() {
+        val expected = 1_000_000.0
+        val actual = MegaBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testGigaBit() {
+        val expected = 1_000_000_000.0
+        val actual = GigaBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testTeraBit() {
+        val expected = 1_000_000_000_000.0
+        val actual = TeraBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testPetaBit() {
+        val expected = 1_000_000_000_000_000.0
+        val actual = PetaBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testExaBit() {
+        val expected = 1_000_000_000_000_000_000.0
+        val actual = ExaBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testKibiBit() {
+        val expected = 1024.0
+        val actual = KibiBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testMebiBit() {
+        val expected = (1024 shl 10).toDouble()
+        val actual = MebiBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testGibiBit() {
+        val expected = (1024 shl 20).toDouble()
+        val actual = GibiBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testTebiBit() {
+        val expected = (1024 shl 30).toDouble()
+        val actual = TebiBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testPebiBit() {
+        val expected = (1024 shl 40).toDouble()
+        val actual = PebiBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+    
+    @Test
+    fun testExbiBit() {
+        val expected = (1024 shl 50).toDouble()
+        val actual = ExbiBit.convertTo(1.0, Bit)
+        assertEquals(expected, actual)
+    } 
+}
