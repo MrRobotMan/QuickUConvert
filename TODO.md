@@ -28,16 +28,16 @@
 - [x] acre
 
 ### Density
-- [x] lbm/in^3
-- [x] lbm/ft^3
-- [ ] lbm/yd^3
-- [ ] lbm/gal
-- [ ] oz/gal
-- [ ] kg/L
-- [x] kg/m^3
-- [ ] kg/cm^3
-- [ ] g/cm^3
-- [ ] mg/dL
+- [x] lbm/in^3    27679.9047102
+- [x] lbm/ft^3       16.0184634
+- [ ] lbm/yd^3        0.5932764
+- [ ] lbm/gal       119.8264273
+- [ ] oz/gal          7.4891517
+- [ ] kg/L         1000.0
+- [x] kg/m^3          1.0
+- [ ] kg/cm^3 1_000_000.0
+- [ ] g/cm^3       1000.0
+- [ ] mg/dL           0.01
 
 
 ### Digital Storage
@@ -47,15 +47,15 @@
 - [ ] 1-Zebi Bits
 
 ### Energy
-- [ ] calorie
-- [ ] btu
-- [ ] hp-hr
-- [ ] kcal
-- [ ] kbtu
-- [ ] joule
-- [ ] erg
-- [ ] kilojoule
-- [ ] hw-hr
+- [ ] calorie      4.1868
+- [ ] btu       1055.0558526
+- [ ] hp-hr  2684519.5376962
+- [ ] kcal      4186.8
+- [ ] kbtu   1055055.85262
+- [ ] joule        1.0
+- [ ] erg          1.0E-7
+- [ ] kilojoule 1000.0
+- [ ] kw-hr  3600000.0
 
 ### Force
 - [x] N
@@ -85,54 +85,53 @@
 - [x] furlong
 
 ### Mass
-- [ ] oz
-- [ ] grain
-- [ ] tonne
-- [x] lbm
-- [ ] mg
-- [ ] stone
-- [ ] ton (short)
-- [ ] ton (long)
-- [ ] g
-- [x] kg
-- [ ] hundredweight (short)
-- [ ] hundredweight (long)
-- [ ] slug
+- [ ] oz                     0.0283495
+- [ ] grain                  6.479892E-5
+- [ ] tonne               1000.0
+- [x] lbm                    0.4535924
+- [ ] mg                     0.000_001
+- [ ] stone                  6.3502932
+- [ ] ton (short)         2000.0
+- [ ] ton (long)          2200.0
+- [ ] g                      0.001
+- [x] kg                     1.0
+- [ ] hundredweight (short) 45.359237
+- [ ] hundredweight (long)  50.8023454
+- [ ] carat                  0.0002
 
 ### Mass Flow rate
-- [ ] lbm/s
-- [ ] lbm/min
-- [ ] lbm/hr
-- [ ] oz/s
-- [ ] oz/min
-- [ ] kg/s
-- [ ] kg/min
-- [ ] kg/hr
-- [ ] g/s
-- [ ] g/min
+- [ ] lbm/s   0.4535924
+- [ ] lbm/min 0.0075599
+- [ ] lbm/hr  0.000126
+- [ ] oz/s    0.0283495
+- [ ] oz/min  0.0004725
+- [ ] kg/s    1.0
+- [ ] kg/min  1 / 60
+- [ ] kg/hr   1 / 3600
+- [ ] g/s     1 / 1000
+- [ ] g/min   1 / 60_000
 
 ### Moment / Torque
-- [ ] in-lb
-- [ ] ft-lb
-- [ ] in-kips
-- [ ] ft-kips
-- [ ] N-m
-- [ ] kN-m
-- [ ] N-cm
-- [ ] N-mm
-- [ ] kgf-M
+- [ ] in-lb      0.1129848
+- [ ] ft-lb      1.3558179
+- [ ] in-kips  112.984829
+- [ ] ft-kips 1355.8179483
+- [ ] N-m        1.0
+- [ ] kN-m    1000.0
+- [ ] N-cm       0.1
+- [ ] N-mm       0.001
+- [ ] kgf-M      9.80665
 
 ### Power
-- [ ] cal / sec
-- [ ] joule / sec
-- [ ] erg / sec
-- [ ] kjoule / sec
-- [ ] kW
-- [ ] BTU / sec
-- [ ] ft-lb / min
-- [ ] hp - British
-- [ ] hp - metric
-- [ ] ft-lb / sec
+- [ ] cal / sec           4.1868
+- [ ] joule / sec         1.0
+- [ ] erg / sec           1.0E-7
+- [ ] kW (kJ/s)       1_000.0
+- [ ] BTU / sec        1055.0558526
+- [ ] ft-lb / min         0.022597
+- [ ] hp - British (HP) 745.6998716 (550ft-lb/s)
+- [ ] hp - metric (PS)  735.49875 (75kgf-m/s)
+- [ ] ft-lb / sec         1.3558179
 
 ### Pressure 
 - [ ] psi              6894.7572932
