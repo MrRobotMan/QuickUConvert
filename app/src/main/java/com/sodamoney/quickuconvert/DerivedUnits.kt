@@ -109,7 +109,7 @@ val ExbiBit = Units("Eibit", Category.DIGITAL_STORAGE) { it * (1024 shl 50)}
 val DigitalStorage = arrayOf(
     Byte, KiloByte, MegaByte, GigaByte, TeraByte, PetaByte, ExaByte, 
     KibiByte, MebiByte, GibiByte, TebiByte, PebiByte, ExbiByte, 
-    bit, KiloBit, MegaBit, GigaBit, TeraBit, PetaBit, ExaBit,
+    Bit, KiloBit, MegaBit, GigaBit, TeraBit, PetaBit, ExaBit,
     KibiBit, MebiBit, GibiBit, TebiBit, PebiBit, ExbiBit 
 )
 // endregion
