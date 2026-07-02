@@ -6,7 +6,7 @@ package com.sodamoney.quickuconvert
  * Collection of Base Units to be used.
  */
 
-const val EARTH_GRAVITY: Double = 9.80655 // m/s^2
+const val EARTH_GRAVITY: Double = 9.80665 // m/s^2
 const val SPEED_OF_LIGHT : Long= 299_792_458 // m/s
 const val Kilo: Long = 1_000
 const val Mega: Long = Kilo * Kilo

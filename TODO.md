@@ -135,46 +135,46 @@
 - [ ] ft-lb / sec
 
 ### Pressure 
-- [ ] psi(g)
-- [ ] psi(a)
-- [ ] ksi
-- [ ] kn/m^2
-- [ ] mpa
-- [ ] bar(g)
-- [ ] bar(a)
-- [ ] atm
-- [ ] psf
-- [ ] g/cm^2
-- [ ] dyne/cm^2
-- [ ] kgf/cm^2
-- [ ] N/mm^2
-- [ ] in of H20 @ 60°F
-- [ ] ft of H20 @ 60°F
-- [ ] mm of Hg
-- [ ] mm of Hg (abs)
-- [ ] in of Hg @ 32°F
-- [ ] in of Hg @ 32°F (abs)
+- [ ] psi              6894.7572932
+- [ ] ksi           6894757.2931684
+- [ ] psf                47.880259
+- [ ] pa                  1.0
+- [ ] kpa             1_000.0
+- [ ] mpa         1_000_000.0
+- [ ] gpa     1_000_000_000.0
+- [ ] bar           100_000.0
+- [ ] atm            101325.0
+- [ ] gf/cm^2            98.0665
+- [ ] dyne/cm^2           0.1
+- [ ] kgf/cm^2            9.80665
+- [ ] in of H20 @ 60°F  248.8348393
+- [ ] ft of H20 @ 60°F 2986.0180717
+- [ ] mm of Hg          133.3223874
+- [ ] in of Hg @ 32°F  3386.3886403
+
+δHg = 13595.1kg/m^3
+δH2O = 998.98kg/m^3
 
 ### Speed
-- [ ] in/s
-- [ ] ft/s
-- [ ] ft/min
-- [ ] yd/min
-- [ ] mph
-- [ ] kph
-- [ ] m/s
-- [ ] m/min
-- [ ] cm/s
+- [ ] in/s   0.0254
+- [ ] ft/s   0.3048
+- [ ] ft/min 0.00508
+- [ ] yd/min 0.01524
+- [ ] mph    0.44704
+- [ ] kph    1 / 3.6
+- [ ] m/s    1.0
+- [ ] m/min  1 / 60
+- [ ] cm/s   1 / 6000
 
 ### Stiffness
-- [ ] N/cm
-- [ ] N/mm
-- [ ] kN/m
-- [ ] kN/mm
-- [ ] kgf/m
-- [ ] kgf/mm
-- [ ] lbf/ft
-- [ ] lbf/in
+- [ ] N/cm        100.0
+- [ ] N/mm       1000.0
+- [ ] kN/m       1000.0
+- [ ] kN/mm 1_000_000.0
+- [ ] kgf/m         9.80665
+- [ ] kgf/mm     9806.65
+- [ ] lbf/in      175.1268352
+- [ ] lbf/ft       14.5939029
 
 ### Temperature
 - [x] °F
@@ -197,12 +197,12 @@
 - [x] century (100 yr)
 
 ### Uniform load
-- [ ] lbf/in
-- [ ] lbf/ft
-- [ ] kip/in
-- [ ] kip/ft
-- [ ] kgf/m
-- [ ] N/m
+- [ ] lbf/in     175.1268352
+- [ ] lbf/ft      14.5939029
+- [ ] kip/in  175126.8352465
+- [ ] kip/ft   14593.9029372
+- [ ] kgf/m        9.80665
+- [ ] N/m          1.00
 
 ### Volume
 - [x] cu in
@@ -228,21 +228,22 @@
 - [x] cu
 
 ### Volumetric Flow rate
-- [ ] cu.ft/min
-- [ ] cu.ft/hr
-- [ ] gal/min
-- [ ] gal/hr
-- [ ] L/min
-- [ ] L/hr
-- [ ] cu.m/min
-- [ ] cu.m/hr
-- [ ] barrel/hr
+- [ ] cu.ft/min 4.71947E-4
+- [ ] cu.ft/hr  7.86579E-6
+- [ ] gal/min   6.30901E-5
+- [ ] gal/hr    1.05150E-6
+- [ ] L/min     1 / 6000
+- [ ] L/hr      1 / 3600000
+- [ ] cu.m/min  1 / 60
+- [ ] cu.m/hr   1 / 3600
+- [ ] cu.m/s    1
+- [ ] barrel/hr 3.31223E-5
 
 
 # Settings
-- [ ] Add settings gear icon to top-right of main screen
-- [ ] Inside settings: light / dark / system default theme toggle
-- [ ] Inside settings: per-category unit management
+- [x] Add settings gear icon to top-right of main screen
+- [x] Inside settings: light / dark / system default theme toggle
+- [x] Inside settings: per-category unit management
   - Drag-and-drop to reorder units within a category
   - Show / hide toggle per unit
 
