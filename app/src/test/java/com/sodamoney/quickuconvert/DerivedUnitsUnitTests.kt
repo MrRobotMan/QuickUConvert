@@ -586,3 +586,79 @@ class VolumeTests() {
     } 
     
 }
+
+class MassTests {
+
+    @Test
+    fun testGram() {
+        val expected = 0.001
+        val actual = Gram.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-6)
+    }
+    @Test
+    fun testMilligram() {
+        val expected = 1E-6
+        val actual = Milligram.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-8)
+    }
+    @Test
+    fun testPoundMass() {
+        val expected = 0.4535924
+        val actual = PoundMass.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-6)
+    }
+    @Test
+    fun testOunce() {
+        val expected = 0.0283495
+        val actual = Ounce.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-6)
+    }
+    @Test
+    fun testStone() {
+        val expected = 6.3502932
+        val actual = Stone.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-6)
+    }
+    @Test
+    fun testHundredweightShort() {
+        val expected = 45.359237
+        val actual = Hundredwei.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-6)
+    }
+    @Test
+    fun testHundredweightLong() {
+        val expected = 50.8023454
+        val actual = Hundredwei.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-6)
+    }
+    @Test
+    fun testGrain() {
+        val expected = 6.479892E-5
+        val actual = Grain.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-8)
+    }
+    @Test
+    fun testShortTon() {
+        val expected = 907.18474
+        val actual = ShortTon.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-6)
+    }
+    @Test
+    fun testLongTon() {
+        val expected = 1016.0469088
+        val actual = LongTon.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-6)
+    }
+    @Test
+    fun testTonne() {
+        val expected = 1000.0
+        val actual = Tonne.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-6)
+    }
+    @Test
+    fun testCarat() {
+        val expected = 0.0002
+        val actual = Carat.convertTo(1.0, Kilogram)
+        assertEquals(expected, actual, 1E-6)
+    }
+}

@@ -91,7 +91,24 @@ val Lengths = arrayOf(
 // endregion
 
 // region Mass
+val Gram = Units("gm", Category.MASS) { it / Kilo } 
+val Milligram = Units("mg", Category.MASS) { it / Mega } 
 val PoundMass = Units("lb", Category.MASS) { it * 0.45359237 }
+val Ounce = Units("oz", Category.MASS) { PoundMass.standardize(it) / 16 }
+val Stone = Units("st", Category.MASS) { PoundMass.standardize(it) * 14 }
+val HundredweightShort = Units("cwt (short)", Category.MASS) { PoundMass.standardize(it) * 100 }
+val HundredweightLong = Units("cwt (long)", Category.MASS) { PoundMass.standardize(it) * 112 }
+val Grain = Units("gr", Category.MASS) { it * 64.79891E-6 }
+val ShortTon = Units("tn", Category.MASS) { PoundMass.standardize(it) * 2000 }
+val LongTon = Units("LT", Category.MASS) { PoundMass.standardize(it) * 2240 }
+val Tonne = Units("T", Category.MASS) { it * 1000 }
+val Carat = Units("ct", Category.MASS) { it * 0.0002 }
+
+val Masses = arrayOf(
+    Kilogram, Gram, Milligram, PoundMass, Ounce,
+    Stone, ShortHundredweight, LongHundredweight,
+    ShortTon, LongTon, Tonne, Grain, Carat
+)
 // endregion
 
 // region Temperatures

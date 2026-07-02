@@ -85,19 +85,19 @@
 - [x] furlong
 
 ### Mass
-- [ ] oz                     0.0283495
-- [ ] grain                  6.479892E-5
-- [ ] tonne               1000.0
+- [x] oz                     0.0283495
+- [x] grain                  6.479892E-5
+- [x] tonne               1000.0
 - [x] lbm                    0.4535924
-- [ ] mg                     0.000_001
-- [ ] stone                  6.3502932
-- [ ] ton (short)         2000.0
-- [ ] ton (long)          2200.0
-- [ ] g                      0.001
+- [x] mg                     0.000_001
+- [x] stone                  6.3502932
+- [x] ton (short)          907.18474
+- [x] ton (long)          1016.0469088
+- [x] g                      0.001
 - [x] kg                     1.0
-- [ ] hundredweight (short) 45.359237
-- [ ] hundredweight (long)  50.8023454
-- [ ] carat                  0.0002
+- [x] hundredweight (short) 45.359237
+- [x] hundredweight (long)  50.8023454
+- [x] carat                  0.0002
 
 ### Mass Flow rate
 - [ ] lbm/s   0.4535924
