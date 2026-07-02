@@ -12,7 +12,7 @@ const val Kilo: Long = 1_000
 const val Mega: Long = Kilo * Kilo
 const val Giga: Long = Kilo * Mega
 
-val bit = Units("bit", Category.DIGITAL_STORAGE) { it }
+val Bit = Units("bit", Category.DIGITAL_STORAGE) { it }
 val Meter = Units("m", Category.LENGTH) { it }
 val Second = Units("s", Category.TIME) { it }
 val Kilogram = Units("kg", Category.MASS) { it }
