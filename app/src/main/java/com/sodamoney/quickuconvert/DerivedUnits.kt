@@ -28,7 +28,7 @@ val Accelerations = arrayOf(
 )
 // endregion
 
-//region Areas
+// region Areas
 val SquareInch = Units("in²", Category.AREA) { Inch.standardize( 1.0 ).squared() * it }
 val SquareFoot = Units("ft²", Category.AREA) { Foot.standardize( 1.0 ).squared() * it }
 val SquareYard = Units("yd²", Category.AREA) { Yard.standardize( 1.0 ).squared() * it }
@@ -44,7 +44,35 @@ val Areas = arrayOf(
     SquareMile, SquareYard, SquareFoot, SquareInch,
     Hectare, Acre
 )
-//endregion
+// endregion
+
+// region Density
+val KilogramPerLiter = Units("kg/L", Category.DENSITY) { it * Kilo }
+val KilogramPerCubicCentimeter = Units("kg/cm³", Category.DENSITY) { it * Mega }
+val GramPerCubicCentimeter = Units("g/cm³", Category.DENSITY) { it * Kilo }
+val MilligramPerDeciliter = Units("mg/dL", Category.DENSITY) { it / 100 }
+val PoundPerCubicInch = Units("lb/in³", Category.DENSITY) {
+    PoundMass.standardize(1.0) / CubicInch.standardize(1.0) * it
+ }
+val PoundPerCubicFoot = Units("lb/ft³", Category.DENSITY) {
+    PoundMass.standardize(1.0) / CubicFoot.standardize(1.0) * it
+ }
+val PoundPerCubicYard = Units("lb/yd³", Category.DENSITY) {
+    PoundMass.standardize(1.0) / CubicYard.standardize(1.0) * it
+ }
+val PoundPerCubicGallon = Units("lb/gal", Category.DENSITY) {
+    PoundMass.standardize(1.0) / CubicGallon.standardize(1.0) * it
+ }
+val OuncePerCubicGallon = Units("oz/gal", Category.DENSITY) {
+    Ounce.standardize(1.0) / CubicGallon.standardize(1.0) * it
+ }
+
+val Densities = arrayOf(
+    KilogramPerCubicMeter, KilogramPerLiter, KilogramPerCubicCentimeter,
+    GramPerCubicCentimeter, MilligramPerDeciliter, PoundPerCubicInch,
+    PoundPerCubicFoot, PoundPerCubicYard, PoundPerCubicGallon,OuncePerCubicGallon
+)
+// endregion
 
 // region Forces
 val Kilonewton = Units("kN", Category.FORCE) { Newton.standardize(it) * Kilo }

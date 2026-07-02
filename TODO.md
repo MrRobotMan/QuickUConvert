@@ -30,21 +30,21 @@
 ### Density
 - [x] lbm/in^3    27679.9047102
 - [x] lbm/ft^3       16.0184634
-- [ ] lbm/yd^3        0.5932764
-- [ ] lbm/gal       119.8264273
-- [ ] oz/gal          7.4891517
-- [ ] kg/L         1000.0
+- [x] lbm/yd^3        0.5932764
+- [x] lbm/gal       119.8264273
+- [x] oz/gal          7.4891517
+- [x] kg/L         1000.0
 - [x] kg/m^3          1.0
-- [ ] kg/cm^3 1_000_000.0
-- [ ] g/cm^3       1000.0
-- [ ] mg/dL           0.01
+- [x] kg/cm^3 1_000_000.0
+- [x] g/cm^3       1000.0
+- [x] mg/dL           0.01
 
 
 ### Digital Storage
-- [ ] 1-Zeta Bytes
-- [ ] 1-Zeta Bits
-- [ ] 1-Zebi Bytes
-- [ ] 1-Zebi Bits
+- [ ] 1-Exabytes
+- [ ] 1-Exabits
+- [ ] 1-Exbibytes
+- [ ] 1-Exbibits
 
 ### Energy
 - [ ] calorie      4.1868

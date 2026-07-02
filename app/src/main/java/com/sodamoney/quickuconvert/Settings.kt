@@ -10,6 +10,7 @@ data class UnitPref(val symbol: String, val visible: Boolean)
 val AllUnits: Map<Category, Array<out Units>> = mapOf(
     Category.ACCELERATION to Accelerations,
     Category.AREA         to Areas,
+    Category.DENSITY      to Densities,
     Category.FORCE        to Forces,
     Category.LENGTH       to Lengths,
     Category.MASS         to Masses,

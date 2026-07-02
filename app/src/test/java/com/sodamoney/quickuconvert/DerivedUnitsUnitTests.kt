@@ -662,3 +662,71 @@ class MassTests {
         assertEquals(expected, actual, 1E-6)
     }
 }
+
+class DensityTests() {
+
+    @Test
+    fun testKilogramPerLiter() {
+        val expected = 1000.0
+        val actual = KilogramPerLiter.convertTo(1.0, KilogramPerCubicMeter)
+        assertEquals(expected, actual, 1E-6)
+    }
+    
+    @Test
+    fun testKilogramPerCubicCentimeter() {
+        val expected = 1_000_000.0
+        val actual = KilogramPerCubicCentimeter.convertTo(1.0, KilogramPerCubicMeter)
+        assertEquals(expected, actual, 1E-6)
+    }
+    
+    @Test
+    fun testGramPerCubicCentimeter() {
+        val expected = 1000.0
+        val actual = GramPerCubicCentimeter.convertTo(1.0, KilogramPerCubicMeter)
+        assertEquals(expected, actual, 1E-6)
+    }
+    
+    @Test
+    fun testMilligramPerDeciliter() {
+        val expected = 0.01
+        val actual = MilligramPerDeciliter.convertTo(1.0, KilogramPerCubicMeter)
+        assertEquals(expected, actual, 1E-6)
+    }
+    
+    @Test
+    fun testPoundPerCubicInch() {
+        val expected = 27679.9047102
+        val actual = PoundPerCubicInch.convertTo(1.0, KilogramPerCubicMeter)
+        assertEquals(expected, actual, 1E-6)
+    }
+    
+    @Test
+    fun testPoundPerCubicFoot() {
+        val expected = 16.0184634
+        val actual = PoundPerCubicFoot.convertTo(1.0, KilogramPerCubicMeter)
+        assertEquals(expected, actual, 1E-6)
+    }
+    
+    @Test
+    fun testPoundPerCubicYard() {
+        val expected = 0.5932764
+        val actual = PoundPerCubicYard.convertTo(1.0, KilogramPerCubicMeter)
+        assertEquals(expected, actual, 1E-6)
+    }
+    
+    @Test
+    fun testPoundPerCubicGallon() {
+        val expected = 119.8264273
+        val actual = PoundPerCubicGallon.convertTo(1.0, KilogramPerCubicMeter)
+        assertEquals(expected, actual, 1E-6)
+    }
+    
+    @Test
+    fun testOuncePerCubicGallon() {
+        val expected = 7.4891517
+        val actual = OuncePerCubicGallon.convertTo(1.0, KilogramPerCubicMeter)
+        assertEquals(expected, actual, 1E-6)
+    }
+    
+}
+    
