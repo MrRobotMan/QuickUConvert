@@ -114,7 +114,6 @@ val DigitalStorage = arrayOf(
 )
 // endregion
 
-
 // region Forces
 val Kilonewton = Units("kN", Category.FORCE) { Newton.standardize(it) * Kilo }
 val KilogramForce = Units("kgf", Category.FORCE) { it * EARTH_GRAVITY }
