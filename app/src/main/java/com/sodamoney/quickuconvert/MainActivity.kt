@@ -50,6 +50,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -83,6 +84,7 @@ import kotlin.enums.EnumEntries
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 
 const val APP_NAME = "Quick UConvert"
@@ -206,6 +208,8 @@ fun ConvertItem(
     states: Array<TextFieldState>,
     modifier: Modifier = Modifier
 ) {
+    var from_unit by remember { mutableStateOf(items[0]) }
+    var input_value by remember { mutableStateOf(BigDecimal(1)) }
     BoxWithConstraints(modifier = modifier) {
         val targetCardWidth = 150.dp
         val columns = ((maxWidth + 10.dp) / (targetCardWidth + 10.dp)).toInt().coerceAtLeast(2)
@@ -224,7 +228,12 @@ fun ConvertItem(
                             UnitCard(
                                 state = states[idx],
                                 symbol = items[idx].symbol,
-                                onUpdate = { updateValues(idx, items, states) },
+                                onUpdate = {
+                                    updateValues(idx, items, states)
+                                    from_unit = items[idx]
+                                    input_value = BigDecimal(states[idx].toString())
+                                           },
+                                onCopy = { from_unit.convertTo(input_value, items[idx]) },
                                 modifier = Modifier.weight(1f)
                             )
                         } else {
@@ -242,6 +251,7 @@ fun UnitCard(
     state: TextFieldState,
     symbol: String,
     onUpdate: () -> Unit,
+    onCopy: () -> BigDecimal,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -325,10 +335,11 @@ fun UnitCard(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable {
+                        val value = onCopy()
                         scope.launch {
                             clipboardManager.setClipEntry(
                                 ClipEntry(
-                                    ClipData.newPlainText("converted", "${state.text} $symbol")
+                                    ClipData.newPlainText("converted", "$value $symbol")
                             ))
                         }
                         copied = true
@@ -336,10 +347,11 @@ fun UnitCard(
                 )
                 IconButton(
                     onClick = {
+                        val value = onCopy()
                         scope.launch {
                             clipboardManager.setClipEntry(
                                 ClipEntry(
-                                    ClipData.newPlainText("converted", state.text)
+                                    ClipData.newPlainText("converted", value.toString())
                                 ))
                         }
                         copied = true
@@ -469,7 +481,7 @@ fun resetValues(states: Array<TextFieldState>, items: Array<out Units>) {
         val value = if (it.index == 0) {
             "1"
         } else if (it.index < items.size) {
-            convertedOrInvalid(1.0, items[0], items[it.index])
+            convertedOrInvalid(BigDecimal(1), items[0], items[it.index])
         } else {
             ""
         }
@@ -478,7 +490,7 @@ fun resetValues(states: Array<TextFieldState>, items: Array<out Units>) {
 }
 
 fun updateValues(index: Int, items: Array<out Units>, states: Array<TextFieldState>) {
-    val value = states[index].text.toString().toDoubleOrNull() ?: 0.0
+    val value = BigDecimal(states[index].text.toString())
     for ((ind, state) in states.withIndex()) {
         if (ind == index) continue
         if (ind >= items.size) break
@@ -531,12 +543,12 @@ private fun IntroTip(icon: ImageVector, text: String) {
     }
 }
 
-fun convertedOrInvalid(value: Double, from: Units, to: Units): String {
+fun convertedOrInvalid(value: BigDecimal, from: Units, to: Units): String {
     return try {
         val converted = from.convertTo(value, to)
-        val absConv = abs(converted)
+        val absConv = converted.abs().toDouble()
         when {
-            converted == 0.0 -> "0"
+            converted == BigDecimal(0) -> "0"
             absConv < 10_000.0 && absConv > 0.0001 -> DecimalFormat("#,###.####").format(converted)
             else -> DecimalFormat("#.####E0").format(converted)
         }

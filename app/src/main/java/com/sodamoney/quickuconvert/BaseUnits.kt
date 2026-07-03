@@ -1,17 +1,16 @@
 package com.sodamoney.quickuconvert
 
+import java.math.BigDecimal
+import java.math.MathContext
+
 /*
  * Copyright 2026 David Weiss
  *
  * Collection of Base Units to be used.
  */
 
-const val EARTH_GRAVITY: Double = 9.80665 // m/s^2
-const val SPEED_OF_LIGHT : Long= 299_792_458 // m/s
-const val Kilo: Long = 1_000
-const val Mega: Long = Kilo * Kilo
-const val Giga: Long = Kilo * Mega
-
+val EARTH_GRAVITY = BigDecimal("9.80665") // m/s^2
+val SPEED_OF_LIGHT= BigDecimal(299_792_458) // m/s
 val Bit = Units("bit", Category.DIGITAL_STORAGE) { it }
 val Meter = Units("m", Category.LENGTH) { it }
 val Second = Units("s", Category.TIME) { it }
