@@ -39,7 +39,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -69,9 +68,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -84,6 +81,8 @@ import kotlin.enums.EnumEntries
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 
+
+const val APP_NAME = "Quick UConvert"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -168,7 +167,7 @@ fun MainContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.app_name),
+                    text = APP_NAME,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(vertical = 12.dp)
@@ -387,7 +386,7 @@ fun CategorySelect(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(cur.resource()),
+                        text = cur.format(),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Medium
                     )
@@ -416,7 +415,7 @@ fun CategorySelect(
                                 modifier = Modifier.weight(1f),
                                 text = {
                                     Text(
-                                        text = stringResource(cat.resource()),
+                                        text = cat.format(),
                                         style = MaterialTheme.typography.bodyLarge,
                                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                                         textDecoration = if (!isValid) TextDecoration.LineThrough else null,
@@ -477,7 +476,7 @@ fun updateValues(index: Int, items: Array<out Units>, states: Array<TextFieldSta
 fun IntroDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Welcome to QuickConvert") },
+        title = { Text("Welcome to $APP_NAME") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 IntroTip(

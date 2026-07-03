@@ -1,5 +1,5 @@
-# UConvert
-Android Unit Converter
+# Quick UConvert
+Fast Unit Converter
 
 
 All input units will first be converted to SI then to the desired output unit.
