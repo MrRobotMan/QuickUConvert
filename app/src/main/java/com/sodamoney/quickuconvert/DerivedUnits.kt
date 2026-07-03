@@ -204,9 +204,9 @@ class TemperatureUnits(
     }
 }
 
-val Centigrade = TemperatureUnits("°C", { BigDecimal(273.15) + it }, { it - BigDecimal(273.15) })
-val Fahrenheit = TemperatureUnits("°F", { (BigDecimal(459.67) + it) / BigDecimal(1.8) }, { (it * BigDecimal(1.8)) - BigDecimal(459.67) })
-val Rankine = TemperatureUnits("°R", { it / BigDecimal(1.8) }, { it * BigDecimal(1.8) })
+val Centigrade = TemperatureUnits("°C", { BigDecimal("273.15") + it }, { it - BigDecimal("273.15") })
+val Fahrenheit = TemperatureUnits("°F", { (BigDecimal("459.67") + it) / BigDecimal("1.8") }, { (it * BigDecimal("1.8")) - BigDecimal("459.67") })
+val Rankine = TemperatureUnits("°R", { it / BigDecimal("1.8") }, { it * BigDecimal("1.8") })
 
 val Temperatures = arrayOf(Centigrade, Fahrenheit, Kelvin, Rankine)
 // endregion
