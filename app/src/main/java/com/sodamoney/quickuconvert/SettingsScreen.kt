@@ -172,6 +172,8 @@ fun SettingsScreen(
 
             SectionLabel("Support")
 
+            // Opens the Google Form in the user's browser via an external
+            // ACTION_VIEW intent; the app itself never touches the network.
             OutlinedButton(
                 onClick = {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(FEEDBACK_FORM_URL))
@@ -220,6 +222,11 @@ private fun ThreePositionSwitch(
     var dragX by remember { mutableFloatStateOf(0f) }
 
     val scope = rememberCoroutineScope()
+    // rememberUpdatedState, not a plain val: the drag gesture below runs in a
+    // long-lived coroutine that isn't relaunched every recomposition, so a
+    // captured `onSelect` reference would go stale if it ever changed. Reading
+    // through .value always gets the current lambda. Same pattern is used
+    // (and matters more) in ReorderableUnitList below.
     val onSelectUpdated = rememberUpdatedState(onSelect)
 
     // Display position: direct during drag, animated otherwise.
@@ -302,6 +309,27 @@ private fun SectionLabel(text: String) {
     )
 }
 
+// Drag-to-reorder list for units within a category. Two bugs used to live
+// here, both worth knowing about if you're debugging reorder/animation
+// issues:
+//
+// 1. Reorder silently not persisting. onDragEnd read a plain `val targetIdx`
+//    computed in the enclosing composable. detectDragGesturesAfterLongPress
+//    runs inside `pointerInput(key)`, which only relaunches its coroutine
+//    when `key` changes — not on every recomposition. Since the row's key
+//    doesn't change mid-drag, onDragEnd's closure kept referencing the
+//    *first* composition's targetIdx (always null, since dragging hadn't
+//    started yet), so the reorder callback never fired. Fix: wrap the
+//    derived values in rememberUpdatedState and read `.value` inside the
+//    gesture callbacks (targetIdxState / draggingIdxState below) — State
+//    reads are live regardless of which composition the closure was built in.
+//
+// 2. Glitchy drop animation. Rows were addressed by list position
+//    (forEachIndexed with no key()), so once a reorder actually did apply,
+//    Compose reused a row's slot for a different unit while its shift
+//    animation was still in flight — the label would swap mid-slide. Fixed
+//    by wrapping each row in key(unit.symbol) so per-row state (the shift
+//    animation) travels with the actual unit, not the index.
 @Composable
 private fun ReorderableUnitList(
     units: List<UnitPref>,
@@ -312,7 +340,14 @@ private fun ReorderableUnitList(
     val rowHeightPx = with(LocalDensity.current) { rowHeightDp.toPx() }
     val scope = rememberCoroutineScope()
 
+    // Identity of the row being dragged, tracked by symbol (not index) so it
+    // stays correct even after the list order changes underneath it.
     var draggingSymbol by remember { mutableStateOf<String?>(null) }
+    // Single source of truth for the dragged row's vertical offset, both
+    // while actively dragging (snapTo, follows the finger exactly) and while
+    // settling into place after drop (animateTo). Using one Animatable for
+    // both phases is what makes the drop transition continuous instead of
+    // jumping from "raw drag offset" to "0" the instant the list reorders.
     val dragOffset = remember { Animatable(0f) }
 
     val draggingIdx = draggingSymbol?.let { sym ->
@@ -321,6 +356,8 @@ private fun ReorderableUnitList(
     val targetIdx = draggingIdx?.let { di ->
         (di + (dragOffset.value / rowHeightPx).roundToInt()).coerceIn(0, units.lastIndex)
     }
+    // See bug #1 above: these must be read via .value inside the drag
+    // callbacks, not captured as plain locals.
     val targetIdxState = rememberUpdatedState(targetIdx)
     val draggingIdxState = rememberUpdatedState(draggingIdx)
 
@@ -328,6 +365,10 @@ private fun ReorderableUnitList(
         units.forEachIndexed { idx, unit ->
             key(unit.symbol) {
                 val lifted = unit.symbol == draggingSymbol
+                // Preview shift for rows *other* than the one being dragged:
+                // nudge them up/down by one row height to open a gap at the
+                // current drop target, purely visual — the actual list order
+                // (`units`) doesn't change until onDragEnd calls onReorder.
                 val shiftTarget = when {
                     targetIdx == null || draggingIdx == null -> 0f
                     else -> {
@@ -379,10 +420,15 @@ private fun ReorderableUnitList(
                                         val di = draggingIdxState.value
                                         scope.launch {
                                             if (ti != null && di != null && ti != di) {
+                                                // onReorder mutates `units`, so this row's rest
+                                                // position (idx * rowHeight, via `lifted`/animShift
+                                                // once draggingSymbol clears) jumps by (ti - di)
+                                                // rows immediately on the next recomposition.
+                                                // Subtract that same delta from dragOffset first so
+                                                // the finger-relative position stays visually
+                                                // unchanged, then animateTo(0f) eases from there —
+                                                // otherwise the row would teleport before settling.
                                                 onReorder(di, ti)
-                                                // Rest position moved by (ti - di) rows; compensate
-                                                // so the settle animation starts from the same
-                                                // visual spot instead of jumping.
                                                 dragOffset.snapTo(dragOffset.value - (ti - di) * rowHeightPx)
                                             }
                                             dragOffset.animateTo(0f)

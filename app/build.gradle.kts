@@ -5,6 +5,11 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// Release signing credentials (storeFile/storePassword/keyAlias/keyPassword)
+// live in keystore.properties, which is gitignored and not in this checkout
+// unless you copy it in yourself (ask Kolbe for the file). When it's absent,
+// keystoreProperties stays empty and the release build type below falls back
+// to debug signing instead of failing the build.
 val keystoreProperties = Properties().apply {
     val propsFile = rootProject.file("keystore.properties")
     if (propsFile.exists()) {
@@ -13,12 +18,16 @@ val keystoreProperties = Properties().apply {
 }
 
 android {
+    // Kept as the original Kotlin source package. Only applicationId (below)
+    // changed for the Play Store listing — the two don't have to match, and
+    // renaming namespace would mean moving every source file's package/dir.
     namespace = "com.sodamoney.quickuconvert"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
+        // Play Store-facing package name. Permanent once published.
         applicationId = "com.quc.app"
         minSdk = 24
         targetSdk = 36
@@ -35,6 +44,8 @@ android {
             keyAlias = "androiddebugkey"
             keyPassword = "android"
         }
+        // Only registered when keystore.properties is present, so the config
+        // doesn't reference a signingConfigs entry that can't be built.
         if (keystoreProperties.containsKey("storeFile")) {
             create("release") {
                 storeFile = file(keystoreProperties.getProperty("storeFile"))
@@ -53,6 +64,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Real release key when available (needed for Play Store uploads);
+            // debug key otherwise, so `assembleRelease` still works without
+            // keystore.properties (e.g. for local testing of R8/minified builds).
             signingConfig = if (keystoreProperties.containsKey("storeFile")) {
                 signingConfigs.getByName("release")
             } else {

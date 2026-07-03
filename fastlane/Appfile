@@ -1,2 +1,5 @@
+# play-store-key.json is gitignored; copy it in locally (see fastlane/Fastfile
+# comments for what it needs to be authorized for) before running any lane.
 json_key_file("fastlane/play-store-key.json")
+# Must match app/build.gradle.kts defaultConfig.applicationId exactly.
 package_name("com.quc.app")

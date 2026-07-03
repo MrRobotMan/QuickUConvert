@@ -4,14 +4,24 @@ platform :android do
 
   desc "Build and upload a new release to Google Play"
   lane :deploy do |options|
+    # e.g. `fastlane android deploy track:production`
     track = options[:track] || "internal"
 
+    # Requires app/build.gradle.kts to have a "release" signingConfig wired up
+    # from keystore.properties (gitignored). Falls back to debug signing if
+    # that file is missing, in which case this AAB can build but Play will
+    # reject the upload as unsigned-for-release.
     gradle(
       task: "bundle",
       build_type: "Release",
       print_command: false
     )
 
+    # Needs fastlane/play-store-key.json (a Google Play service account key,
+    # gitignored) and that service account to already have permission on this
+    # app in Play Console. Google's API can't create an app's very first
+    # release — that first upload has to happen manually through the Play
+    # Console UI before this lane works.
     upload_to_play_store(
       track: track,
       aab: "app/build/outputs/bundle/release/app-release.aab",
