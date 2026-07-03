@@ -50,7 +50,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,7 +80,6 @@ import com.sodamoney.quickuconvert.ui.theme.QuickUConvertTheme
 import kotlinx.coroutines.delay
 import java.text.DecimalFormat
 import kotlin.enums.EnumEntries
-import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
