@@ -159,6 +159,7 @@ fun MainContent(
 ) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         val visibleItems = repo.visibleUnits(category)
+        var fromUnit by remember { mutableStateOf(AllUnits[category]!![0]) }
 
         Column(
             modifier = Modifier
@@ -187,13 +188,17 @@ fun MainContent(
             CategorySelect(
                 categories = Category.entries,
                 cur = category,
-                onChange = onCategoryChange,
+                onChange = {
+                    onCategoryChange(it)
+                    fromUnit = AllUnits[it]!![0]
+                           },
                 valid = AllUnits.keys
             )
             Spacer(modifier = Modifier.size(12.dp))
             ConvertItem(
                 items = visibleItems,
                 states = states,
+                fromUnit = fromUnit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
@@ -206,10 +211,11 @@ fun MainContent(
 fun ConvertItem(
     items: Array<out Units>,
     states: Array<TextFieldState>,
+    fromUnit: Units,
     modifier: Modifier = Modifier
 ) {
-    var from_unit by remember { mutableStateOf(items[0]) }
-    var input_value by remember { mutableStateOf(BigDecimal(1)) }
+    var inputValue by remember { mutableStateOf(BigDecimal(1)) }
+    var fromUnit = fromUnit
     BoxWithConstraints(modifier = modifier) {
         val targetCardWidth = 150.dp
         val columns = ((maxWidth + 10.dp) / (targetCardWidth + 10.dp)).toInt().coerceAtLeast(2)
@@ -230,10 +236,10 @@ fun ConvertItem(
                                 symbol = items[idx].symbol,
                                 onUpdate = {
                                     updateValues(idx, items, states)
-                                    from_unit = items[idx]
-                                    input_value = BigDecimal(states[idx].toString())
+                                    fromUnit = items[idx]
+                                    inputValue = BigDecimal(states[idx].text.toString())
                                            },
-                                onCopy = { from_unit.convertTo(input_value, items[idx]) },
+                                onCopy = { fromUnit.convertTo(inputValue, items[idx]) },
                                 modifier = Modifier.weight(1f)
                             )
                         } else {
@@ -315,6 +321,7 @@ fun UnitCard(
                                 savedText = state.text.toString()
                                 state.clearText()
                             }
+
                             losing -> {
                                 if (state.text.isEmpty()) {
                                     state.setTextAndPlaceCursorAtEnd(savedText)
@@ -335,11 +342,10 @@ fun UnitCard(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable {
-                        val value = onCopy()
                         scope.launch {
                             clipboardManager.setClipEntry(
                                 ClipEntry(
-                                    ClipData.newPlainText("converted", "$value $symbol")
+                                    ClipData.newPlainText("converted", "${state.text} $symbol")
                             ))
                         }
                         copied = true
@@ -351,7 +357,7 @@ fun UnitCard(
                         scope.launch {
                             clipboardManager.setClipEntry(
                                 ClipEntry(
-                                    ClipData.newPlainText("converted", value.toString())
+                                        ClipData.newPlainText("converted", value.stripTrailingZeros().toPlainString())
                                 ))
                         }
                         copied = true
@@ -537,7 +543,9 @@ private fun IntroTip(icon: ImageVector, text: String) {
             imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(20.dp).padding(top = 2.dp)
+            modifier = Modifier
+                .size(20.dp)
+                .padding(top = 2.dp)
         )
         Text(text = text, style = MaterialTheme.typography.bodyMedium)
     }
