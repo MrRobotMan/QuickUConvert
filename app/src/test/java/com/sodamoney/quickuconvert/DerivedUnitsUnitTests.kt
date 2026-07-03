@@ -3,6 +3,7 @@ package com.sodamoney.quickuconvert
 import org.junit.Test
 
 import org.junit.Assert.*
+import kotlin.math.pow
 
 /**
  * Testing that derived units give the correct values.
@@ -790,35 +791,35 @@ class DigitalStorageTests {
     
     @Test
     fun testMebiByte() {
-        val expected = (1024 shl 10).toDouble() * 8.0
+        val expected = (1024.0).pow(2) * 8.0
         val actual = MebiByte.convertTo(1.0, Bit)
         assertEquals(expected, actual, 1E-6)
     } 
     
     @Test
     fun testGibiByte() {
-        val expected = (1024 shl 20).toDouble() * 8.0
+        val expected = (1024.0).pow(3) * 8.0
         val actual = GibiByte.convertTo(1.0, Bit)
         assertEquals(expected, actual, 1E-6)
     } 
     
     @Test
     fun testTebiByte() {
-        val expected = (1024 shl 30).toDouble() * 8.0
+        val expected = (1024.0).pow(4) * 8.0
         val actual = TebiByte.convertTo(1.0, Bit)
         assertEquals(expected, actual, 1E-6)
     } 
     
     @Test
     fun testPebiByte() {
-        val expected = (1024 shl 40).toDouble() * 8.0
+        val expected = (1024.0).pow(5) * 8.0
         val actual = PebiByte.convertTo(1.0, Bit)
         assertEquals(expected, actual, 1E-6)
     } 
     
     @Test
     fun testExbiByte() {
-        val expected = (1024 shl 50).toDouble() * 8.0
+        val expected = (1024.0).pow(6) * 8.0
         val actual = ExbiByte.convertTo(1.0, Bit)
         assertEquals(expected, actual, 1E-6)
     } 
@@ -874,35 +875,35 @@ class DigitalStorageTests {
     
     @Test
     fun testMebiBit() {
-        val expected = (1024 shl 10).toDouble()
+        val expected = (1024.0).pow(2)
         val actual = MebiBit.convertTo(1.0, Bit)
         assertEquals(expected, actual, 1E-6)
     } 
     
     @Test
     fun testGibiBit() {
-        val expected = (1024 shl 20).toDouble()
+        val expected = (1024.0).pow(3)
         val actual = GibiBit.convertTo(1.0, Bit)
         assertEquals(expected, actual, 1E-6)
     } 
     
     @Test
     fun testTebiBit() {
-        val expected = (1024 shl 30).toDouble()
+        val expected = (1024.0).pow(4)
         val actual = TebiBit.convertTo(1.0, Bit)
         assertEquals(expected, actual, 1E-6)
     } 
     
     @Test
     fun testPebiBit() {
-        val expected = (1024 shl 40).toDouble()
+        val expected = (1024.0).pow(5)
         val actual = PebiBit.convertTo(1.0, Bit)
         assertEquals(expected, actual, 1E-6)
     } 
     
     @Test
     fun testExbiBit() {
-        val expected = (1024 shl 50).toDouble()
+        val expected = (1024.0).pow(6)
         val actual = ExbiBit.convertTo(1.0, Bit)
         assertEquals(expected, actual, 1E-6)
     } 

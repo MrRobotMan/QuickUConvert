@@ -75,11 +75,14 @@ val Densities = arrayOf(
 // endregion
 
 // region Digital Storage
-// k * k = m
-// k * m = g
-// m * m = t
-// m * g = p
-// g * g = e
+// K * K = M
+// K * M = G
+// M * M = T
+// M * G = P
+// G * G = E
+val Kibi: Long = 1024
+val Mebi = Kibi * Kibi
+val Gibi = Kibi * Mebi
 val Byte = Units("B", Category.DIGITAL_STORAGE) { it * 8 }
 val KiloByte = Units("kB", Category.DIGITAL_STORAGE) { it * Kilo * 8 }
 val MegaByte = Units("MB", Category.DIGITAL_STORAGE) { it * Mega * 8 }
@@ -87,24 +90,24 @@ val GigaByte = Units("GB", Category.DIGITAL_STORAGE) { it * Giga * 8 }
 val TeraByte = Units("TB", Category.DIGITAL_STORAGE) { it  * Mega * Mega * 8 }
 val PetaByte = Units("PB", Category.DIGITAL_STORAGE) { it * Mega * Giga * 8 }
 val ExaByte = Units("EB", Category.DIGITAL_STORAGE) { it * Giga * Giga * 8 }
-val KibiByte = Units("KiB", Category.DIGITAL_STORAGE) { it * 1024 * 8 }
-val MebiByte = Units("MiB", Category.DIGITAL_STORAGE) { it * (1024 shl 10) * 8 }
-val GibiByte = Units("GiB", Category.DIGITAL_STORAGE) { it * (1024 shl 20) * 8 }
-val TebiByte = Units("TiB", Category.DIGITAL_STORAGE) { it * (1024 shl 30) * 8 }
-val PebiByte = Units("PiB", Category.DIGITAL_STORAGE) { it * (1024 shl 40) * 8 }
-val ExbiByte = Units("EiB", Category.DIGITAL_STORAGE) { it * (1024 shl 50) * 8 }
+val KibiByte = Units("KiB", Category.DIGITAL_STORAGE) { it * Kibi * 8 }
+val MebiByte = Units("MiB", Category.DIGITAL_STORAGE) { it * Mebi * 8 }
+val GibiByte = Units("GiB", Category.DIGITAL_STORAGE) { it * Gibi * 8 }
+val TebiByte = Units("TiB", Category.DIGITAL_STORAGE) { it * Mebi * Mebi * 8 }
+val PebiByte = Units("PiB", Category.DIGITAL_STORAGE) { it * Mebi * Gibi * 8 }
+val ExbiByte = Units("EiB", Category.DIGITAL_STORAGE) { it * Gibi * Gibi * 8 }
 val KiloBit = Units("kbit", Category.DIGITAL_STORAGE) { it * Kilo }
 val MegaBit = Units("Mbit", Category.DIGITAL_STORAGE) { it * Mega }
 val GigaBit = Units("Gbit", Category.DIGITAL_STORAGE) { it * Giga }
 val TeraBit = Units("Tbit", Category.DIGITAL_STORAGE) { it  * Mega * Mega }
 val PetaBit = Units("Pbit", Category.DIGITAL_STORAGE) { it * Mega * Giga }
 val ExaBit = Units("Ebit", Category.DIGITAL_STORAGE) { it * Giga * Giga }
-val KibiBit = Units("Kibit", Category.DIGITAL_STORAGE) { it * 1024 }
-val MebiBit = Units("Mibit", Category.DIGITAL_STORAGE) { it * (1024 shl 10)}
-val GibiBit = Units("Gibit", Category.DIGITAL_STORAGE) { it * (1024 shl 20)}
-val TebiBit = Units("Tibit", Category.DIGITAL_STORAGE) { it * (1024 shl 30)}
-val PebiBit = Units("Pibit", Category.DIGITAL_STORAGE) { it * (1024 shl 40)}
-val ExbiBit = Units("Eibit", Category.DIGITAL_STORAGE) { it * (1024 shl 50)}
+val KibiBit = Units("Kibit", Category.DIGITAL_STORAGE) { it * Kibi }
+val MebiBit = Units("Mibit", Category.DIGITAL_STORAGE) { it * Mebi }
+val GibiBit = Units("Gibit", Category.DIGITAL_STORAGE) { it * Gibi }
+val TebiBit = Units("Tibit", Category.DIGITAL_STORAGE) { it * Mebi * Mebi }
+val PebiBit = Units("Pibit", Category.DIGITAL_STORAGE) { it * Mebi * Gibi }
+val ExbiBit = Units("Eibit", Category.DIGITAL_STORAGE) { it * Gibi * Gibi }
 
 val DigitalStorage = arrayOf(
     Byte, KiloByte, MegaByte, GigaByte, TeraByte, PetaByte, ExaByte, 
@@ -240,7 +243,7 @@ val Tablespoon = Units("tbsp", Category.VOLUME) { FluidOunce.standardize(it) / 2
 val Teaspoon = Units("tsp", Category.VOLUME) { FluidOunce.standardize(it) / 6 }
 val DryPint = Units("pt (dry)", Category.VOLUME) { CubicInch.standardize(it) * 33.600_312_5 }
 val DryQuart = Units("qt (dry)", Category.VOLUME) { DryPint.standardize(it) * 2 }
-val Peck = Units("bu", Category.VOLUME) { DryQuart.standardize(it) * 8 }
+val Peck = Units("pk", Category.VOLUME) { DryQuart.standardize(it) * 8 }
 val Bushel = Units("bu", Category.VOLUME) { Peck.standardize(it) * 4 }
 val DryBarrel = Units("bbl (dry)", Category.VOLUME) { CubicInch.standardize(it) * 7056 }
 

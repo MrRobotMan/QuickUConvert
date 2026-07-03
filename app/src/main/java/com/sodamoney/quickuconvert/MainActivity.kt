@@ -387,7 +387,7 @@ fun CategorySelect(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = cur.name.lowercase().replaceFirstChar { it.uppercase() },
+                        text = stringResource(cur.resource()),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Medium
                     )
@@ -416,7 +416,7 @@ fun CategorySelect(
                                 modifier = Modifier.weight(1f),
                                 text = {
                                     Text(
-                                        text = cat.name.lowercase().replaceFirstChar { it.uppercase() },
+                                        text = stringResource(cat.resource()),
                                         style = MaterialTheme.typography.bodyLarge,
                                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                                         textDecoration = if (!isValid) TextDecoration.LineThrough else null,
