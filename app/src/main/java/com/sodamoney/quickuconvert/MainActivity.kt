@@ -1,5 +1,6 @@
 package com.sodamoney.quickuconvert
 
+import android.content.ClipData
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -52,6 +53,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -64,11 +66,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -80,6 +82,7 @@ import java.text.DecimalFormat
 import kotlin.enums.EnumEntries
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.launch
 
 
 const val APP_NAME = "Quick UConvert"
@@ -242,11 +245,12 @@ fun UnitCard(
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
-    val clipboardManager = LocalClipboardManager.current
+    val clipboardManager = LocalClipboard.current
     val keyboardController = LocalSoftwareKeyboardController.current
     var copied by remember { mutableStateOf(false) }
     var isFocused by remember { mutableStateOf(false) }
     var savedText by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
 
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -321,13 +325,23 @@ fun UnitCard(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable {
-                        clipboardManager.setText(AnnotatedString("${state.text} $symbol"))
+                        scope.launch {
+                            clipboardManager.setClipEntry(
+                                ClipEntry(
+                                    ClipData.newPlainText("converted", "${state.text} $symbol")
+                            ))
+                        }
                         copied = true
                     }
                 )
                 IconButton(
                     onClick = {
-                        clipboardManager.setText(AnnotatedString(state.text.toString()))
+                        scope.launch {
+                            clipboardManager.setClipEntry(
+                                ClipEntry(
+                                    ClipData.newPlainText("converted", state.text)
+                                ))
+                        }
                         copied = true
                     },
                     modifier = Modifier.size(32.dp)
