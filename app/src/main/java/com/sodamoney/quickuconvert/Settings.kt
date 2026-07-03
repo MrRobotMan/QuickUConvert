@@ -6,18 +6,19 @@ import androidx.core.content.edit
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
 
 data class UnitPref(val symbol: String, val visible: Boolean)
+data class CatPref(val name: String, val visible: Boolean)
 
 val AllUnits: Map<Category, Array<out Units>> = mapOf(
-    Category.ACCELERATION    to Accelerations,
-    Category.AREA            to Areas,
-    Category.DENSITY         to Densities,
+    Category.ACCELERATION to Accelerations,
+    Category.AREA to Areas,
+    Category.DENSITY to Densities,
     Category.DIGITAL_STORAGE to DigitalStorage,
-    Category.FORCE           to Forces,
-    Category.LENGTH          to Lengths,
-    Category.MASS            to Masses,
-    Category.TEMPERATURE     to Temperatures,
-    Category.TIME            to Times,
-    Category.VOLUME          to Volumes,
+    Category.FORCE to Forces,
+    Category.LENGTH to Lengths,
+    Category.MASS to Masses,
+    Category.TEMPERATURE to Temperatures,
+    Category.TIME to Times,
+    Category.VOLUME to Volumes,
 )
 
 class SettingsRepository(private val prefs: SharedPreferences) {
@@ -29,28 +30,41 @@ class SettingsRepository(private val prefs: SharedPreferences) {
         set(value) = prefs.edit { putString(KEY_THEME, value.name) }
 
     fun getUnitPrefs(category: Category): List<UnitPref> {
-        val all = AllUnits[category] ?: return emptyList()
-        val allSyms = all.map { it.symbol }
+        val allUnits = AllUnits[category] ?: return emptyList()
+        val allSymbols = allUnits.map { it.symbol }
         val hidden = hiddenSymbols(category)
         val order = orderedSymbols(category)
-        val ordered = if (order.isEmpty()) allSyms else {
+        val ordered = if (order.isEmpty()) allSymbols else {
             val known = order.toSet()
-            order + allSyms.filter { it !in known }
+            order + allSymbols.filter { it !in known }
         }
         return ordered.map { UnitPref(it, it !in hidden) }
     }
 
-    fun saveUnitPrefs(category: Category, unitPrefs: List<UnitPref>) {
+    fun getCatPrefs(): List<CatPref> {
+        val hidden = hiddenCategories()
+        return AllUnits.keys.map { CatPref(it.name, it !in hidden) }
+    }
+
+    fun saveUnitPrefs(category: Category, unitPrefs: List<UnitPref>, catPrefs: List<CatPref>) {
         prefs.edit {
+            // Assumes all symbols are unique. Better to go by name. TODO add name field to class
             putString(orderKey(category), unitPrefs.joinToString(",") { it.symbol })
-            putString(hiddenKey(category), unitPrefs.filter { !it.visible }.joinToString(",") { it.symbol })
+            putString(
+                hiddenKey(category),
+                unitPrefs.filter { !it.visible }.joinToString(",") { it.symbol })
+            putString("HiddenCategories", catPrefs.joinToString(",") { it.name })
         }
     }
 
     fun visibleUnits(category: Category): Array<out Units> {
         val all = AllUnits[category] ?: return emptyArray()
-        val visibleSyms = getUnitPrefs(category).filter { it.visible }.map { it.symbol }
-        return visibleSyms.mapNotNull { sym -> all.find { it.symbol == sym } }.toTypedArray()
+        val visibleSymbols = getUnitPrefs(category).filter { it.visible }.map { it.symbol }
+        return visibleSymbols.mapNotNull { sym -> all.find { it.symbol == sym } }.toTypedArray()
+    }
+
+    fun visibleCategories() : Array<Category> {
+        return getCatPrefs().filter { it.visible }.map { Category.valueOf(it.name) }.toTypedArray()
     }
 
     private fun orderedSymbols(category: Category): List<String> =
@@ -60,6 +74,10 @@ class SettingsRepository(private val prefs: SharedPreferences) {
     private fun hiddenSymbols(category: Category): Set<String> =
         prefs.getString(hiddenKey(category), null)
             ?.split(",")?.filter { it.isNotEmpty() }?.toSet() ?: emptySet()
+
+    private fun hiddenCategories(): Set<Category> =
+        prefs.getString("HiddenCategories", null)?.split(",")?.filter { it.isNotEmpty() }
+            ?.map { Category.valueOf(it) }?.toSet() ?: emptySet()
 
     private fun orderKey(cat: Category) = "unit_order_${cat.name}"
     private fun hiddenKey(cat: Category) = "unit_hidden_${cat.name}"

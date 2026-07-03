@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,6 +80,7 @@ fun SettingsScreen(
     var themeMode by remember { mutableStateOf(repo.themeMode) }
     var selectedCategory by remember { mutableStateOf(AllUnits.keys.first()) }
     var unitPrefs by remember(selectedCategory) { mutableStateOf(repo.getUnitPrefs(selectedCategory)) }
+    var catPrefs by remember { mutableStateOf(repo.getCatPrefs()) }
     val context = LocalContext.current
 
     Scaffold(
@@ -159,12 +161,12 @@ fun SettingsScreen(
                 onReorder = { from, to ->
                     val list = unitPrefs.toMutableList().also { it.add(to, it.removeAt(from)) }
                     unitPrefs = list
-                    repo.saveUnitPrefs(selectedCategory, list)
+                    repo.saveUnitPrefs(selectedCategory, list, catPrefs)
                 },
                 onToggle = { idx, visible ->
                     val list = unitPrefs.toMutableList().also { it[idx] = it[idx].copy(visible = visible) }
                     unitPrefs = list
-                    repo.saveUnitPrefs(selectedCategory, list)
+                    repo.saveUnitPrefs(selectedCategory, list, catPrefs)
                 }
             )
 
@@ -176,7 +178,7 @@ fun SettingsScreen(
             // ACTION_VIEW intent; the app itself never touches the network.
             OutlinedButton(
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(FEEDBACK_FORM_URL))
+                    val intent = Intent(Intent.ACTION_VIEW, FEEDBACK_FORM_URL.toUri())
                     context.startActivity(intent)
                 },
                 modifier = Modifier.padding(horizontal = 16.dp)

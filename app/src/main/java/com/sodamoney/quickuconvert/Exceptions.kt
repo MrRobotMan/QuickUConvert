@@ -7,3 +7,4 @@ package com.sodamoney.quickuconvert
  */
 
 class IllegalConversionException(message: String? = null, cause: Throwable? = null) : Exception(message, cause)
+class UnknownCategoryException(message: String? = null, cause: Throwable? = null) : Exception(message, cause)
