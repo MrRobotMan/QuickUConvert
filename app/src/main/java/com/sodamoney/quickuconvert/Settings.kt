@@ -27,7 +27,7 @@ val AllUnits: Map<Category, Array<out Units>> = mapOf(
     Category.TIME            to Times,
     Category.UNIFORM_LOAD    to UniformLoads,
     Category.VOLUME          to Volumes,
-    Category.VOL_FLOW        to VolumetricFlows
+    Category.VOLUMETRIC_FLOW to VolumetricFlows
 )
 
 class SettingsRepository(private val prefs: SharedPreferences) {

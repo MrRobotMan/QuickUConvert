@@ -415,17 +415,17 @@ val Volumes = arrayOf(
 // endregion
 
 // region Volumetric Flow Rates
-val CubicMeterPerMinute = Units("m³/min", Category.VOL_FLOW) { it.divide(BigDecimal(60), context)}
-val CubicMeterPerHour = Units("m³/hr", Category.VOL_FLOW) { it.divide(BigDecimal(3600), context)}
-val LiterPerSecond = Units("L/s", Category.VOL_FLOW) { it.divide(BigDecimal(1000), context)}
-val LiterPerMinute = Units("L/min", Category.VOL_FLOW) { it.divide(BigDecimal(60_000), context)}
-val LiterPerHour = Units("L/hr", Category.VOL_FLOW) { it.divide(BigDecimal(3_600_000), context)}
-val CubicFootPerSecond = Units("ft³/s", Category.VOL_FLOW) { CubicFoot.standardize(it) }
-val CubicFootPerMinute = Units("ft³/min", Category.VOL_FLOW) { CubicFoot.standardize(it).divide(BigDecimal(60), context) }
-val CubicFootPerHour = Units("ft³/hr", Category.VOL_FLOW) { CubicFoot.standardize(it).divide(BigDecimal(3600), context) }
-val GallonPerMinute = Units("gal/min", Category.VOL_FLOW) { Gallon.standardize(it).divide(BigDecimal(60), context) }
-val GallonPerHour = Units("gal/hr", Category.VOL_FLOW) { Gallon.standardize(it).divide(BigDecimal(3600), context) }
-val BarrelPerHour = Units("bbl/hr", Category.VOL_FLOW) { WetBarrel.standardize(it).divide(BigDecimal(3600), context) }
+val CubicMeterPerMinute = Units("m³/min", Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(60), context)}
+val CubicMeterPerHour = Units("m³/hr", Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(3600), context)}
+val LiterPerSecond = Units("L/s", Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(1000), context)}
+val LiterPerMinute = Units("L/min", Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(60_000), context)}
+val LiterPerHour = Units("L/hr", Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(3_600_000), context)}
+val CubicFootPerSecond = Units("ft³/s", Category.VOLUMETRIC_FLOW) { CubicFoot.standardize(it) }
+val CubicFootPerMinute = Units("ft³/min", Category.VOLUMETRIC_FLOW) { CubicFoot.standardize(it).divide(BigDecimal(60), context) }
+val CubicFootPerHour = Units("ft³/hr", Category.VOLUMETRIC_FLOW) { CubicFoot.standardize(it).divide(BigDecimal(3600), context) }
+val GallonPerMinute = Units("gal/min", Category.VOLUMETRIC_FLOW) { Gallon.standardize(it).divide(BigDecimal(60), context) }
+val GallonPerHour = Units("gal/hr", Category.VOLUMETRIC_FLOW) { Gallon.standardize(it).divide(BigDecimal(3600), context) }
+val BarrelPerHour = Units("bbl/hr", Category.VOLUMETRIC_FLOW) { WetBarrel.standardize(it).divide(BigDecimal(3600), context) }
 
 val VolumetricFlows = arrayOf(
     CubicMeterPerSecond, CubicMeterPerMinute, CubicMeterPerHour,

@@ -1,7 +1,6 @@
 package com.sodamoney.quickuconvert
 
 import java.math.BigDecimal
-import java.math.MathContext
 
 /*
  * Copyright 2026 David Weiss
@@ -31,5 +30,5 @@ val Watt = Units("W", Category.POWER) { it }
 val Pascal = Units("Pa", Category.PRESSURE) { it }
 val MeterPerSecond = Units("m/s", Category.SPEED) { it }
 val NewtonPerMeter = Units("N/m", Category.STIFFNESS) { it }
-val CubicMeterPerSecond = Units("m³/s", Category.VOL_FLOW) { it }
+val CubicMeterPerSecond = Units("m³/s", Category.VOLUMETRIC_FLOW) { it }
 

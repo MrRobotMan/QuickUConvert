@@ -24,8 +24,8 @@ enum class Category {
     TEMPERATURE,
     TIME,
     UNIFORM_LOAD,
-    VOL_FLOW,
-    VOLUME;
+    VOLUME,
+    VOLUMETRIC_FLOW,;
 
 
     fun baseUnits(): String {
@@ -47,7 +47,7 @@ enum class Category {
             TEMPERATURE -> "K"
             TIME -> "s"
             UNIFORM_LOAD -> "N/mm"
-            VOL_FLOW -> "m³/hr"
+            VOLUMETRIC_FLOW -> "m³/hr"
             VOLUME -> "m³"
         }
     }
