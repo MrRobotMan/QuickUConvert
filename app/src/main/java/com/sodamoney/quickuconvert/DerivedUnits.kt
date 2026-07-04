@@ -9,7 +9,7 @@ import java.math.MathContext
  * Collection of Derived to be used.
  */
 private val context = MathContext.DECIMAL64
-val Kilo = BigDecimal(1_000)
+val Kilo = BigDecimal(1000)
 val Mega = Kilo.multiply(Kilo)
 val Giga = Kilo.multiply(Mega)
 val Kibi = BigDecimal(1024)
@@ -81,6 +81,28 @@ val Densities = arrayOf(
     GramPerCubicCentimeter, MilligramPerDeciliter, PoundPerCubicInch,
     PoundPerCubicFoot, PoundPerCubicYard, PoundPerCubicGallon,OuncePerCubicGallon
 )
+// endregion
+
+// region Mass Flow Rate
+val KilogramPerMinute = Units("kg/min", Category.MASS_FLOW) { it.divide(BigDecimal(60), context) }
+val KilogramPerHour = Units("kg/hr", Category.MASS_FLOW) { it.divide(BigDecimal(3600), context) }
+val GramPerSecond = Units("g/s", Category.MASS_FLOW) { it.divide(BigDecimal(1000)) }
+val GramPerMinute = Units("g/min", Category.MASS_FLOW) { it.divide(BigDecimal(60_000), context) }
+val GramPerHour = Units("g/hr", Category.MASS_FLOW) { it.divide(BigDecimal(3_600_000), context) }
+val PoundPerSecond = Units("lb/s", Category.MASS_FLOW) { PoundMass.standardize(it) }
+val PoundPerMinute = Units("lb/min", Category.MASS_FLOW) {PoundPerSecond.standardize(it).divide(BigDecimal(60), context) }
+val PoundPerHour = Units("lb/hr", Category.MASS_FLOW) {PoundPerSecond.standardize(it).divide(BigDecimal(3600), context) }
+val OuncePerSecond = Units("oz/s", Category.MASS_FLOW) { Ounce.standardize(it) }
+val OuncePerMinute = Units("oz/min", Category.MASS_FLOW) {OuncePerSecond.standardize(it).divide(BigDecimal(60), context) }
+val OuncePerHour = Units("oz/hr", Category.MASS_FLOW) {OuncePerSecond.standardize(it).divide(BigDecimal(3600), context) }
+
+val MassFlowRates = arrayOf(
+    KilogramPerSecond, KilogramPerMinute, KilogramPerHour,
+    GramPerSecond, GramPerMinute, GramPerHour,
+    PoundPerSecond, PoundPerMinute, PoundPerHour,
+    OuncePerSecond, OuncePerMinute, OuncePerHour     
+)
+
 // endregion
 
 // region Digital Storage
