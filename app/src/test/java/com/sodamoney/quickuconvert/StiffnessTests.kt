@@ -3,7 +3,6 @@ package com.sodamoney.quickuconvert
 import org.junit.Test
 import org.junit.Assert.*
 import java.math.BigDecimal
-import java.math.MathContext
 
 class StiffnessTests {
 

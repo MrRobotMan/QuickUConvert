@@ -227,16 +227,18 @@
 - [x] cu
 
 ### Volumetric Flow rate
-- [ ] cu.ft/min 4.71947E-4
-- [ ] cu.ft/hr  7.86579E-6
-- [ ] gal/min   6.30901E-5
-- [ ] gal/hr    1.05150E-6
-- [ ] L/min     1 / 6000
-- [ ] L/hr      1 / 3600000
-- [ ] cu.m/min  1 / 60
-- [ ] cu.m/hr   1 / 3600
-- [ ] cu.m/s    1
-- [ ] barrel/hr 3.31223E-5
+- [x] cu.ft/s   
+- [x] cu.ft/min 4.71947E-4
+- [x] cu.ft/hr  7.86579E-6
+- [x] gal/min   6.30901E-5
+- [x] gal/hr    1.05150E-6
+- [x] L/s
+- [x] L/min     1 / 60000
+- [x] L/hr      1 / 3600000
+- [x] cu.m/min  1 / 60
+- [x] cu.m/hr   1 / 3600
+- [x] cu.m/s    1
+- [x] barrel/hr 3.31223E-5
 
 
 # Settings

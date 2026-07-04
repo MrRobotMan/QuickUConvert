@@ -31,5 +31,11 @@ class DerivedUnitsUnitTests {
         ) { Kilogram.convertTo(BigDecimal(10.0), Kelvin) }
     }
 
+    @Test
+    fun totalUnitCountIsCorrect() {
+        val expected = 228
+        val actual = AllUnits.values.map{it.size}.sum()
+        assertEquals(expected, actual)
+    }
 }
 
