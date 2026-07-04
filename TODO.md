@@ -47,15 +47,15 @@
 - [x] 1-Exbibits
 
 ### Energy
-- [ ] calorie      4.1868
-- [ ] btu       1055.0558526
-- [ ] hp-hr  2684519.5376962
-- [ ] kcal      4186.8
-- [ ] kbtu   1055055.85262
-- [ ] joule        1.0
-- [ ] erg          1.0E-7
-- [ ] kilojoule 1000.0
-- [ ] kw-hr  3600000.0
+- [x] joule           1.0
+- [x] kilojoule    1000.0
+- [x] megajoule 1000000.0
+- [x] kw-hr     3600000.0
+- [x] calorie         4.1868
+- [x] kcal         4186.8
+- [x] btu          1055.05585262
+- [x] kbtu      1055055.85262
+- [x] erg             1.0E-7
 
 ### Force
 - [x] N
@@ -100,80 +100,88 @@
 - [x] carat                  0.0002
 
 ### Mass Flow rate
-- [ ] lbm/s   0.4535924
-- [ ] lbm/min 0.0075599
-- [ ] lbm/hr  0.000126
-- [ ] oz/s    0.0283495
-- [ ] oz/min  0.0004725
-- [ ] kg/s    1.0
-- [ ] kg/min  1 / 60
-- [ ] kg/hr   1 / 3600
-- [ ] g/s     1 / 1000
-- [ ] g/min   1 / 60_000
+- [x] lbm/s   0.4535924
+- [x] lbm/min 0.0075599
+- [x] lbm/hr  0.000126
+- [x] oz/s    0.0283495
+- [x] oz/min  0.0004725
+- [x] kg/s    1.0
+- [x] kg/min  1 / 60
+- [x] kg/hr   1 / 3600
+- [x] g/s     1 / 1000
+- [x] g/min   1 / 60_000
+- [x] g/hr    1 / 3_600_000
 
 ### Moment / Torque
-- [ ] in-lb      0.1129848
-- [ ] ft-lb      1.3558179
-- [ ] in-kips  112.984829
-- [ ] ft-kips 1355.8179483
-- [ ] N-m        1.0
-- [ ] kN-m    1000.0
-- [ ] N-cm       0.1
-- [ ] N-mm       0.001
-- [ ] kgf-M      9.80665
+- [x] in-lb      0.1129848
+- [x] ft-lb      1.3558179
+- [x] in-kips  112.984829
+- [x] ft-kips 1355.8179483
+- [x] N-m        1.0
+- [x] kN-m    1000.0
+- [x] N-cm       0.01
+- [x] N-mm       0.001
+- [x] kgf-m      9.80665
+- [x] kgf-cm     0.0980665
+- [x] kgf-mm     0.00980665
 
 ### Power
-- [ ] cal / sec           4.1868
-- [ ] W                   1.0
-- [ ] erg / sec           1.0E-7
-- [ ] kW              1_000.0
-- [ ] BTU / sec        1055.0558526
-- [ ] ft-lb / min         0.022597
-- [ ] hp - British (HP) 745.6998716 (550ft-lb/s)
-- [ ] hp - metric (PS)  735.49875 (75kgf-m/s)
-- [ ] ft-lb / sec         1.3558179
+- [x] cal / sec           4.1868
+- [x] W                   1.0
+- [x] erg / sec           1.0E-7
+- [x] kW              1_000.0
+- [x] MW          1_000_000.0
+- [x] GW      1_000_000_000.0
+- [x] BTU / sec        1055.0558526
+- [x] BTU / min
+- [x] BTU / hr
+- [x] Ton of Refridge
+- [x] hp - British (HP) 745.6998716 (550ft-lb/s)
+- [x] hp - metric (PS)  735.49875 (75kgf-m/s)
 
 ### Pressure 
-- [ ] psi              6894.7572932
-- [ ] ksi           6894757.2931684
-- [ ] psf                47.880259
-- [ ] pa                  1.0
-- [ ] kpa             1_000.0
-- [ ] mpa         1_000_000.0
-- [ ] gpa     1_000_000_000.0
-- [ ] bar           100_000.0
-- [ ] atm            101325.0
-- [ ] gf/cm^2            98.0665
-- [ ] dyne/cm^2           0.1
-- [ ] kgf/cm^2            9.80665
-- [ ] in of H20 @ 60°F  248.8348393
-- [ ] ft of H20 @ 60°F 2986.0180717
-- [ ] mm of Hg          133.3223874
-- [ ] in of Hg @ 32°F  3386.3886403
+- [x] pa                  1.0
+- [x] kpa             1_000.0
+- [x] mpa         1_000_000.0
+- [x] gpa     1_000_000_000.0
+- [x] bar           100_000.0
+- [x] atm            101325.0
+- [x] psi              6894.7572932
+- [x] ksi           6894757.2931684
+- [x] psf                47.880259
+- [x] gf/cm^2            98.0665
+- [x] dyne/cm^2           0.1
+- [x] kgf/cm^2            9.80665
+- [x] in of H20 @ 60°F  248.8348393
+- [x] ft of H20 @ 60°F 2986.0180717
+- [x] mm of Hg          133.3223874
+- [x] in of Hg @ 32°F  3386.3886403
 
 δHg = 13595.1kg/m^3
 δH2O = 998.98kg/m^3
 
 ### Speed
-- [ ] in/s   0.0254
-- [ ] ft/s   0.3048
-- [ ] ft/min 0.00508
-- [ ] yd/min 0.01524
-- [ ] mph    0.44704
-- [ ] kph    1 / 3.6
-- [ ] m/s    1.0
-- [ ] m/min  1 / 60
-- [ ] cm/s   1 / 6000
+- [x] in/s   0.0254
+- [x] ft/s   0.3048
+- [x] ft/min 0.00508
+- [x] yd/min 0.01524
+- [x] mph    0.44704
+- [x] kph    1 / 3.6
+- [x] m/s    1.0
+- [x] m/min  1 / 60
+- [x] cm/s   1 / 6000
 
-### Stiffness
-- [ ] N/cm        100.0
-- [ ] N/mm       1000.0
-- [ ] kN/m       1000.0
-- [ ] kN/mm 1_000_000.0
-- [ ] kgf/m         9.80665
-- [ ] kgf/mm     9806.65
-- [ ] lbf/in      175.1268352
-- [ ] lbf/ft       14.5939029
+### Stiffness / Uniform Load
+- [x] N/cm        100.0
+- [x] N/mm       1000.0
+- [x] kN/m       1000.0
+- [x] kN/mm 1_000_000.0
+- [x] kgf/m         9.80665
+- [x] kgf/mm     9806.65
+- [x] lbf/in      175.1268352
+- [x] lbf/ft       14.5939029
+- [x] kip/in  175126.8352465
+- [x] kip/ft   14593.9029372
 
 ### Temperature
 - [x] °F
@@ -194,14 +202,6 @@
 - [x] month (yr / 12)
 - [x] decade (10 yr)
 - [x] century (100 yr)
-
-### Uniform load
-- [ ] lbf/in     175.1268352
-- [ ] lbf/ft      14.5939029
-- [ ] kip/in  175126.8352465
-- [ ] kip/ft   14593.9029372
-- [ ] kgf/m        9.80665
-- [ ] N/m          1.00
 
 ### Volume
 - [x] cu in
@@ -227,16 +227,18 @@
 - [x] cu
 
 ### Volumetric Flow rate
-- [ ] cu.ft/min 4.71947E-4
-- [ ] cu.ft/hr  7.86579E-6
-- [ ] gal/min   6.30901E-5
-- [ ] gal/hr    1.05150E-6
-- [ ] L/min     1 / 6000
-- [ ] L/hr      1 / 3600000
-- [ ] cu.m/min  1 / 60
-- [ ] cu.m/hr   1 / 3600
-- [ ] cu.m/s    1
-- [ ] barrel/hr 3.31223E-5
+- [x] cu.ft/s   
+- [x] cu.ft/min 4.71947E-4
+- [x] cu.ft/hr  7.86579E-6
+- [x] gal/min   6.30901E-5
+- [x] gal/hr    1.05150E-6
+- [x] L/s
+- [x] L/min     1 / 60000
+- [x] L/hr      1 / 3600000
+- [x] cu.m/min  1 / 60
+- [x] cu.m/hr   1 / 3600
+- [x] cu.m/s    1
+- [x] barrel/hr 3.31223E-5
 
 
 # Settings

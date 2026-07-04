@@ -9,16 +9,25 @@ data class UnitPref(val symbol: String, val visible: Boolean)
 data class CatPref(val name: String, val visible: Boolean)
 
 val AllUnits: Map<Category, Array<out Units>> = mapOf(
-    Category.ACCELERATION to Accelerations,
-    Category.AREA to Areas,
-    Category.DENSITY to Densities,
+    Category.ACCELERATION    to Accelerations,
+    Category.AREA            to Areas,
+    Category.DENSITY         to Densities,
     Category.DIGITAL_STORAGE to DigitalStorage,
-    Category.FORCE to Forces,
-    Category.LENGTH to Lengths,
-    Category.MASS to Masses,
-    Category.TEMPERATURE to Temperatures,
-    Category.TIME to Times,
-    Category.VOLUME to Volumes,
+    Category.ENERGY          to Energies,
+    Category.FORCE           to Forces,
+    Category.LENGTH          to Lengths,
+    Category.MASS            to Masses,
+    Category.MASS_FLOW       to MassFlowRates,
+    Category.MOMENT          to Moments,
+    Category.POWER           to Powers,
+    Category.PRESSURE        to Pressures,
+    Category.SPEED           to Speeds,
+    Category.STIFFNESS       to Stiffnesses,
+    Category.TEMPERATURE     to Temperatures,
+    Category.TIME            to Times,
+    Category.UNIFORM_LOAD    to UniformLoads,
+    Category.VOLUME          to Volumes,
+    Category.VOLUMETRIC_FLOW to VolumetricFlows
 )
 
 class SettingsRepository(private val prefs: SharedPreferences) {

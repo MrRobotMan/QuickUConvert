@@ -1,7 +1,6 @@
 package com.sodamoney.quickuconvert
 
 import java.math.BigDecimal
-import java.math.MathContext
 
 /*
  * Copyright 2026 David Weiss
@@ -26,10 +25,10 @@ val CubicMeter = Units("m³", Category.VOLUME) { it }
 val KilogramPerCubicMeter = Units("kg/m³", Category.DENSITY) { it }
 val Joule = Units("J", Category.ENERGY) { it }
 val KilogramPerSecond = Units("kg/s", Category.MASS_FLOW) { it }
-val NewtonMeter = Units("Nm", Category.MOMENT) { it }
+val NewtonMeter = Units("N⋅m", Category.MOMENT) { it }
 val Watt = Units("W", Category.POWER) { it }
 val Pascal = Units("Pa", Category.PRESSURE) { it }
 val MeterPerSecond = Units("m/s", Category.SPEED) { it }
 val NewtonPerMeter = Units("N/m", Category.STIFFNESS) { it }
-val CubicMetersPerSecond = Units("m³/s", Category.VOL_FLOW) { it }
+val CubicMeterPerSecond = Units("m³/s", Category.VOLUMETRIC_FLOW) { it }
 

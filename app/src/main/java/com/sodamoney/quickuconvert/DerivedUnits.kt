@@ -8,14 +8,16 @@ import java.math.MathContext
  *
  * Collection of Derived to be used.
  */
+
+// region constants
 private val context = MathContext.DECIMAL64
-val Kilo = BigDecimal(1_000)
+val Kilo = BigDecimal(1000)
 val Mega = Kilo.multiply(Kilo)
 val Giga = Kilo.multiply(Mega)
 val Kibi = BigDecimal(1024)
 val Mebi = Kibi.multiply(Kibi, context)
 val Gibi = Kibi.multiply(Mebi, context)
-
+// endregion
 
 // region Acceleration
 val InchPerSecondSquared = Units("in/s²", Category.ACCELERATION) { Inch.convertTo(it, Meter) }
@@ -123,6 +125,22 @@ val DigitalStorage = arrayOf(
 )
 // endregion
 
+// region Energy
+val KiloJoule = Units("kJ", Category.ENERGY) { it * Kilo }
+val MegaJoule = Units("MJ", Category.ENERGY) { it * Mega }
+val KiloWattHour = Units("kw⋅h", Category.ENERGY) { it * BigDecimal(3600000) }
+val Calorie = Units("cal", Category.ENERGY) { it * BigDecimal("4.1868") }
+val KiloCalorie = Units("kcal", Category.ENERGY) { it * BigDecimal("4186.8") }
+val Btu = Units("BTU", Category.ENERGY) { it * BigDecimal("1055.05585262") }
+val KiloBtu= Units("kBTU", Category.ENERGY) { Btu.standardize(it) * Kilo }
+val Erg = Units("erg", Category.ENERGY) { it * BigDecimal("1E-7") }
+
+val Energies = arrayOf(
+    Joule, KiloJoule, MegaJoule, KiloWattHour, Calorie, KiloCalorie,
+    Btu, KiloBtu, Erg,
+)
+// endregion
+
 // region Forces
 val Kilonewton = Units("kN", Category.FORCE) { Newton.standardize(it) * Kilo }
 val KilogramForce = Units("kgf", Category.FORCE) { it * EARTH_GRAVITY }
@@ -185,6 +203,136 @@ val Masses = arrayOf(
     Kilogram, Gram, Milligram, PoundMass, Ounce,
     Stone, HundredweightShort, HundredweightLong,
     ShortTon, LongTon, Tonne, Grain, Carat
+)
+// endregion
+
+// region Mass Flow Rate
+val KilogramPerMinute = Units("kg/min", Category.MASS_FLOW) { it.divide(BigDecimal(60), context) }
+val KilogramPerHour = Units("kg/hr", Category.MASS_FLOW) { it.divide(BigDecimal(3600), context) }
+val GramPerSecond = Units("g/s", Category.MASS_FLOW) { it.divide(BigDecimal(1000)) }
+val GramPerMinute = Units("g/min", Category.MASS_FLOW) { it.divide(BigDecimal(60_000), context) }
+val GramPerHour = Units("g/hr", Category.MASS_FLOW) { it.divide(BigDecimal(3_600_000), context) }
+val PoundPerSecond = Units("lb/s", Category.MASS_FLOW) { PoundMass.standardize(it) }
+val PoundPerMinute = Units("lb/min", Category.MASS_FLOW) {PoundPerSecond.standardize(it).divide(BigDecimal(60), context) }
+val PoundPerHour = Units("lb/hr", Category.MASS_FLOW) {PoundPerSecond.standardize(it).divide(BigDecimal(3600), context) }
+val OuncePerSecond = Units("oz/s", Category.MASS_FLOW) { Ounce.standardize(it) }
+val OuncePerMinute = Units("oz/min", Category.MASS_FLOW) {OuncePerSecond.standardize(it).divide(BigDecimal(60), context) }
+val OuncePerHour = Units("oz/hr", Category.MASS_FLOW) {OuncePerSecond.standardize(it).divide(BigDecimal(3600), context) }
+
+val MassFlowRates = arrayOf(
+    KilogramPerSecond, KilogramPerMinute, KilogramPerHour,
+    GramPerSecond, GramPerMinute, GramPerHour,
+    PoundPerSecond, PoundPerMinute, PoundPerHour,
+    OuncePerSecond, OuncePerMinute, OuncePerHour
+)
+// endregion
+
+// region Moments / Torques
+val KilonewtonMeter = Units("kN⋅m", Category.MOMENT) { it * Kilo }
+val NewtonCentimeter = Units("N⋅cm", Category.MOMENT) { it * BigDecimal("0.01") }
+val NewtonMillimeter = Units("N⋅mm", Category.MOMENT) { it * BigDecimal("0.001") }
+val KilogramForceMeter = Units("kg⋅m", Category.MOMENT) { it * EARTH_GRAVITY }
+val KilogramForceCentimeter = Units("kg⋅cm", Category.MOMENT) { it * EARTH_GRAVITY * BigDecimal("0.01") }
+val KilogramForceMillimeter = Units("kg⋅mm", Category.MOMENT) { it * EARTH_GRAVITY * BigDecimal("0.001") }
+val FootPound = Units("ft⋅lb", Category.MOMENT) { PoundForce.standardize(it) * Foot.standardize(BigDecimal(1)) }
+val FootKip = Units("ft⋅kip", Category.MOMENT) { Kips.standardize(it) * Foot.standardize(BigDecimal(1)) }
+val InchPound = Units("in⋅lb", Category.MOMENT) { PoundForce.standardize(it) * Inch.standardize(BigDecimal(1)) }
+val InchKip = Units("in⋅kip", Category.MOMENT) { Kips.standardize(it) * Inch.standardize(BigDecimal(1)) }
+
+val Moments = arrayOf(
+    KilonewtonMeter, NewtonMeter, NewtonCentimeter, NewtonMillimeter,
+    KilogramForceMeter, KilogramForceCentimeter, KilogramForceMillimeter,
+    FootPound, FootKip, InchPound, InchKip
+)
+// endregion
+
+// region Power
+val Kilowatt = Units("kW", Category.POWER) { it * Kilo }
+val Megawatt = Units("MW", Category.POWER) { it * Mega }
+val Gigawatt = Units("GW", Category.POWER) { it * Giga }
+val ErgPerSecond = Units("erg/s", Category.POWER) { it * BigDecimal("1E-7") }
+val CaloriePerSecond = Units("cal/s", Category.POWER) { it * BigDecimal("4.1868") }
+
+val BtuPerSecond = Units("BTU/s", Category.POWER) { Btu.standardize(it) }
+val BtuPerMinute = Units("BTU/min", Category.POWER) { Btu.standardize(it).divide(BigDecimal(60), context) }
+val BtuPerHour = Units("BTU/hr", Category.POWER) { Btu.standardize(it).divide(BigDecimal(3600), context) }
+val TonOfRefrigeration = Units("TR", Category.POWER) { BtuPerHour.standardize(it) * BigDecimal(12_000) }
+val HorsePower = Units("HP", Category.POWER) { FootPound.standardize(it) * BigDecimal(550) }
+val MetricHorsePower = Units("PS", Category.POWER) { KilogramForce.standardize(it) * BigDecimal(75) }
+
+val Powers = arrayOf(
+    Watt, Kilowatt, Megawatt, Gigawatt, ErgPerSecond, CaloriePerSecond,
+    BtuPerSecond, BtuPerMinute, BtuPerHour, TonOfRefrigeration,
+    HorsePower, MetricHorsePower
+)
+// endregion
+
+// region Pressure
+val KiloPascal = Units("kPa", Category.PRESSURE) { it * Kilo } 
+val MegaPascal = Units("MPa (N/mm²)", Category.PRESSURE) { it * Mega } 
+val GigaPascal = Units("GPa", Category.PRESSURE) { it * Giga } 
+val KilogramPerSquareCentimeter = Units("kg/cm²", Category.PRESSURE) { it * EARTH_GRAVITY } 
+val GramPerSquareCentimeter = Units("gm/cm²", Category.PRESSURE) { it * EARTH_GRAVITY * BigDecimal(10) } 
+val DynePerSquareCentimeter = Units("gm/cm²", Category.PRESSURE) { it.divide(BigDecimal(10), context) }
+val Bar = Units("bar", Category.PRESSURE) { it * BigDecimal(100_000) } 
+val Atmosphere = Units("atm", Category.PRESSURE) { it * BigDecimal(101_325) } 
+val PoundPerSquareInch = Units("psi", Category.PRESSURE) { PoundForce.standardize(it).divide(SquareInch.standardize(BigDecimal(1)), context)}
+val KipPerSquareInch = Units("ksi", Category.PRESSURE) { Kips.standardize(it).divide(SquareInch.standardize(BigDecimal(1)), context)}
+val PoundPerSquareFoot = Units("psf", Category.PRESSURE) { PoundForce.standardize(it).divide(SquareFoot.standardize(BigDecimal(1)), context)}
+// Water column pressure: density (ρ) * length * g
+// ρH₂O @ 60F = 998.98kg/m^2
+// ρHg @ 0C = 13595.1kg/m^2
+val InchOfWater = Units("inH₂O", Category.PRESSURE) { it * BigDecimal("998.98") * Inch.standardize(BigDecimal(1)) * EARTH_GRAVITY }
+val FootOfWater = Units("ftH₂O", Category.PRESSURE) { it * BigDecimal("998.98") * Foot.standardize(BigDecimal(1)) * EARTH_GRAVITY }
+val InchOfMercury = Units("inHg", Category.PRESSURE) { it * BigDecimal("13595.1") * Inch.standardize(BigDecimal(1)) * EARTH_GRAVITY }
+val MillimeterOfMercury= Units("mmHg", Category.PRESSURE) { it * BigDecimal("13595.1") * Millimeter.standardize(BigDecimal(1)) * EARTH_GRAVITY }
+
+val Pressures = arrayOf(
+    Pascal, KiloPascal, MegaPascal, GigaPascal, KilogramPerSquareCentimeter,
+    GramPerSquareCentimeter, DynePerSquareCentimeter, Bar, Atmosphere,
+    PoundPerSquareInch, KipPerSquareInch, PoundPerSquareFoot, InchOfWater,
+    FootOfWater, InchOfMercury, MillimeterOfMercury
+)
+// endregion
+
+// region Speed
+val MeterPerMinute = Units("m/min", Category.SPEED) { it.divide(BigDecimal(60), context) }
+val CentimeterPerSecond = Units("cm/s", Category.SPEED) { it.divide(BigDecimal(100), context) }
+val CentimeterPerMinute = Units("cm/s", Category.SPEED) { it.divide(BigDecimal(6000), context) }
+val InchPerSecond = Units("in/s", Category.SPEED) { Inch.standardize(it) }
+val InchPerMinute = Units("in/min", Category.SPEED) { Inch.standardize(it).divide(BigDecimal(60), context) }
+val FootPerSecond = Units("ft/s", Category.SPEED) { Foot.standardize(it) }
+val FootPerMinute = Units("ft/min", Category.SPEED) { Foot.standardize(it).divide(BigDecimal(60), context) }
+val YardPerSecond = Units("yd/s", Category.SPEED) { Yard.standardize(it) }
+val YardPerMinute = Units("yd/min", Category.SPEED) { Yard.standardize(it).divide(BigDecimal(60), context) }
+val MilePerHour = Units("mph", Category.SPEED) { Mile.standardize(it).divide(BigDecimal(3600), context) }
+val KilometerPerHour = Units("kph", Category.SPEED) { it.divide(BigDecimal("3.6"), context) }
+
+val Speeds = arrayOf(
+    MeterPerSecond, MeterPerMinute, CentimeterPerSecond, CentimeterPerMinute,
+    InchPerSecond, InchPerMinute, FootPerSecond, FootPerMinute, YardPerSecond,
+    YardPerMinute, MilePerHour, KilometerPerHour
+)
+// endregion
+
+// region Stiffness / Uniform Load
+val NewtonPerCentimeter = Units("N/cm", Category.STIFFNESS) { it * BigDecimal(100) }
+val NewtonPerMillimeter = Units("N/mm (kN/m)", Category.STIFFNESS) { it * Kilo }
+val KilonewtonPerMillimeter = Units("kN/mm", Category.STIFFNESS) { it * Mega }
+val KilogramPerMeter = Units("kgf/m", Category.STIFFNESS) { it * EARTH_GRAVITY }
+val KilogramPerMillimeter = Units("kgf/mm", Category.STIFFNESS) { it * EARTH_GRAVITY * Kilo }
+val PoundPerInch = Units("lbf/in", Category.STIFFNESS) { PoundForce.standardize(it).divide(Inch.standardize(BigDecimal(1)), context) }
+val PoundPerFoot = Units("lbf/ft", Category.STIFFNESS) { PoundForce.standardize(it).divide(Foot.standardize(BigDecimal(1)), context) }
+val KipPerInch = Units("kip/in", Category.STIFFNESS) { Kips.standardize(it).divide(Inch.standardize(BigDecimal(1)), context) }
+val KipPerFoot = Units("kip/ft", Category.STIFFNESS) { Kips.standardize(it).divide(Foot.standardize(BigDecimal(1)), context) }
+
+val Stiffnesses = arrayOf(
+    NewtonPerMeter, NewtonPerCentimeter, NewtonPerMillimeter,
+    KilonewtonPerMillimeter, KilogramPerMeter, KilogramPerMillimeter,
+    PoundPerInch, PoundPerFoot, KipPerInch, KipPerFoot
+)
+val UniformLoads = arrayOf(
+    NewtonPerMeter, KilogramPerMeter, PoundPerInch, PoundPerFoot, KipPerInch, KipPerFoot
 )
 // endregion
 
@@ -265,3 +413,25 @@ val Volumes = arrayOf(
     DryPint, DryQuart, Peck, Bushel, DryBarrel,
 )
 // endregion
+
+// region Volumetric Flow Rates
+val CubicMeterPerMinute = Units("m³/min", Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(60), context)}
+val CubicMeterPerHour = Units("m³/hr", Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(3600), context)}
+val LiterPerSecond = Units("L/s", Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(1000), context)}
+val LiterPerMinute = Units("L/min", Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(60_000), context)}
+val LiterPerHour = Units("L/hr", Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(3_600_000), context)}
+val CubicFootPerSecond = Units("ft³/s", Category.VOLUMETRIC_FLOW) { CubicFoot.standardize(it) }
+val CubicFootPerMinute = Units("ft³/min", Category.VOLUMETRIC_FLOW) { CubicFoot.standardize(it).divide(BigDecimal(60), context) }
+val CubicFootPerHour = Units("ft³/hr", Category.VOLUMETRIC_FLOW) { CubicFoot.standardize(it).divide(BigDecimal(3600), context) }
+val GallonPerMinute = Units("gal/min", Category.VOLUMETRIC_FLOW) { Gallon.standardize(it).divide(BigDecimal(60), context) }
+val GallonPerHour = Units("gal/hr", Category.VOLUMETRIC_FLOW) { Gallon.standardize(it).divide(BigDecimal(3600), context) }
+val BarrelPerHour = Units("bbl/hr", Category.VOLUMETRIC_FLOW) { WetBarrel.standardize(it).divide(BigDecimal(3600), context) }
+
+val VolumetricFlows = arrayOf(
+    CubicMeterPerSecond, CubicMeterPerMinute, CubicMeterPerHour,
+    LiterPerSecond, LiterPerMinute, LiterPerHour,
+    CubicFootPerSecond, CubicFootPerMinute, CubicFootPerHour,
+    GallonPerMinute, GallonPerHour, BarrelPerHour
+)
+// endregion
+
