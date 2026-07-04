@@ -337,6 +337,26 @@ val Pressures = arrayOf(
 )
 // endregion
 
+// region Speed
+val MeterPerMinute = Units("m/min", Category.SPEED) { it.divide(BigDecimal(60), context) }
+val CentimeterPerSecond = Units("cm/s", Category.SPEED) { it.divide(BigDecimal(100), context) }
+val CentimeterPerMinute = Units("cm/s", Category.SPEED) { it.divide(BigDecimal(6000), context) }
+val InchPerSecond = Units("in/s", Category.SPEED) { Inch.standardize(it) }
+val InchPerMinute = Units("in/min", Category.SPEED) { Inch.standardize(it).divide(BigDecimal(60), context) }
+val FootPerSecond = Units("ft/s", Category.SPEED) { Foot.standardize(it) }
+val FootPerMinute = Units("ft/min", Category.SPEED) { Foot.standardize(it).divide(BigDecimal(60), context) }
+val YardPerSecond = Units("yd/s", Category.SPEED) { Yard.standardize(it) }
+val YardPerMinute = Units("yd/min", Category.SPEED) { Yard.standardize(it).divide(BigDecimal(60), context) }
+val MilePerHour = Units("mph", Category.SPEED) { Mile.standardize(it).divide(BigDecimal(3600), context) }
+val KilometerPerHour = Units("kph", Category.SPEED) { it.divide(BigDecimal("3.6"), context) }
+
+val Speeds = arrayOf(
+    MeterPerSecond, MeterPerMinute, CentimeterPerSecond, CentimeterPerMinute,
+    InchPerSecond, InchPerMinute, FootPerSecond, FootPerMinute, YardPerSecond,
+    YardPerMinute, MilePerHour, KilometerPerHour
+)
+// endregion
+
 // region Volume
 val Liter = Units("L", Category.VOLUME) { it.divide(BigDecimal(1_000), context) }
 val Deciliter = Units("dL", Category.VOLUME) { it.divide(BigDecimal(10_000), context) }
