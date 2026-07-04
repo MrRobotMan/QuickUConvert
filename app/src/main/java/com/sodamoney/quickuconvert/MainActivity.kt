@@ -189,8 +189,7 @@ fun MainContent(
                 onChange = {
                     onCategoryChange(it)
                     fromUnit = AllUnits[it]!![0]
-                           },
-                valid = AllUnits.keys
+                           }
             )
             Spacer(modifier = Modifier.size(12.dp))
             ConvertItem(
@@ -379,7 +378,6 @@ fun CategorySelect(
     categories: EnumEntries<Category>,
     cur: Category,
     onChange: (Category) -> Unit,
-    valid: Set<Category>
 ) {
     var expanded by remember { mutableStateOf(false) }
     val arrowRotation by animateFloatAsState(
@@ -440,7 +438,6 @@ fun CategorySelect(
                     Row(modifier = Modifier.fillMaxWidth()) {
                         pair.forEach { cat ->
                             val isSelected = cat == cur
-                            val isValid = cat in valid
                             DropdownMenuItem(
                                 modifier = Modifier.weight(1f),
                                 text = {
@@ -448,10 +445,8 @@ fun CategorySelect(
                                         text = cat.format(),
                                         style = MaterialTheme.typography.bodyLarge,
                                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                                        textDecoration = if (!isValid) TextDecoration.LineThrough else null,
                                         color = when {
                                             isSelected -> MaterialTheme.colorScheme.primary
-                                            !isValid   -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                                             else       -> MaterialTheme.colorScheme.onSurface
                                         }
                                     )
@@ -467,7 +462,7 @@ fun CategorySelect(
                                     }
                                 } else null,
                                 onClick = {
-                                    if (!isSelected && isValid) onChange(cat)
+                                    if (!isSelected) onChange(cat)
                                     expanded = false
                                 }
                             )
