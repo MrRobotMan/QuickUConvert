@@ -555,7 +555,7 @@ fun convertedOrInvalid(value: BigDecimal, from: Units, to: Units): String {
         val absConv = converted.abs().toDouble()
         when {
             converted == BigDecimal(0) -> "0"
-            absConv < 10_000.0 && absConv > 0.0001 -> DecimalFormat("#,###.####").format(converted)
+            absConv < 1E5 && absConv > 1E-4 -> DecimalFormat("#,###.####").format(converted)
             else -> DecimalFormat("#.####E0").format(converted)
         }
     } catch (_: IllegalConversionException) {
