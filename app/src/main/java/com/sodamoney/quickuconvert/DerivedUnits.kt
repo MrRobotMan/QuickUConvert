@@ -123,6 +123,22 @@ val DigitalStorage = arrayOf(
 )
 // endregion
 
+// region Energy
+val KiloJoule = Units("kJ", Category.ENERGY) { it * Kilo }
+val MegaJoule = Units("MJ", Category.ENERGY) { it * Mega }
+val KiloWattHour = Units("kw⋅h", Category.ENERGY) { it * BigDecimal(3600000) }
+val Calorie = Units("cal", Category.ENERGY) { it * BigDecimal("4.1868") }
+val KiloCalorie = Units("kcal", Category.ENERGY) { it * BigDecimal("4186.8") }
+val Btu = Units("BTU", Category.ENERGY) { it * BigDecimal("1055.05585262") }
+val KiloBtu= Units("kBTU", Category.ENERGY) { Btu.standardize(it) * Kilo }
+val Erg = Units("erg", Category.ENERGY) { it * BigDecimal("1E-7") }
+
+val Energies = arrayOf(
+    Joule, KiloJoule, MegaJoule, KiloWattHour, Calorie, KiloCalorie,
+    Btu, KiloBtu, Erg,
+)
+// endregion
+
 // region Forces
 val Kilonewton = Units("kN", Category.FORCE) { Newton.standardize(it) * Kilo }
 val KilogramForce = Units("kgf", Category.FORCE) { it * EARTH_GRAVITY }

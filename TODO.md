@@ -47,15 +47,15 @@
 - [x] 1-Exbibits
 
 ### Energy
-- [ ] calorie      4.1868
-- [ ] btu       1055.0558526
-- [ ] hp-hr  2684519.5376962
-- [ ] kcal      4186.8
-- [ ] kbtu   1055055.85262
-- [ ] joule        1.0
-- [ ] erg          1.0E-7
-- [ ] kilojoule 1000.0
-- [ ] kw-hr  3600000.0
+- [x] joule           1.0
+- [x] kilojoule    1000.0
+- [x] megajoule 1000000.0
+- [x] kw-hr     3600000.0
+- [x] calorie         4.1868
+- [x] kcal         4186.8
+- [x] btu          1055.05585262
+- [x] kbtu      1055055.85262
+- [x] erg             1.0E-7
 
 ### Force
 - [x] N
