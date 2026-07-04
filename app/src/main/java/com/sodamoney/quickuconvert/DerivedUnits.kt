@@ -269,6 +269,27 @@ val Rankine = TemperatureUnits("°R", { it / BigDecimal("1.8") }, { it * BigDeci
 val Temperatures = arrayOf(Centigrade, Fahrenheit, Kelvin, Rankine)
 // endregion
 
+// region Power
+val Kilowatt = Units("kW", Category.POWER) { it * Kilo }
+val Megawatt = Units("MW", Category.POWER) { it * Mega }
+val Gigawatt = Units("GW", Category.POWER) { it * Giga }
+val ErgPerSecond = Units("erg/s", Category.POWER) { it * BigDecimal("1E-7") }
+val CaloriePerSecond = Units("cal/s", Category.POWER) { it * BigDecimal("4.1868") }
+
+val BtuPerSecond = Units("BTU/s", Category.POWER) { Btu.standardize(it) }
+val BtuPerMinute = Units("BTU/min", Category.POWER) { Btu.standardize(it).divide(BigDecimal(60), context) }
+val BtuPerHour = Units("BTU/hr", Category.POWER) { Btu.standardize(it).divide(BigDecimal(3600), context) }
+val TonOfRefrigeration = Units("TR", Category.POWER) { BtuPerHour.standardize(it) * BigDecimal(12_000) }
+val HorsePower = Units("HP", Category.POWER) { FootPound.standardize(it) * BigDecimal(550) }
+val MetricHorsePower = Units("PS", Category.POWER) { KilogramForce.standardize(it) * BigDecimal(75) }
+
+val Powers = arrayOf(
+    Watt, Kilowatt, Megawatt, Gigawatt, ErgPerSecond, CaloriePerSecond,
+    BtuPerSecond, BtuPerMinute, BtuPerHour, TonOfRefrigeration,
+    HorsePower, MetricHorsePower
+)
+// endregion
+
 // region Time
 val Millisecond = Units("ms", Category.TIME) { it.divide(Kilo, context) }
 val Microsecond = Units("μs", Category.TIME) { it.divide(Mega, context) }

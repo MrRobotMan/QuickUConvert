@@ -126,15 +126,18 @@
 - [x] kgf-mm     0.00980665
 
 ### Power
-- [ ] cal / sec           4.1868
-- [ ] W                   1.0
-- [ ] erg / sec           1.0E-7
-- [ ] kW              1_000.0
-- [ ] BTU / sec        1055.0558526
-- [ ] ft-lb / min         0.022597
-- [ ] hp - British (HP) 745.6998716 (550ft-lb/s)
-- [ ] hp - metric (PS)  735.49875 (75kgf-m/s)
-- [ ] ft-lb / sec         1.3558179
+- [x] cal / sec           4.1868
+- [x] W                   1.0
+- [x] erg / sec           1.0E-7
+- [x] kW              1_000.0
+- [x] MW          1_000_000.0
+- [x] GW      1_000_000_000.0
+- [x] BTU / sec        1055.0558526
+- [x] BTU / min
+- [x] BTU / hr
+- [x] Ton of Refridge
+- [x] hp - British (HP) 745.6998716 (550ft-lb/s)
+- [x] hp - metric (PS)  735.49875 (75kgf-m/s)
 
 ### Pressure 
 - [ ] psi              6894.7572932
