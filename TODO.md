@@ -171,15 +171,17 @@
 - [x] m/min  1 / 60
 - [x] cm/s   1 / 6000
 
-### Stiffness
-- [ ] N/cm        100.0
-- [ ] N/mm       1000.0
-- [ ] kN/m       1000.0
-- [ ] kN/mm 1_000_000.0
-- [ ] kgf/m         9.80665
-- [ ] kgf/mm     9806.65
-- [ ] lbf/in      175.1268352
-- [ ] lbf/ft       14.5939029
+### Stiffness / Uniform Load
+- [x] N/cm        100.0
+- [x] N/mm       1000.0
+- [x] kN/m       1000.0
+- [x] kN/mm 1_000_000.0
+- [x] kgf/m         9.80665
+- [x] kgf/mm     9806.65
+- [x] lbf/in      175.1268352
+- [x] lbf/ft       14.5939029
+- [x] kip/in  175126.8352465
+- [x] kip/ft   14593.9029372
 
 ### Temperature
 - [x] °F
@@ -200,14 +202,6 @@
 - [x] month (yr / 12)
 - [x] decade (10 yr)
 - [x] century (100 yr)
-
-### Uniform load
-- [ ] lbf/in     175.1268352
-- [ ] lbf/ft      14.5939029
-- [ ] kip/in  175126.8352465
-- [ ] kip/ft   14593.9029372
-- [ ] kgf/m        9.80665
-- [ ] N/m          1.00
 
 ### Volume
 - [x] cu in

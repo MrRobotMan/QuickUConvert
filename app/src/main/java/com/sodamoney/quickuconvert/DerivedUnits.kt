@@ -246,48 +246,6 @@ val Moments = arrayOf(
 )
 // endregion
 
-// region Temperatures
-class TemperatureUnits(
-    symbol: String, standardize: (BigDecimal) -> BigDecimal, val fromStandard: (BigDecimal) -> BigDecimal
-) : Units(
-    symbol, Category.TEMPERATURE, standardize
-) {
-    override fun convertTo(inputValue: BigDecimal, other: Units): BigDecimal {
-        if (other !is TemperatureUnits) {
-            throw IllegalConversionException(
-                "Can't convert from ${this.symbol} to ${other.symbol}. Base units are mismatched ${this.category.baseUnits()} and ${other.category.baseUnits()}"
-            )
-        }
-        return other.fromStandard(this.standardize(inputValue))
-    }
-}
-
-val Centigrade = TemperatureUnits("°C", { BigDecimal("273.15") + it }, { it - BigDecimal("273.15") })
-val Fahrenheit = TemperatureUnits("°F", { (BigDecimal("459.67") + it) / BigDecimal("1.8") }, { (it * BigDecimal("1.8")) - BigDecimal("459.67") })
-val Rankine = TemperatureUnits("°R", { it / BigDecimal("1.8") }, { it * BigDecimal("1.8") })
-
-val Temperatures = arrayOf(Centigrade, Fahrenheit, Kelvin, Rankine)
-// endregion
-
-// region Time
-val Millisecond = Units("ms", Category.TIME) { it.divide(Kilo, context) }
-val Microsecond = Units("μs", Category.TIME) { it.divide(Mega, context) }
-val Nanosecond = Units("ns", Category.TIME) { it.divide(Giga, context) }
-val Minute = Units("m", Category.TIME) { it * BigDecimal(60) }
-val Hour = Units("hr", Category.TIME) { Minute.standardize(it) * BigDecimal(60) }
-val Day = Units("d", Category.TIME) { Hour.standardize(it) * BigDecimal(24) }
-val Year = Units("yr", Category.TIME) { Day.standardize(it) * BigDecimal(365.25) }
-val Week = Units("wk", Category.TIME) { Day.standardize(it) * BigDecimal(7) }
-val Month = Units("mo", Category.TIME) { Year.standardize(it) / BigDecimal(12) }
-val Decade = Units("dec", Category.TIME) { Year.standardize(it) * BigDecimal(10) }
-val Century = Units("cen", Category.TIME) { Year.standardize(it) * BigDecimal(100) }
-
-val Times = arrayOf(
-    Nanosecond, Microsecond, Millisecond, Second, Minute, Hour,
-    Day, Week, Month, Year, Decade, Century
-)
-// endregion
-
 // region Power
 val Kilowatt = Units("kW", Category.POWER) { it * Kilo }
 val Megawatt = Units("MW", Category.POWER) { it * Mega }
@@ -311,7 +269,7 @@ val Powers = arrayOf(
 
 // region Pressure
 val KiloPascal = Units("kPa", Category.PRESSURE) { it * Kilo } 
-val MegaPascal = Units("MPa", Category.PRESSURE) { it * Mega } 
+val MegaPascal = Units("MPa (N/mm²)", Category.PRESSURE) { it * Mega } 
 val GigaPascal = Units("GPa", Category.PRESSURE) { it * Giga } 
 val KilogramPerSquareCentimeter = Units("kg/cm²", Category.PRESSURE) { it * EARTH_GRAVITY } 
 val GramPerSquareCentimeter = Units("gm/cm²", Category.PRESSURE) { it * EARTH_GRAVITY * BigDecimal(10) } 
@@ -354,6 +312,69 @@ val Speeds = arrayOf(
     MeterPerSecond, MeterPerMinute, CentimeterPerSecond, CentimeterPerMinute,
     InchPerSecond, InchPerMinute, FootPerSecond, FootPerMinute, YardPerSecond,
     YardPerMinute, MilePerHour, KilometerPerHour
+)
+// endregion
+
+// region Stiffness / Uniform Load
+val NewtonPerCentimeter = Units("N/cm", Category.STIFFNESS) { it * BigDecimal(100) }
+val NewtonPerMillimeter = Units("N/mm (kN/m)", Category.STIFFNESS) { it * Kilo }
+val KilonewtonPerMillimeter = Units("kN/mm", Category.STIFFNESS) { it * Mega }
+val KilogramPerMeter = Units("kgf/m", Category.STIFFNESS) { it * EARTH_GRAVITY }
+val KilogramPerMillimeter = Units("kgf/mm", Category.STIFFNESS) { it * EARTH_GRAVITY * Kilo }
+val PoundPerInch = Units("lbf/in", Category.STIFFNESS) { PoundForce.standardize(it).divide(Inch.standardize(BigDecimal(1)), context) }
+val PoundPerFoot = Units("lbf/ft", Category.STIFFNESS) { PoundForce.standardize(it).divide(Foot.standardize(BigDecimal(1)), context) }
+val KipPerInch = Units("kip/in", Category.STIFFNESS) { Kips.standardize(it).divide(Inch.standardize(BigDecimal(1)), context) }
+val KipPerFoot = Units("kip/ft", Category.STIFFNESS) { Kips.standardize(it).divide(Foot.standardize(BigDecimal(1)), context) }
+
+val Stiffnesses = arrayOf(
+    NewtonPerMeter, NewtonPerCentimeter, NewtonPerMillimeter,
+    KilonewtonPerMillimeter, KilogramPerMeter, KilogramPerMillimeter,
+    PoundPerInch, PoundPerFoot, KipPerInch, KipPerFoot
+)
+val UniformLoads = arrayOf(
+    NewtonPerMeter, KilogramPerMeter, PoundPerInch, PoundPerFoot, KipPerInch, KipPerFoot
+)
+// endregion
+
+// region Temperatures
+class TemperatureUnits(
+    symbol: String, standardize: (BigDecimal) -> BigDecimal, val fromStandard: (BigDecimal) -> BigDecimal
+) : Units(
+    symbol, Category.TEMPERATURE, standardize
+) {
+    override fun convertTo(inputValue: BigDecimal, other: Units): BigDecimal {
+        if (other !is TemperatureUnits) {
+            throw IllegalConversionException(
+                "Can't convert from ${this.symbol} to ${other.symbol}. Base units are mismatched ${this.category.baseUnits()} and ${other.category.baseUnits()}"
+            )
+        }
+        return other.fromStandard(this.standardize(inputValue))
+    }
+}
+
+val Centigrade = TemperatureUnits("°C", { BigDecimal("273.15") + it }, { it - BigDecimal("273.15") })
+val Fahrenheit = TemperatureUnits("°F", { (BigDecimal("459.67") + it) / BigDecimal("1.8") }, { (it * BigDecimal("1.8")) - BigDecimal("459.67") })
+val Rankine = TemperatureUnits("°R", { it / BigDecimal("1.8") }, { it * BigDecimal("1.8") })
+
+val Temperatures = arrayOf(Centigrade, Fahrenheit, Kelvin, Rankine)
+// endregion
+
+// region Time
+val Millisecond = Units("ms", Category.TIME) { it.divide(Kilo, context) }
+val Microsecond = Units("μs", Category.TIME) { it.divide(Mega, context) }
+val Nanosecond = Units("ns", Category.TIME) { it.divide(Giga, context) }
+val Minute = Units("m", Category.TIME) { it * BigDecimal(60) }
+val Hour = Units("hr", Category.TIME) { Minute.standardize(it) * BigDecimal(60) }
+val Day = Units("d", Category.TIME) { Hour.standardize(it) * BigDecimal(24) }
+val Year = Units("yr", Category.TIME) { Day.standardize(it) * BigDecimal(365.25) }
+val Week = Units("wk", Category.TIME) { Day.standardize(it) * BigDecimal(7) }
+val Month = Units("mo", Category.TIME) { Year.standardize(it) / BigDecimal(12) }
+val Decade = Units("dec", Category.TIME) { Year.standardize(it) * BigDecimal(10) }
+val Century = Units("cen", Category.TIME) { Year.standardize(it) * BigDecimal(100) }
+
+val Times = arrayOf(
+    Nanosecond, Microsecond, Millisecond, Second, Minute, Hour,
+    Day, Week, Month, Year, Decade, Century
 )
 // endregion
 

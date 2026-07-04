@@ -19,11 +19,13 @@ val AllUnits: Map<Category, Array<out Units>> = mapOf(
     Category.MASS            to Masses,
     Category.MASS_FLOW       to MassFlowRates,
     Category.MOMENT          to Moments,
-    Category.TEMPERATURE     to Temperatures,
-    Category.TIME            to Times,
     Category.POWER           to Powers,
     Category.PRESSURE        to Pressures,
     Category.SPEED           to Speeds,
+    Category.STIFFNESS       to Stiffnesses,
+    Category.TEMPERATURE     to Temperatures,
+    Category.TIME            to Times,
+    Category.UNIFORM_LOAD    to UniformLoads,
     Category.VOLUME          to Volumes,
 )
 
