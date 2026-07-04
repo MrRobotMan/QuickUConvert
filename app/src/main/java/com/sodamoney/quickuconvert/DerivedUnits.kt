@@ -269,6 +269,25 @@ val Rankine = TemperatureUnits("°R", { it / BigDecimal("1.8") }, { it * BigDeci
 val Temperatures = arrayOf(Centigrade, Fahrenheit, Kelvin, Rankine)
 // endregion
 
+// region Time
+val Millisecond = Units("ms", Category.TIME) { it.divide(Kilo, context) }
+val Microsecond = Units("μs", Category.TIME) { it.divide(Mega, context) }
+val Nanosecond = Units("ns", Category.TIME) { it.divide(Giga, context) }
+val Minute = Units("m", Category.TIME) { it * BigDecimal(60) }
+val Hour = Units("hr", Category.TIME) { Minute.standardize(it) * BigDecimal(60) }
+val Day = Units("d", Category.TIME) { Hour.standardize(it) * BigDecimal(24) }
+val Year = Units("yr", Category.TIME) { Day.standardize(it) * BigDecimal(365.25) }
+val Week = Units("wk", Category.TIME) { Day.standardize(it) * BigDecimal(7) }
+val Month = Units("mo", Category.TIME) { Year.standardize(it) / BigDecimal(12) }
+val Decade = Units("dec", Category.TIME) { Year.standardize(it) * BigDecimal(10) }
+val Century = Units("cen", Category.TIME) { Year.standardize(it) * BigDecimal(100) }
+
+val Times = arrayOf(
+    Nanosecond, Microsecond, Millisecond, Second, Minute, Hour,
+    Day, Week, Month, Year, Decade, Century
+)
+// endregion
+
 // region Power
 val Kilowatt = Units("kW", Category.POWER) { it * Kilo }
 val Megawatt = Units("MW", Category.POWER) { it * Mega }
@@ -290,22 +309,31 @@ val Powers = arrayOf(
 )
 // endregion
 
-// region Time
-val Millisecond = Units("ms", Category.TIME) { it.divide(Kilo, context) }
-val Microsecond = Units("μs", Category.TIME) { it.divide(Mega, context) }
-val Nanosecond = Units("ns", Category.TIME) { it.divide(Giga, context) }
-val Minute = Units("m", Category.TIME) { it * BigDecimal(60) }
-val Hour = Units("hr", Category.TIME) { Minute.standardize(it) * BigDecimal(60) }
-val Day = Units("d", Category.TIME) { Hour.standardize(it) * BigDecimal(24) }
-val Year = Units("yr", Category.TIME) { Day.standardize(it) * BigDecimal(365.25) }
-val Week = Units("wk", Category.TIME) { Day.standardize(it) * BigDecimal(7) }
-val Month = Units("mo", Category.TIME) { Year.standardize(it) / BigDecimal(12) }
-val Decade = Units("dec", Category.TIME) { Year.standardize(it) * BigDecimal(10) }
-val Century = Units("cen", Category.TIME) { Year.standardize(it) * BigDecimal(100) }
+// region Pressure
+val KiloPascal = Units("kPa", Category.PRESSURE) { it * Kilo } 
+val MegaPascal = Units("MPa", Category.PRESSURE) { it * Mega } 
+val GigaPascal = Units("GPa", Category.PRESSURE) { it * Giga } 
+val KilogramPerSquareCentimeter = Units("kg/cm²", Category.PRESSURE) { it * EARTH_GRAVITY } 
+val GramPerSquareCentimeter = Units("gm/cm²", Category.PRESSURE) { it * EARTH_GRAVITY * BigDecimal(10) } 
+val DynePerSquareCentimeter = Units("gm/cm²", Category.PRESSURE) { it.divide(BigDecimal(10), context) }
+val Bar = Units("bar", Category.PRESSURE) { it * BigDecimal(100_000) } 
+val Atmosphere = Units("atm", Category.PRESSURE) { it * BigDecimal(101_325) } 
+val PoundPerSquareInch = Units("psi", Category.PRESSURE) { PoundForce.standardize(it).divide(SquareInch.standardize(BigDecimal(1)), context)}
+val KipPerSquareInch = Units("ksi", Category.PRESSURE) { Kips.standardize(it).divide(SquareInch.standardize(BigDecimal(1)), context)}
+val PoundPerSquareFoot = Units("psf", Category.PRESSURE) { PoundForce.standardize(it).divide(SquareFoot.standardize(BigDecimal(1)), context)}
+// Water column pressure: density (ρ) * length * g
+// ρH₂O @ 60F = 998.98kg/m^2
+// ρHg @ 0C = 13595.1kg/m^2
+val InchOfWater = Units("inH₂O", Category.PRESSURE) { it * BigDecimal("998.98") * Inch.standardize(BigDecimal(1)) * EARTH_GRAVITY }
+val FootOfWater = Units("ftH₂O", Category.PRESSURE) { it * BigDecimal("998.98") * Foot.standardize(BigDecimal(1)) * EARTH_GRAVITY }
+val InchOfMercury = Units("inHg", Category.PRESSURE) { it * BigDecimal("13595.1") * Inch.standardize(BigDecimal(1)) * EARTH_GRAVITY }
+val MillimeterOfMercury= Units("mmHg", Category.PRESSURE) { it * BigDecimal("13595.1") * Millimeter.standardize(BigDecimal(1)) * EARTH_GRAVITY }
 
-val Times = arrayOf(
-    Nanosecond, Microsecond, Millisecond, Second, Minute, Hour,
-    Day, Week, Month, Year, Decade, Century
+val Pressures = arrayOf(
+    Pascal, KiloPascal, MegaPascal, GigaPascal, KilogramPerSquareCentimeter,
+    GramPerSquareCentimeter, DynePerSquareCentimeter, Bar, Atmosphere,
+    PoundPerSquareInch, KipPerSquareInch, PoundPerSquareFoot, InchOfWater,
+    FootOfWater, InchOfMercury, MillimeterOfMercury
 )
 // endregion
 

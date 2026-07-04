@@ -22,6 +22,7 @@ val AllUnits: Map<Category, Array<out Units>> = mapOf(
     Category.TEMPERATURE     to Temperatures,
     Category.TIME            to Times,
     Category.POWER           to Powers,
+    Category.PRESSURE        to Pressures,
     Category.VOLUME          to Volumes,
 )
 
