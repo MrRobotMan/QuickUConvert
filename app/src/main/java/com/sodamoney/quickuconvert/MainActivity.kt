@@ -366,7 +366,7 @@ fun UnitCard(
                         }
                         copied = true
                     },
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(32.dp).padding(start=16.dp)
                 ) {
                     Icon(
                         imageVector = if (copied) Icons.Default.Check else Icons.Default.ContentCopy,
