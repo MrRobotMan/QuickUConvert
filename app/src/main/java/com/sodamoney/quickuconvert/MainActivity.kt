@@ -34,19 +34,26 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -74,7 +81,6 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.sodamoney.quickuconvert.ui.theme.QuickUConvertTheme
 import kotlinx.coroutines.delay
@@ -230,7 +236,7 @@ fun ConvertItem(
                         if (idx < items.size) {
                             UnitCard(
                                 state = states[idx],
-                                symbol = items[idx].symbol,
+                                symbol = items[idx],
                                 onUpdate = {
                                     updateValues(idx, items, states)
                                     fromUnit = items[idx]
@@ -249,10 +255,11 @@ fun ConvertItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnitCard(
     state: TextFieldState,
-    symbol: String,
+    symbol: Units,
     onUpdate: () -> Unit,
     onCopy: () -> BigDecimal,
     modifier: Modifier = Modifier
@@ -264,7 +271,7 @@ fun UnitCard(
     var isFocused by remember { mutableStateOf(false) }
     var savedText by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
-
+    val tooltipState = rememberTooltipState()
     val primaryColor = MaterialTheme.colorScheme.primary
 
     LaunchedEffect(copied) {
@@ -330,24 +337,24 @@ fun UnitCard(
                     }
             )
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = symbol,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            clipboardManager.setClipEntry(
-                                ClipEntry(
-                                    ClipData.newPlainText("converted", "${state.text} $symbol")
-                            ))
-                        }
-                        copied = true
-                    }
-                )
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                        TooltipAnchorPosition.Above),
+                    tooltip = {
+                         PlainTooltip {Text(symbol.name) }
+                    },
+                    state = tooltipState
+                ) {
+                    Text(
+                        text = symbol.symbol,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
                 IconButton(
                     onClick = {
                         val value = onCopy()
@@ -511,6 +518,10 @@ fun IntroDialog(onDismiss: () -> Unit) {
                 IntroTip(
                     icon = Icons.Default.ContentCopy,
                     text = "The copy icon on each card puts that value on your clipboard."
+                )
+                IntroTip(
+                    icon = Icons.Default.QuestionMark,
+                    text = "Long press the unit to see its full name."
                 )
                 IntroTip(
                     icon = Icons.Default.Settings,

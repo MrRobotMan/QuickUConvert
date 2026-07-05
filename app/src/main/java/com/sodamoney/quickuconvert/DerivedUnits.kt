@@ -338,9 +338,9 @@ val UniformLoads = arrayOf(
 
 // region Temperatures
 class TemperatureUnits(
-    symbol: String, standardize: (BigDecimal) -> BigDecimal, val fromStandard: (BigDecimal) -> BigDecimal
+    symbol: String, name: String, standardize: (BigDecimal) -> BigDecimal, val fromStandard: (BigDecimal) -> BigDecimal
 ) : Units(
-    symbol, Category.TEMPERATURE, standardize
+    symbol, Category.TEMPERATURE, name, standardize
 ) {
     override fun convertTo(inputValue: BigDecimal, other: Units): BigDecimal {
         if (other !is TemperatureUnits) {
@@ -352,9 +352,9 @@ class TemperatureUnits(
     }
 }
 
-val Centigrade = TemperatureUnits("°C", { BigDecimal("273.15") + it }, { it - BigDecimal("273.15") })
-val Fahrenheit = TemperatureUnits("°F", { (BigDecimal("459.67") + it) / BigDecimal("1.8") }, { (it * BigDecimal("1.8")) - BigDecimal("459.67") })
-val Rankine = TemperatureUnits("°R", { it / BigDecimal("1.8") }, { it * BigDecimal("1.8") })
+val Centigrade = TemperatureUnits("°C", "Centigrade", { BigDecimal("273.15") + it }, { it - BigDecimal("273.15") })
+val Fahrenheit = TemperatureUnits("°F", "Fahrenheit", { (BigDecimal("459.67") + it) / BigDecimal("1.8") }, { (it * BigDecimal("1.8")) - BigDecimal("459.67") })
+val Rankine = TemperatureUnits("°R","Rankine", { it / BigDecimal("1.8") }, { it * BigDecimal("1.8") })
 
 val Temperatures = arrayOf(Centigrade, Fahrenheit, Kelvin, Rankine)
 // endregion

@@ -15,6 +15,10 @@ open class Units (
     val category: Category,
 
     /**
+     * Name of the unit for tooltip display
+     */
+    val name: String = "Provided unit name",
+    /**
      * The formula to convert to a standard (base) unit.
      * 1 UNIT = X BASE UNITS
      */
