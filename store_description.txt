@@ -1,0 +1,31 @@
+Quickly convert length, mass, volume, & more. Fully customizable. No tracking.
+
+Quick UConvert is a clean, fast unit converter for everyday and technical conversions - no ads, no accounts, no tracking - completely free.
+
+Enter a value of any unit and see it instantly converted across every other unit in that category. 
+
+Over 200 units supported including:  <-- new
+- Length (meters, feet, miles, nautical miles, and more)
+- Area (square meters, acres, hectares, and more)
+- Volume (liters, gallons, cups, tablespoons, and more)
+- Mass (kilograms, pounds, stone, tons, carats, and more)
+- Time (nanoseconds through centuries)
+- Temperature (Celsius, Fahrenheit, Kelvin, Rankine)
+- Digital storage (bits through exbibytes, decimal and binary)
+- Force (Newtons, pounds kilogram-force, and more). <-- changed
+- Acceleration and speed <-- changed
+- Density
+- Pressure, uniform loads, and moments <-- new
+- And more! <-- changed
+
+Make it yours:
+Light, dark, or system-matched theme
+Show or hide individual units per category
+Drag and drop to reorder units the way you use them
+
+Your privacy, respected:
+Quick UConvert collects no personal data of any kind. Your theme and unit preferences are stored only on your device and never leave it. There are no accounts, no analytics, and no ads.
+
+Have a suggestion or found a bug? 
+
+Use the "Request feature / report issue" link right in Settings - we read every submission.
