@@ -250,8 +250,8 @@ fun ConvertItem(
                                     val parsed = parseUserInput(states[idx].text.toString())
                                     when {
                                         parsed == null -> "Unparsable value, reverting"
-                                        items[idx] === Kelvin && parsed.signum() < 0 ->
-                                            "Kelvin only goes to zero, Andrew!"
+                                        items[idx].category == Category.TEMPERATURE && items[idx].standardize(parsed) < BigDecimal(0) ->
+                                            "Andrew, temperatures can't go below absolute zero without breaking the universe!"
                                         else -> {
                                             updateValues(idx, parsed, items, states)
                                             fromUnit = items[idx]
