@@ -378,13 +378,21 @@ fun UnitCard(
                     tooltip = {
                          PlainTooltip {Text(symbol.name) }
                     },
-                    state = tooltipState
+                    state = tooltipState,
+                    enableUserInput = false
                 ) {
                     Text(
                         text = symbol.symbol,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {
+                            if (tooltipState.isVisible) {
+                                tooltipState.dismiss()
+                            } else {
+                                scope.launch { tooltipState.show() }
+                            }
+                        }
                     )
                 }
                 IconButton(
@@ -398,7 +406,9 @@ fun UnitCard(
                         }
                         copied = true
                     },
-                    modifier = Modifier.size(32.dp).padding(start=16.dp)
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(start = 16.dp)
                 ) {
                     Icon(
                         imageVector = if (copied) Icons.Default.Check else Icons.Default.ContentCopy,
@@ -579,7 +589,7 @@ fun IntroDialog(onDismiss: () -> Unit) {
                 )
                 IntroTip(
                     icon = Icons.Default.QuestionMark,
-                    text = "Long press the unit to see its full name."
+                    text = "Tap any unit to see its full name."
                 )
                 IntroTip(
                     icon = Icons.Default.Settings,

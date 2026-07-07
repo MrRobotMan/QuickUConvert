@@ -1,7 +1,6 @@
 package com.sodamoney.quickuconvert
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -456,10 +455,9 @@ private fun ReorderableUnitList(
                     val shiftTarget = when {
                         targetIdx == null || draggingIdx == null -> 0f
                         else -> {
-                            val di = draggingIdx; val ti = targetIdx
                             when {
-                                di < ti && idx in (di + 1)..ti -> -rowHeightPx
-                                di > ti && idx in ti until di  ->  rowHeightPx
+                                draggingIdx < targetIdx && idx in (draggingIdx + 1)..targetIdx -> -rowHeightPx
+                                draggingIdx > targetIdx && idx in targetIdx until draggingIdx ->  rowHeightPx
                                 else -> 0f
                             }
                         }
