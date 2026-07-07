@@ -47,6 +47,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -126,6 +128,7 @@ fun Convert() {
         if (settingsOpen) {
             SettingsScreen(
                 repo = repo,
+                initialCategory = category,
                 onThemeChange = { themeMode = it },
                 onBack = {
                     resetValues(states, repo.visibleUnits(category))
@@ -161,7 +164,11 @@ fun MainContent(
     onCategoryChange: (Category) -> Unit,
     onSettingsClick: () -> Unit
 ) {
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    val snackbarHostState = remember { SnackbarHostState() }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
         val visibleItems = repo.visibleUnits(category)
         var fromUnit by remember { mutableStateOf(AllUnits[category]!![0]) }
 
@@ -202,6 +209,7 @@ fun MainContent(
                 items = visibleItems,
                 states = states,
                 fromUnit = fromUnit,
+                snackbarHostState = snackbarHostState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
@@ -215,10 +223,11 @@ fun ConvertItem(
     items: Array<out Units>,
     states: Array<TextFieldState>,
     fromUnit: Units,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
     var inputValue by remember { mutableStateOf(BigDecimal(1)) }
-    var fromUnit = fromUnit
+    var fromUnit by remember(fromUnit) { mutableStateOf(fromUnit) }
     BoxWithConstraints(modifier = modifier) {
         val targetCardWidth = 150.dp
         val columns = ((maxWidth + 10.dp) / (targetCardWidth + 10.dp)).toInt().coerceAtLeast(2)
@@ -238,11 +247,21 @@ fun ConvertItem(
                                 state = states[idx],
                                 symbol = items[idx],
                                 onUpdate = {
-                                    updateValues(idx, items, states)
-                                    fromUnit = items[idx]
-                                    inputValue = BigDecimal(states[idx].text.toString())
+                                    val parsed = parseUserInput(states[idx].text.toString())
+                                    when {
+                                        parsed == null -> "Unparsable value, reverting"
+                                        items[idx] === Kelvin && parsed.signum() < 0 ->
+                                            "Kelvin only goes to zero, Andrew!"
+                                        else -> {
+                                            updateValues(idx, parsed, items, states)
+                                            fromUnit = items[idx]
+                                            inputValue = parsed
+                                            null
+                                        }
+                                    }
                                            },
                                 onCopy = { fromUnit.convertTo(inputValue, items[idx]) },
+                                snackbarHostState = snackbarHostState,
                                 modifier = Modifier.weight(1f)
                             )
                         } else {
@@ -260,8 +279,9 @@ fun ConvertItem(
 fun UnitCard(
     state: TextFieldState,
     symbol: Units,
-    onUpdate: () -> Unit,
+    onUpdate: () -> String?,
     onCopy: () -> BigDecimal,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -306,7 +326,14 @@ fun UnitCard(
                     imeAction = ImeAction.Done
                 ),
                 onKeyboardAction = {
-                    onUpdate()
+                    val error = onUpdate()
+                    if (error != null) {
+                        state.setTextAndPlaceCursorAtEnd(savedText)
+                        scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar(error)
+                        }
+                    }
                     keyboardController?.hide()
                 },
                 lineLimits = TextFieldLineLimits.SingleLine,
@@ -326,11 +353,16 @@ fun UnitCard(
                                 state.clearText()
                             }
 
-                            losing -> {
-                                if (state.text.isEmpty()) {
+                            losing -> if (state.text.isEmpty()) {
+                                state.setTextAndPlaceCursorAtEnd(savedText)
+                            } else {
+                                val error = onUpdate()
+                                if (error != null) {
                                     state.setTextAndPlaceCursorAtEnd(savedText)
-                                } else {
-                                    onUpdate()
+                                    scope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                        snackbarHostState.showSnackbar(error)
+                                    }
                                 }
                             }
                         }
@@ -495,8 +527,34 @@ fun resetValues(states: Array<TextFieldState>, items: Array<out Units>) {
     }
 }
 
-fun updateValues(index: Int, items: Array<out Units>, states: Array<TextFieldState>) {
-    val value = BigDecimal(states[index].text.toString())
+// Users can type or paste thousands-grouped values (e.g. "1,000" or "1 000"),
+// and the app's own output formatting (convertedOrInvalid) uses commas too,
+// so commas and whitespace (including a stray trailing newline from a
+// clipboard paste) must round-trip back into a parseable value here rather
+// than crashing with a NumberFormatException.
+private val WHITESPACE = Regex("\\s")
+
+// Only matches commas placed as valid US-style thousands grouping (each
+// group exactly 3 digits), e.g. "1,234,567.89". Deliberately narrow: this
+// app only ever formats output with comma grouping (convertedOrInvalid), so
+// a comma anywhere else is either a mistyped grouping ("1,2,3") or, on a
+// locale where ',' is the decimal separator, a value like "3,14" meaning
+// 3.14 — both would otherwise be silently misparsed as a different number
+// (123, 314) rather than rejected. Rejecting ambiguous/malformed comma use
+// is safer than guessing; full locale-aware parsing is tracked in TODO.md.
+private val GROUPED_THOUSANDS = Regex("^-?\\d{1,3}(,\\d{3})*(\\.\\d*)?$")
+
+fun parseUserInput(text: String): BigDecimal? {
+    val stripped = text.replace(WHITESPACE, "")
+    if (stripped.contains(',') && !GROUPED_THOUSANDS.matches(stripped)) return null
+    return try {
+        BigDecimal(stripped.replace(",", ""))
+    } catch (_: NumberFormatException) {
+        null
+    }
+}
+
+fun updateValues(index: Int, value: BigDecimal, items: Array<out Units>, states: Array<TextFieldState>) {
     for ((ind, state) in states.withIndex()) {
         if (ind == index) continue
         if (ind >= items.size) break

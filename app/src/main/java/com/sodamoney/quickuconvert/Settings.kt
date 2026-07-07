@@ -55,6 +55,10 @@ class SettingsRepository(private val prefs: SharedPreferences) {
         return AllUnits.keys.map { CatPref(it.name, it !in hidden) }
     }
 
+    fun resetUnitOrder(category: Category) {
+        prefs.edit { remove(orderKey(category)) }
+    }
+
     fun saveUnitPrefs(category: Category, unitPrefs: List<UnitPref>, catPrefs: List<CatPref>) {
         prefs.edit {
             // Assumes all symbols are unique. Better to go by name. TODO add name field to class
