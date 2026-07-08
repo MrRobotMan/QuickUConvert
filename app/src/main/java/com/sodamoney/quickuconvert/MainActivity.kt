@@ -91,6 +91,8 @@ import kotlin.enums.EnumEntries
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.text.DecimalFormatSymbols
+import java.text.NumberFormat
 
 
 const val APP_NAME = "Quick UConvert"
@@ -544,21 +546,34 @@ fun resetValues(states: Array<TextFieldState>, items: Array<out Units>) {
 // than crashing with a NumberFormatException.
 private val WHITESPACE = Regex("\\s")
 
-// Only matches commas placed as valid US-style thousands grouping (each
+// Matches localized separators placed as valid thousands grouping (each
 // group exactly 3 digits), e.g. "1,234,567.89". Deliberately narrow: this
-// app only ever formats output with comma grouping (convertedOrInvalid), so
+// app only ever formats output with thousands grouping (convertedOrInvalid), so
 // a comma anywhere else is either a mistyped grouping ("1,2,3") or, on a
-// locale where ',' is the decimal separator, a value like "3,14" meaning
-// 3.14 — both would otherwise be silently misparsed as a different number
-// (123, 314) rather than rejected. Rejecting ambiguous/malformed comma use
-// is safer than guessing; full locale-aware parsing is tracked in TODO.md.
-private val GROUPED_THOUSANDS = Regex("^-?\\d{1,3}(,\\d{3})*(\\.\\d*)?$")
+// locale where groupings are not in sets of 3, e.g. lakh 1,00,000 could be a typo or
+// which could be otherwise be silently misparsed as a different number
+// (123) rather than rejected. Rejecting ambiguous/malformed comma use
+// is safer than guessing.
+private val formatSymbols  = DecimalFormatSymbols()
+private val decimalSeparator = formatSymbols.decimalSeparator
+private val dec = if (decimalSeparator == '.') "\\$decimalSeparator" else decimalSeparator.toString()
+private val groupingSeparator = formatSymbols.groupingSeparator
+private val grp = if (groupingSeparator == '.') "\\$groupingSeparator" else groupingSeparator.toString()
+private val GROUPED_THOUSANDS = Regex("^-?\\d{1,3}($grp\\d{3})*($dec\\d*)?([Ee][-+]?\\d+)?$")
+//^-? start of string and optional -
+// \d{1,3} one to three digits
+// (,\d{3})* grouping separator followed by three digits, any number of times
+// (\.\d*) decimal separator followed by any number of digits
+// ([Ee][-+]?\d+)? exponent "symbol" followed by +, -
+// $ end of string
 
 fun parseUserInput(text: String): BigDecimal? {
+    // Stripped may cause a future bug if plain ASCII space is used as a separator. As for now
+    // it should be a non-issue.
     val stripped = text.replace(WHITESPACE, "")
-    if (stripped.contains(',') && !GROUPED_THOUSANDS.matches(stripped)) return null
+    if (stripped.contains(groupingSeparator) && !GROUPED_THOUSANDS.matches(stripped)) return null
     return try {
-        BigDecimal(stripped.replace(",", ""))
+        BigDecimal(stripped.replace(groupingSeparator.toString(), "").replace(decimalSeparator, '.'))
     } catch (_: NumberFormatException) {
         null
     }
@@ -624,15 +639,23 @@ private fun IntroTip(icon: ImageVector, text: String) {
 }
 
 fun convertedOrInvalid(value: BigDecimal, from: Units, to: Units): String {
-    return try {
-        val converted = from.convertTo(value, to)
-        val absConv = converted.abs().toDouble()
-        when {
-            converted == BigDecimal(0) -> "0"
-            absConv < 1E5 && absConv > 1E-4 -> DecimalFormat("#,###.####").format(converted)
-            else -> DecimalFormat("#.####E0").format(converted)
-        }
+    val converted =  try {
+        from.convertTo(value, to)
     } catch (_: IllegalConversionException) {
-        "Invalid"
+        return "Invalid"
     }
+    val numberFormat = NumberFormat.getNumberInstance()
+    if (numberFormat !is DecimalFormat) {
+        return numberFormat.format(converted)
+    }
+    val absConv = converted.abs().toDouble()
+    when {
+        converted.compareTo(BigDecimal.ZERO) == 0 -> return "0"
+        absConv < 1E5 && absConv > 1E-4 -> numberFormat.applyPattern("#,##0.###")
+        else -> {
+            numberFormat.applyPattern("0.####E0")
+
+        }
+    }
+    return numberFormat.format(converted)
 }

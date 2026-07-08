@@ -10,8 +10,8 @@
 - Apply formatting to entered value (outputTransformation)
 
 # Fixes needed
-- Change save to unit name, no risk of clash
-- Deal with commas
-- Localization? 1,000.00 == 1.000,00
+- ~Change save to unit name, no risk of clash~ Not needed now that unit symbols are tested for uniqueness.
+- ~Deal with commas~
+- ~Localization? 1,000.00 == 1.000,00~
 - Fix unit field hidden behind keyboard
 
