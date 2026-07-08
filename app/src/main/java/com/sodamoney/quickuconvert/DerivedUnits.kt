@@ -273,7 +273,7 @@ val MegaPascal = Units("MPa (N/mm²)", "Megapascals",  Category.PRESSURE) { it *
 val GigaPascal = Units("GPa", "Gigapascals",  Category.PRESSURE) { it * Giga } 
 val KilogramPerSquareCentimeter = Units("kg/cm²", "Kilograms per square centimeter",  Category.PRESSURE) { it * EARTH_GRAVITY } 
 val GramPerSquareCentimeter = Units("gm/cm²", "Grams per square centimeter",  Category.PRESSURE) { it * EARTH_GRAVITY * BigDecimal(10) } 
-val DynePerSquareCentimeter = Units("gm/cm²", "Dynes per square centimeter",  Category.PRESSURE) { it.divide(BigDecimal(10), context) }
+val DynePerSquareCentimeter = Units("dyne/cm²", "Dynes per square centimeter",  Category.PRESSURE) { it.divide(BigDecimal(10), context) }
 val Bar = Units("bar", "Bars",  Category.PRESSURE) { it * BigDecimal(100_000) } 
 val Atmosphere = Units("atm", "Atmospheres",  Category.PRESSURE) { it * BigDecimal(101_325) } 
 val PoundPerSquareInch = Units("psi", "Pounds per square inch",  Category.PRESSURE) { PoundForce.standardize(it).divide(SquareInch.standardize(BigDecimal(1)), context)}
@@ -298,7 +298,7 @@ val Pressures = arrayOf(
 // region Speed
 val MeterPerMinute = Units("m/min", "Meters per minute",  Category.SPEED) { it.divide(BigDecimal(60), context) }
 val CentimeterPerSecond = Units("cm/s", "Centimeters per second",  Category.SPEED) { it.divide(BigDecimal(100), context) }
-val CentimeterPerMinute = Units("cm/s", "Centimeters per minute",  Category.SPEED) { it.divide(BigDecimal(6000), context) }
+val CentimeterPerMinute = Units("cm/min", "Centimeters per minute",  Category.SPEED) { it.divide(BigDecimal(6000), context) }
 val InchPerSecond = Units("in/s", "Inches per second",  Category.SPEED) { Inch.standardize(it) }
 val InchPerMinute = Units("in/min", "Inches per minute",  Category.SPEED) { Inch.standardize(it).divide(BigDecimal(60), context) }
 val FootPerSecond = Units("ft/s", "Feet per second",  Category.SPEED) { Foot.standardize(it) }
@@ -363,18 +363,19 @@ val Temperatures = arrayOf(Centigrade, Fahrenheit, Kelvin, Rankine)
 val Millisecond = Units("ms", "Milliseconds",  Category.TIME) { it.divide(Kilo, context) }
 val Microsecond = Units("μs", "Microseconds",  Category.TIME) { it.divide(Mega, context) }
 val Nanosecond = Units("ns", "Nanoseconds",  Category.TIME) { it.divide(Giga, context) }
-val Minute = Units("m", "Minutes",  Category.TIME) { it * BigDecimal(60) }
+val Minute = Units("min", "Minutes",  Category.TIME) { it * BigDecimal(60) }
 val Hour = Units("hr", "Hours",  Category.TIME) { Minute.standardize(it) * BigDecimal(60) }
-val Day = Units("d", "Days",  Category.TIME) { Hour.standardize(it) * BigDecimal(24) }
+val Day = Units("day", "Days",  Category.TIME) { Hour.standardize(it) * BigDecimal(24) }
 val Year = Units("yr", "Years",  Category.TIME) { Day.standardize(it) * BigDecimal(365.25) }
 val Week = Units("wk", "Weeks",  Category.TIME) { Day.standardize(it) * BigDecimal(7) }
+val Fortnight = Units("fn", "Fortnight (14 days)", Category.TIME) {Day.standardize(it) * BigDecimal(14) }
 val Month = Units("mo", "Months",  Category.TIME) { Year.standardize(it) / BigDecimal(12) }
 val Decade = Units("dec", "Decades",  Category.TIME) { Year.standardize(it) * BigDecimal(10) }
 val Century = Units("cen", "Centuries",  Category.TIME) { Year.standardize(it) * BigDecimal(100) }
 
 val Times = arrayOf(
     Nanosecond, Microsecond, Millisecond, Second, Minute, Hour,
-    Day, Week, Month, Year, Decade, Century
+    Day, Week, Fortnight, Month, Year, Decade, Century
 )
 // endregion
 

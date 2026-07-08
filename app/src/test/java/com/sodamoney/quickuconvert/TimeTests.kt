@@ -84,4 +84,10 @@ class TimeTests {
         assertEquals(expected.compareTo(actual), 0)
     }
 
+    @Test
+    fun testFortnight() {
+        val expected = BigDecimal(1_209_600)
+        val actual = Fortnight.convertTo(BigDecimal(1), Second)
+        assertEquals(expected.compareTo(actual), 0)
+    }
 }
