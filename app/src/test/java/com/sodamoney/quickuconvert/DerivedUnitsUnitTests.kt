@@ -32,10 +32,16 @@ class DerivedUnitsUnitTests {
     }
 
     @Test
-    fun totalUnitCountIsCorrect() {
-        val expected = 228
-        val actual = AllUnits.values.map{it.size}.sum()
-        assertEquals(expected, actual)
+    fun allSymbolsUnique() {
+        // Filter out UNIFORM_LOAD since it's a subset of STIFFNESS
+        val expected = AllUnits.filter{ it.key != Category.UNIFORM_LOAD }.map{it.value.size}.sum()
+        var allSymbols = AllUnits.filter {it.key != Category.UNIFORM_LOAD }.flatMap{it.value.map{it.symbol}}.toMutableList()
+        val actual = allSymbols.toSet()
+        for (s in actual) {
+            allSymbols.remove(s)
+        }
+        println(allSymbols)
+        assertEquals(expected, actual.count())
     }
 }
 
