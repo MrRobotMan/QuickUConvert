@@ -34,19 +34,28 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -74,7 +83,6 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.sodamoney.quickuconvert.ui.theme.QuickUConvertTheme
 import kotlinx.coroutines.delay
@@ -120,6 +128,7 @@ fun Convert() {
         if (settingsOpen) {
             SettingsScreen(
                 repo = repo,
+                initialCategory = category,
                 onThemeChange = { themeMode = it },
                 onBack = {
                     resetValues(states, repo.visibleUnits(category))
@@ -155,7 +164,11 @@ fun MainContent(
     onCategoryChange: (Category) -> Unit,
     onSettingsClick: () -> Unit
 ) {
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    val snackbarHostState = remember { SnackbarHostState() }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
         val visibleItems = repo.visibleUnits(category)
         var fromUnit by remember { mutableStateOf(AllUnits[category]!![0]) }
 
@@ -189,14 +202,14 @@ fun MainContent(
                 onChange = {
                     onCategoryChange(it)
                     fromUnit = AllUnits[it]!![0]
-                           },
-                valid = AllUnits.keys
+                           }
             )
             Spacer(modifier = Modifier.size(12.dp))
             ConvertItem(
                 items = visibleItems,
                 states = states,
                 fromUnit = fromUnit,
+                snackbarHostState = snackbarHostState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
@@ -210,10 +223,11 @@ fun ConvertItem(
     items: Array<out Units>,
     states: Array<TextFieldState>,
     fromUnit: Units,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
     var inputValue by remember { mutableStateOf(BigDecimal(1)) }
-    var fromUnit = fromUnit
+    var fromUnit by remember(fromUnit) { mutableStateOf(fromUnit) }
     BoxWithConstraints(modifier = modifier) {
         val targetCardWidth = 150.dp
         val columns = ((maxWidth + 10.dp) / (targetCardWidth + 10.dp)).toInt().coerceAtLeast(2)
@@ -231,13 +245,23 @@ fun ConvertItem(
                         if (idx < items.size) {
                             UnitCard(
                                 state = states[idx],
-                                symbol = items[idx].symbol,
+                                symbol = items[idx],
                                 onUpdate = {
-                                    updateValues(idx, items, states)
-                                    fromUnit = items[idx]
-                                    inputValue = BigDecimal(states[idx].text.toString())
+                                    val parsed = parseUserInput(states[idx].text.toString())
+                                    when {
+                                        parsed == null -> "Unparsable value, reverting"
+                                        items[idx].category == Category.TEMPERATURE && items[idx].standardize(parsed) < BigDecimal(0) ->
+                                            "Andrew, temperatures can't go below absolute zero without breaking the universe!"
+                                        else -> {
+                                            updateValues(idx, parsed, items, states)
+                                            fromUnit = items[idx]
+                                            inputValue = parsed
+                                            null
+                                        }
+                                    }
                                            },
                                 onCopy = { fromUnit.convertTo(inputValue, items[idx]) },
+                                snackbarHostState = snackbarHostState,
                                 modifier = Modifier.weight(1f)
                             )
                         } else {
@@ -250,12 +274,14 @@ fun ConvertItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnitCard(
     state: TextFieldState,
-    symbol: String,
-    onUpdate: () -> Unit,
+    symbol: Units,
+    onUpdate: () -> String?,
     onCopy: () -> BigDecimal,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -265,7 +291,7 @@ fun UnitCard(
     var isFocused by remember { mutableStateOf(false) }
     var savedText by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
-
+    val tooltipState = rememberTooltipState()
     val primaryColor = MaterialTheme.colorScheme.primary
 
     LaunchedEffect(copied) {
@@ -300,7 +326,14 @@ fun UnitCard(
                     imeAction = ImeAction.Done
                 ),
                 onKeyboardAction = {
-                    onUpdate()
+                    val error = onUpdate()
+                    if (error != null) {
+                        state.setTextAndPlaceCursorAtEnd(savedText)
+                        scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar(error)
+                        }
+                    }
                     keyboardController?.hide()
                 },
                 lineLimits = TextFieldLineLimits.SingleLine,
@@ -320,35 +353,48 @@ fun UnitCard(
                                 state.clearText()
                             }
 
-                            losing -> {
-                                if (state.text.isEmpty()) {
+                            losing -> if (state.text.isEmpty()) {
+                                state.setTextAndPlaceCursorAtEnd(savedText)
+                            } else {
+                                val error = onUpdate()
+                                if (error != null) {
                                     state.setTextAndPlaceCursorAtEnd(savedText)
-                                } else {
-                                    onUpdate()
+                                    scope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                        snackbarHostState.showSnackbar(error)
+                                    }
                                 }
                             }
                         }
                     }
             )
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = symbol,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            clipboardManager.setClipEntry(
-                                ClipEntry(
-                                    ClipData.newPlainText("converted", "${state.text} $symbol")
-                            ))
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                        TooltipAnchorPosition.Above),
+                    tooltip = {
+                         PlainTooltip {Text(symbol.name) }
+                    },
+                    state = tooltipState,
+                    enableUserInput = false
+                ) {
+                    Text(
+                        text = symbol.symbol,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {
+                            if (tooltipState.isVisible) {
+                                tooltipState.dismiss()
+                            } else {
+                                scope.launch { tooltipState.show() }
+                            }
                         }
-                        copied = true
-                    }
-                )
+                    )
+                }
                 IconButton(
                     onClick = {
                         val value = onCopy()
@@ -360,7 +406,9 @@ fun UnitCard(
                         }
                         copied = true
                     },
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(start = 16.dp)
                 ) {
                     Icon(
                         imageVector = if (copied) Icons.Default.Check else Icons.Default.ContentCopy,
@@ -379,7 +427,6 @@ fun CategorySelect(
     categories: EnumEntries<Category>,
     cur: Category,
     onChange: (Category) -> Unit,
-    valid: Set<Category>
 ) {
     var expanded by remember { mutableStateOf(false) }
     val arrowRotation by animateFloatAsState(
@@ -440,7 +487,6 @@ fun CategorySelect(
                     Row(modifier = Modifier.fillMaxWidth()) {
                         pair.forEach { cat ->
                             val isSelected = cat == cur
-                            val isValid = cat in valid
                             DropdownMenuItem(
                                 modifier = Modifier.weight(1f),
                                 text = {
@@ -448,10 +494,8 @@ fun CategorySelect(
                                         text = cat.format(),
                                         style = MaterialTheme.typography.bodyLarge,
                                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                                        textDecoration = if (!isValid) TextDecoration.LineThrough else null,
                                         color = when {
                                             isSelected -> MaterialTheme.colorScheme.primary
-                                            !isValid   -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                                             else       -> MaterialTheme.colorScheme.onSurface
                                         }
                                     )
@@ -467,7 +511,7 @@ fun CategorySelect(
                                     }
                                 } else null,
                                 onClick = {
-                                    if (!isSelected && isValid) onChange(cat)
+                                    if (!isSelected) onChange(cat)
                                     expanded = false
                                 }
                             )
@@ -493,8 +537,34 @@ fun resetValues(states: Array<TextFieldState>, items: Array<out Units>) {
     }
 }
 
-fun updateValues(index: Int, items: Array<out Units>, states: Array<TextFieldState>) {
-    val value = BigDecimal(states[index].text.toString())
+// Users can type or paste thousands-grouped values (e.g. "1,000" or "1 000"),
+// and the app's own output formatting (convertedOrInvalid) uses commas too,
+// so commas and whitespace (including a stray trailing newline from a
+// clipboard paste) must round-trip back into a parseable value here rather
+// than crashing with a NumberFormatException.
+private val WHITESPACE = Regex("\\s")
+
+// Only matches commas placed as valid US-style thousands grouping (each
+// group exactly 3 digits), e.g. "1,234,567.89". Deliberately narrow: this
+// app only ever formats output with comma grouping (convertedOrInvalid), so
+// a comma anywhere else is either a mistyped grouping ("1,2,3") or, on a
+// locale where ',' is the decimal separator, a value like "3,14" meaning
+// 3.14 — both would otherwise be silently misparsed as a different number
+// (123, 314) rather than rejected. Rejecting ambiguous/malformed comma use
+// is safer than guessing; full locale-aware parsing is tracked in TODO.md.
+private val GROUPED_THOUSANDS = Regex("^-?\\d{1,3}(,\\d{3})*(\\.\\d*)?$")
+
+fun parseUserInput(text: String): BigDecimal? {
+    val stripped = text.replace(WHITESPACE, "")
+    if (stripped.contains(',') && !GROUPED_THOUSANDS.matches(stripped)) return null
+    return try {
+        BigDecimal(stripped.replace(",", ""))
+    } catch (_: NumberFormatException) {
+        null
+    }
+}
+
+fun updateValues(index: Int, value: BigDecimal, items: Array<out Units>, states: Array<TextFieldState>) {
     for ((ind, state) in states.withIndex()) {
         if (ind == index) continue
         if (ind >= items.size) break
@@ -516,6 +586,10 @@ fun IntroDialog(onDismiss: () -> Unit) {
                 IntroTip(
                     icon = Icons.Default.ContentCopy,
                     text = "The copy icon on each card puts that value on your clipboard."
+                )
+                IntroTip(
+                    icon = Icons.Default.QuestionMark,
+                    text = "Tap any unit to see its full name."
                 )
                 IntroTip(
                     icon = Icons.Default.Settings,

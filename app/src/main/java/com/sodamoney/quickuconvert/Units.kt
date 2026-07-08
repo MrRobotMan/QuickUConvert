@@ -10,6 +10,10 @@ open class Units (
     val symbol: String,
 
     /**
+     * Name of the unit for tooltip display
+     */
+    val name: String,
+    /**
      * The category of unit for conversion.
      */
     val category: Category,

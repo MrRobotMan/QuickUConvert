@@ -1,7 +1,6 @@
 package com.sodamoney.quickuconvert
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -32,7 +31,9 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SettingsBrightness
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,8 +45,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
@@ -62,6 +65,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -74,13 +79,15 @@ import androidx.core.net.toUri
 @Composable
 fun SettingsScreen(
     repo: SettingsRepository,
+    initialCategory: Category,
     onThemeChange: (ThemeMode) -> Unit = {},
     onBack: () -> Unit
 ) {
     var themeMode by remember { mutableStateOf(repo.themeMode) }
-    var selectedCategory by remember { mutableStateOf(AllUnits.keys.first()) }
+    var selectedCategory by remember { mutableStateOf(initialCategory) }
     var unitPrefs by remember(selectedCategory) { mutableStateOf(repo.getUnitPrefs(selectedCategory)) }
     var catPrefs by remember { mutableStateOf(repo.getCatPrefs()) }
+    var resetConfirmCategory by remember { mutableStateOf<Category?>(null) }
     val context = LocalContext.current
 
     Scaffold(
@@ -170,6 +177,18 @@ fun SettingsScreen(
                 }
             )
 
+            Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+                OutlinedButton(onClick = { resetConfirmCategory = selectedCategory }) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("Reset order")
+                }
+            }
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             SectionLabel("Support")
@@ -194,6 +213,41 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(16.dp))
         }
+    }
+
+    resetConfirmCategory?.let { cat ->
+        val categoryLabel = cat.format()
+        AlertDialog(
+            onDismissRequest = { resetConfirmCategory = null },
+            title = { Text("Reset $categoryLabel order?") },
+            text = {
+                Text(
+                    "This will restore the default unit order for $categoryLabel. " +
+                        "Show/hide settings for these units won't change."
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    repo.resetUnitOrder(cat)
+                    // resetUnitOrder only clears the saved order, leaving visibility
+                    // untouched, so the reset list is derivable from the in-memory
+                    // unitPrefs (existing visible flags, reordered to declaration
+                    // order) without a fresh SharedPreferences read.
+                    val visibility = unitPrefs.associate { it.symbol to it.visible }
+                    unitPrefs = (AllUnits[cat] ?: emptyArray()).map {
+                        UnitPref(it.symbol, visibility[it.symbol] ?: true)
+                    }
+                    resetConfirmCategory = null
+                }) {
+                    Text("Reset")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { resetConfirmCategory = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 
@@ -311,6 +365,17 @@ private fun SectionLabel(text: String) {
     )
 }
 
+// detectDragGesturesAfterLongPress has no duration parameter of its own — it
+// waits for LocalViewConfiguration's longPressTimeoutMillis (the system's
+// long-press threshold, ~500ms). Delegating everything else to `this` keeps
+// this in sync with whatever other ViewConfiguration members the Compose UI
+// version adds, instead of having to enumerate them all here.
+private fun ViewConfiguration.scaledLongPress(scale: Float): ViewConfiguration =
+    object : ViewConfiguration by this {
+        override val longPressTimeoutMillis: Long
+            get() = (this@scaledLongPress.longPressTimeoutMillis * scale).toLong()
+    }
+
 // Drag-to-reorder list for units within a category. Two bugs used to live
 // here, both worth knowing about if you're debugging reorder/animation
 // issues:
@@ -363,100 +428,116 @@ private fun ReorderableUnitList(
     val targetIdxState = rememberUpdatedState(targetIdx)
     val draggingIdxState = rememberUpdatedState(draggingIdx)
 
-    Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-        units.forEachIndexed { idx, unit ->
-            key(unit.symbol) {
-                val lifted = unit.symbol == draggingSymbol
-                // Preview shift for rows *other* than the one being dragged:
-                // nudge them up/down by one row height to open a gap at the
-                // current drop target, purely visual — the actual list order
-                // (`units`) doesn't change until onDragEnd calls onReorder.
-                val shiftTarget = when {
-                    targetIdx == null || draggingIdx == null -> 0f
-                    else -> {
-                        val di = draggingIdx; val ti = targetIdx
-                        when {
-                            di < ti && idx in (di + 1)..ti -> -rowHeightPx
-                            di > ti && idx in ti until di  ->  rowHeightPx
-                            else -> 0f
+    // Reorder is a settings-screen power-user gesture, not a destructive one
+    // (onToggle's Switch handles the accidental-tap-prone action), so a
+    // shorter hold before drag starts is worth the small risk of a stray
+    // drag — 70% of the system long-press timeout (~30% faster).
+    //
+    // Must be `remember`ed rather than recomputed every recomposition: this
+    // composable recomposes on every pointer-move frame while dragging (it
+    // reads dragOffset.value above to drive the row-shift animation), and
+    // pointerInput's gesture-detection coroutine reads LocalViewConfiguration
+    // live via CompositionLocalConsumerModifierNode — providing a *new*
+    // instance each frame re-triggers that read mid-gesture. That's exactly
+    // what caused the long-press to flash and immediately cancel instead of
+    // picking up: the ambient value changed right as onDragStart fired.
+    val baseViewConfig = LocalViewConfiguration.current
+    val reorderViewConfig = remember(baseViewConfig) { baseViewConfig.scaledLongPress(0.7f) }
+    CompositionLocalProvider(LocalViewConfiguration provides reorderViewConfig) {
+        Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+            units.forEachIndexed { idx, unit ->
+                key(unit.symbol) {
+                    val lifted = unit.symbol == draggingSymbol
+                    // Preview shift for rows *other* than the one being dragged:
+                    // nudge them up/down by one row height to open a gap at the
+                    // current drop target, purely visual — the actual list order
+                    // (`units`) doesn't change until onDragEnd calls onReorder.
+                    val shiftTarget = when {
+                        targetIdx == null || draggingIdx == null -> 0f
+                        else -> {
+                            when {
+                                draggingIdx < targetIdx && idx in (draggingIdx + 1)..targetIdx -> -rowHeightPx
+                                draggingIdx > targetIdx && idx in targetIdx until draggingIdx ->  rowHeightPx
+                                else -> 0f
+                            }
                         }
                     }
-                }
-                val animShift by animateFloatAsState(targetValue = shiftTarget, label = "shift")
-                val elevation by animateFloatAsState(targetValue = if (lifted) 8f else 0f, label = "elevation")
+                    val animShift by animateFloatAsState(targetValue = shiftTarget, label = "shift")
+                    val elevation by animateFloatAsState(targetValue = if (lifted) 8f else 0f, label = "elevation")
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(rowHeightDp)
-                        .zIndex(if (lifted) 1f else 0f)
-                        .graphicsLayer {
-                            translationY = if (lifted) dragOffset.value else animShift
-                            shadowElevation = elevation
-                        }
-                        .background(
-                            if (lifted) MaterialTheme.colorScheme.surfaceContainerHighest
-                            else MaterialTheme.colorScheme.surface
-                        )
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.DragHandle,
-                        contentDescription = "Drag to reorder",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Row(
                         modifier = Modifier
-                            .size(24.dp)
-                            .pointerInput(unit.symbol) {
-                                detectDragGesturesAfterLongPress(
-                                    onDragStart = {
-                                        draggingSymbol = unit.symbol
-                                        scope.launch { dragOffset.snapTo(0f) }
-                                    },
-                                    onDrag = { change, delta ->
-                                        change.consume()
-                                        scope.launch { dragOffset.snapTo(dragOffset.value + delta.y) }
-                                    },
-                                    onDragEnd = {
-                                        val ti = targetIdxState.value
-                                        val di = draggingIdxState.value
-                                        scope.launch {
-                                            if (ti != null && di != null && ti != di) {
-                                                // onReorder mutates `units`, so this row's rest
-                                                // position (idx * rowHeight, via `lifted`/animShift
-                                                // once draggingSymbol clears) jumps by (ti - di)
-                                                // rows immediately on the next recomposition.
-                                                // Subtract that same delta from dragOffset first so
-                                                // the finger-relative position stays visually
-                                                // unchanged, then animateTo(0f) eases from there —
-                                                // otherwise the row would teleport before settling.
-                                                onReorder(di, ti)
-                                                dragOffset.snapTo(dragOffset.value - (ti - di) * rowHeightPx)
-                                            }
-                                            dragOffset.animateTo(0f)
-                                            draggingSymbol = null
-                                        }
-                                    },
-                                    onDragCancel = {
-                                        scope.launch {
-                                            dragOffset.animateTo(0f)
-                                            draggingSymbol = null
-                                        }
-                                    }
-                                )
+                            .fillMaxWidth()
+                            .height(rowHeightDp)
+                            .zIndex(if (lifted) 1f else 0f)
+                            .graphicsLayer {
+                                translationY = if (lifted) dragOffset.value else animShift
+                                shadowElevation = elevation
                             }
-                    )
-                    Spacer(Modifier.width(16.dp))
-                    Text(
-                        text = unit.symbol,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        checked = unit.visible,
-                        onCheckedChange = { onToggle(idx, it) }
-                    )
+                            .background(
+                                if (lifted) MaterialTheme.colorScheme.surfaceContainerHighest
+                                else MaterialTheme.colorScheme.surface
+                            )
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DragHandle,
+                            contentDescription = "Drag to reorder",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .pointerInput(unit.symbol) {
+                                    detectDragGesturesAfterLongPress(
+                                        onDragStart = {
+                                            draggingSymbol = unit.symbol
+                                            scope.launch { dragOffset.snapTo(0f) }
+                                        },
+                                        onDrag = { change, delta ->
+                                            change.consume()
+                                            scope.launch { dragOffset.snapTo(dragOffset.value + delta.y) }
+                                        },
+                                        onDragEnd = {
+                                            val ti = targetIdxState.value
+                                            val di = draggingIdxState.value
+                                            scope.launch {
+                                                if (ti != null && di != null && ti != di) {
+                                                    // onReorder mutates `units`, so this row's rest
+                                                    // position (idx * rowHeight, via `lifted`/animShift
+                                                    // once draggingSymbol clears) jumps by (ti - di)
+                                                    // rows immediately on the next recomposition.
+                                                    // Subtract that same delta from dragOffset first so
+                                                    // the finger-relative position stays visually
+                                                    // unchanged, then animateTo(0f) eases from there —
+                                                    // otherwise the row would teleport before settling.
+                                                    onReorder(di, ti)
+                                                    dragOffset.snapTo(dragOffset.value - (ti - di) * rowHeightPx)
+                                                }
+                                                dragOffset.animateTo(0f)
+                                                draggingSymbol = null
+                                            }
+                                        },
+                                        onDragCancel = {
+                                            scope.launch {
+                                                dragOffset.animateTo(0f)
+                                                draggingSymbol = null
+                                            }
+                                        }
+                                    )
+                                }
+                        )
+                        Spacer(Modifier.width(16.dp))
+                        Text(
+                            text = unit.symbol,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Switch(
+                            checked = unit.visible,
+                            onCheckedChange = { onToggle(idx, it) }
+                        )
+                    }
                 }
             }
         }
