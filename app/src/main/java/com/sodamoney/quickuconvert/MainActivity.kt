@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
@@ -126,16 +127,19 @@ fun Convert() {
         resetValues(states, repo.visibleUnits(category))
     }
 
+    val closeSettings = {
+        resetValues(states, repo.visibleUnits(category))
+        settingsOpen = false
+    }
+
     QuickUConvertTheme(themeMode = themeMode) {
+        BackHandler(enabled = settingsOpen, onBack = closeSettings)
         if (settingsOpen) {
             SettingsScreen(
                 repo = repo,
                 initialCategory = category,
                 onThemeChange = { themeMode = it },
-                onBack = {
-                    resetValues(states, repo.visibleUnits(category))
-                    settingsOpen = false
-                }
+                onBack = closeSettings
             )
         } else {
             MainContent(
