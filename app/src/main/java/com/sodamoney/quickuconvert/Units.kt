@@ -34,7 +34,7 @@ open class Units (
                 "Can't convert from ${this.symbol} to ${other.symbol}. Base units are mismatched ${this.category.baseUnits()} and ${other.category.baseUnits()}"
             )
         }
-        return BigDecimal(1).divide(other.standardize(BigDecimal(1).divide(this.standardize(inputValue),
+        return BigDecimal.ONE.divide(other.standardize(BigDecimal.ONE.divide(this.standardize(inputValue),
             MathContext.DECIMAL64)), MathContext.DECIMAL64)
     }
 }

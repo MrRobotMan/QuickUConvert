@@ -228,7 +228,7 @@ fun ConvertItem(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
-    var inputValue by remember { mutableStateOf(BigDecimal(1)) }
+    var inputValue by remember { mutableStateOf(BigDecimal.ONE) }
     var fromUnit by remember(fromUnit) { mutableStateOf(fromUnit) }
     BoxWithConstraints(modifier = modifier) {
         val targetCardWidth = 150.dp
@@ -252,7 +252,7 @@ fun ConvertItem(
                                     val parsed = parseUserInput(states[idx].text.toString())
                                     when {
                                         parsed == null -> "Unparsable value, reverting"
-                                        items[idx].category == Category.TEMPERATURE && items[idx].standardize(parsed) < BigDecimal(0) ->
+                                        items[idx].category == Category.TEMPERATURE && items[idx].standardize(parsed) < BigDecimal.ZERO ->
                                             "Andrew, temperatures can't go below absolute zero without breaking the universe!"
                                         else -> {
                                             updateValues(idx, parsed, items, states)

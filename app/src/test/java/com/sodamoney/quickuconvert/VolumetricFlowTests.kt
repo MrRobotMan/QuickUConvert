@@ -10,88 +10,88 @@ class VolumetricFlowTests {
 
     @Test
     fun testCubicMeterPerMinute() {
-        val expected = BigDecimal(1).divide(BigDecimal(60), context)
-        val actual = CubicMeterPerMinute.convertTo(BigDecimal(1), CubicMeterPerSecond)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        val expected = BigDecimal.ONE.divide(BigDecimal(60), context)
+        val actual = CubicMeterPerMinute.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
     
     @Test
     fun testCubicMeterPerHour() {
-        val expected = BigDecimal(1).divide(BigDecimal(3600), context)
-        val actual = CubicMeterPerHour.convertTo(BigDecimal(1), CubicMeterPerSecond)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        val expected = BigDecimal.ONE.divide(BigDecimal(3600), context)
+        val actual = CubicMeterPerHour.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
 
     @Test
     fun testLiterPerSecond() {
-        val expected = BigDecimal(1).divide(BigDecimal(1000), context)
-        val actual = LiterPerSecond.convertTo(BigDecimal(1), CubicMeterPerSecond)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        val expected = BigDecimal.ONE.divide(BigDecimal(1000), context)
+        val actual = LiterPerSecond.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
     
     @Test
     fun testLiterPerMinute() {
-        val expected = BigDecimal(1).divide(BigDecimal(60_000), context)
-        val actual = LiterPerMinute.convertTo(BigDecimal(1), CubicMeterPerSecond)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        val expected = BigDecimal.ONE.divide(BigDecimal(60_000), context)
+        val actual = LiterPerMinute.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
     
     @Test
     fun testLiterPerHour() {
-        val expected = BigDecimal(1).divide(BigDecimal(3_600_000), context)
-        val actual = LiterPerHour.convertTo(BigDecimal(1), CubicMeterPerSecond)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        val expected = BigDecimal.ONE.divide(BigDecimal(3_600_000), context)
+        val actual = LiterPerHour.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
 
     @Test
     fun testCubicFootPerSecond() {
         val expected = BigDecimal("0.028316846592")
-        val actual = CubicFootPerSecond.convertTo(BigDecimal(1), CubicMeterPerSecond)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        val actual = CubicFootPerSecond.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
     
     @Test
     fun testCubicFootPerMinute() {
         val expected = BigDecimal("0.028316846592").divide(BigDecimal(60), context)
-        val actual = CubicFootPerMinute.convertTo(BigDecimal(1), CubicMeterPerSecond)
+        val actual = CubicFootPerMinute.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
         println(expected)
         println(actual)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
     
     @Test
     fun testCubicFootPerHour() {
         val expected = BigDecimal("0.028316846592").divide(BigDecimal(3600), context)
-        val actual = CubicFootPerHour.convertTo(BigDecimal(1), CubicMeterPerSecond)
+        val actual = CubicFootPerHour.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
         println(expected)
         println(actual)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
     
     @Test
     fun testGallonPerMinute() {
         val expected = BigDecimal("0.003785411784").divide(BigDecimal(60), context)
-        val actual = GallonPerMinute.convertTo(BigDecimal(1), CubicMeterPerSecond)
+        val actual = GallonPerMinute.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
         println(expected)
         println(actual)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
     
     @Test
     fun testGallonPerHour() {
         val expected = BigDecimal("0.003785411784").divide(BigDecimal(3600), context)
-        val actual = GallonPerHour.convertTo(BigDecimal(1), CubicMeterPerSecond)
+        val actual = GallonPerHour.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
         println(expected)
         println(actual)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
     
     @Test
     fun testBarrelPerHour() {
         val expected = BigDecimal("0.119240471196").divide(BigDecimal(3600), context)
-        val actual = BarrelPerHour.convertTo(BigDecimal(1), CubicMeterPerSecond)
+        val actual = BarrelPerHour.convertTo(BigDecimal.ONE, CubicMeterPerSecond)
         println(expected)
         println(actual)
-        assertEquals((expected / actual).compareTo(BigDecimal(1)), 0)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
 }

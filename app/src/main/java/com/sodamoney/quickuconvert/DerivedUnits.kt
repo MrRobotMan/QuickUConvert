@@ -39,10 +39,10 @@ val Accelerations = arrayOf(
 // endregion
 
 // region Areas
-val SquareInch = Units("in²", "Square inches",  Category.AREA) { Inch.standardize( BigDecimal(1) ).pow(2) * it }
-val SquareFoot = Units("ft²", "Square feet",  Category.AREA) { Foot.standardize( BigDecimal(1) ).pow(2) * it }
-val SquareYard = Units("yd²", "Square yards",  Category.AREA) { Yard.standardize( BigDecimal(1) ).pow(2) * it }
-val SquareMile = Units("mi²", "Square miles",  Category.AREA) { Mile.standardize( BigDecimal(1) ).pow(2) * it }
+val SquareInch = Units("in²", "Square inches",  Category.AREA) { Inch.standardize( BigDecimal.ONE ).pow(2) * it }
+val SquareFoot = Units("ft²", "Square feet",  Category.AREA) { Foot.standardize( BigDecimal.ONE ).pow(2) * it }
+val SquareYard = Units("yd²", "Square yards",  Category.AREA) { Yard.standardize( BigDecimal.ONE ).pow(2) * it }
+val SquareMile = Units("mi²", "Square miles",  Category.AREA) { Mile.standardize( BigDecimal.ONE ).pow(2) * it }
 val SquareKilometer = Units("km²", "Square kilometers",  Category.AREA) { it * Mega }
 val SquareCentimeter = Units("cm²", "Square centimeters",  Category.AREA) { it.divide(BigDecimal(10_000), context) }
 val SquareMillimeter = Units("mm²", "Square millimeters",  Category.AREA) { it.divide(Mega) }
@@ -63,19 +63,19 @@ val GramPerCubicCentimeter = Units("g/cm³", "Grams per centimeter cubed",  Cate
 val MilligramPerDeciliter = Units("mg/dL", "Milligrams per deciliter",  Category.DENSITY) { it.divide(BigDecimal(100),
     context) }
 val PoundPerCubicInch = Units("lb/in³", "Pounds per inch cubed",  Category.DENSITY) {
-    PoundMass.standardize(BigDecimal(1)) / CubicInch.standardize(BigDecimal(1)) * it
+    PoundMass.standardize(BigDecimal.ONE) / CubicInch.standardize(BigDecimal.ONE) * it
  }
 val PoundPerCubicFoot = Units("lb/ft³", "Pounds per foot cubed",  Category.DENSITY) {
-    PoundMass.standardize(BigDecimal(1)) / CubicFoot.standardize(BigDecimal(1)) * it
+    PoundMass.standardize(BigDecimal.ONE) / CubicFoot.standardize(BigDecimal.ONE) * it
  }
 val PoundPerCubicYard = Units("lb/yd³", "Pounds per yard cubed",  Category.DENSITY) {
-    PoundMass.standardize(BigDecimal(1)) / CubicYard.standardize(BigDecimal(1)) * it
+    PoundMass.standardize(BigDecimal.ONE) / CubicYard.standardize(BigDecimal.ONE) * it
  }
 val PoundPerCubicGallon = Units("lb/gal", "Pounds per gallon cubed",  Category.DENSITY) {
-    PoundMass.standardize(BigDecimal(1)) / Gallon.standardize(BigDecimal(1)) * it
+    PoundMass.standardize(BigDecimal.ONE) / Gallon.standardize(BigDecimal.ONE) * it
  }
 val OuncePerCubicGallon = Units("oz/gal", "Ounces per gallon cubed",  Category.DENSITY) {
-    Ounce.standardize(BigDecimal(1)) / Gallon.standardize(BigDecimal(1)) * it
+    Ounce.standardize(BigDecimal.ONE) / Gallon.standardize(BigDecimal.ONE) * it
  }
 
 val Densities = arrayOf(
@@ -145,11 +145,11 @@ val Energies = arrayOf(
 val Kilonewton = Units("kN", "Kilonewtons",  Category.FORCE) { Newton.standardize(it) * Kilo }
 val KilogramForce = Units("kgf", "Kilograms (force)",  Category.FORCE) { it * EARTH_GRAVITY }
 val Dyne = Units("dyn", "Dynes",  Category.FORCE) { Newton.standardize(it).divide(BigDecimal(100_000), context) }
-val PoundForce = Units("lbf", "Pounds (force)",  Category.FORCE) { it * (EARTH_GRAVITY * PoundMass.standardize(BigDecimal(1))) }
+val PoundForce = Units("lbf", "Pounds (force)",  Category.FORCE) { it * (EARTH_GRAVITY * PoundMass.standardize(BigDecimal.ONE)) }
 val Kips = Units("kip", "Thousand Pounds",  Category.FORCE) { PoundForce.standardize(it) * Kilo }
 val Poundal = Units(
     "pdl", "Poundals",  Category.FORCE
-) { PoundMass.standardize(it) * FootPerSecondSquared.standardize(BigDecimal(1)) }
+) { PoundMass.standardize(it) * FootPerSecondSquared.standardize(BigDecimal.ONE) }
 
 val Forces = arrayOf(
     Newton, Kilonewton, KilogramForce, Dyne, PoundForce, Kips, Poundal
@@ -174,7 +174,7 @@ val Chain = Units("ch", "Chains",  Category.LENGTH) { Rod.standardize(it) * BigD
 val Furlong = Units("fur", "Furlongs",  Category.LENGTH) { Mile.standardize(it) / BigDecimal(8) }
 val Angstrom = Units("Å", "Angstroms",  Category.LENGTH) { it * BigDecimal(1E-10) }
 val LightYear = Units("ly", "Light years",  Category.LENGTH) {
-    it * (SPEED_OF_LIGHT * Year.convertTo(BigDecimal(1), Second))
+    it * (SPEED_OF_LIGHT * Year.convertTo(BigDecimal.ONE, Second))
 }
 
 val Lengths = arrayOf(
@@ -234,10 +234,10 @@ val NewtonMillimeter = Units("N⋅mm", "Newton-millimeters",  Category.MOMENT) {
 val KilogramForceMeter = Units("kg⋅m", "Kilogram-meters",  Category.MOMENT) { it * EARTH_GRAVITY }
 val KilogramForceCentimeter = Units("kg⋅cm", "Kilogram-centimeters",  Category.MOMENT) { it * EARTH_GRAVITY * BigDecimal("0.01") }
 val KilogramForceMillimeter = Units("kg⋅mm", "Kilogram-millimeters",  Category.MOMENT) { it * EARTH_GRAVITY * BigDecimal("0.001") }
-val FootPound = Units("ft⋅lb", "Foot-pounds",  Category.MOMENT) { PoundForce.standardize(it) * Foot.standardize(BigDecimal(1)) }
-val FootKip = Units("ft⋅kip", "Thousand Foot-pounds",  Category.MOMENT) { Kips.standardize(it) * Foot.standardize(BigDecimal(1)) }
-val InchPound = Units("in⋅lb", "Inch-pounds",  Category.MOMENT) { PoundForce.standardize(it) * Inch.standardize(BigDecimal(1)) }
-val InchKip = Units("in⋅kip", "Thousand Inch-pounds",  Category.MOMENT) { Kips.standardize(it) * Inch.standardize(BigDecimal(1)) }
+val FootPound = Units("ft⋅lb", "Foot-pounds",  Category.MOMENT) { PoundForce.standardize(it) * Foot.standardize(BigDecimal.ONE) }
+val FootKip = Units("ft⋅kip", "Thousand Foot-pounds",  Category.MOMENT) { Kips.standardize(it) * Foot.standardize(BigDecimal.ONE) }
+val InchPound = Units("in⋅lb", "Inch-pounds",  Category.MOMENT) { PoundForce.standardize(it) * Inch.standardize(BigDecimal.ONE) }
+val InchKip = Units("in⋅kip", "Thousand Inch-pounds",  Category.MOMENT) { Kips.standardize(it) * Inch.standardize(BigDecimal.ONE) }
 
 val Moments = arrayOf(
     KilonewtonMeter, NewtonMeter, NewtonCentimeter, NewtonMillimeter,
@@ -276,16 +276,16 @@ val GramPerSquareCentimeter = Units("gm/cm²", "Grams per square centimeter",  C
 val DynePerSquareCentimeter = Units("dyne/cm²", "Dynes per square centimeter",  Category.PRESSURE) { it.divide(BigDecimal(10), context) }
 val Bar = Units("bar", "Bars",  Category.PRESSURE) { it * BigDecimal(100_000) } 
 val Atmosphere = Units("atm", "Atmospheres",  Category.PRESSURE) { it * BigDecimal(101_325) } 
-val PoundPerSquareInch = Units("psi", "Pounds per square inch",  Category.PRESSURE) { PoundForce.standardize(it).divide(SquareInch.standardize(BigDecimal(1)), context)}
-val KipPerSquareInch = Units("ksi", "Thousand Pounds per square inch",  Category.PRESSURE) { Kips.standardize(it).divide(SquareInch.standardize(BigDecimal(1)), context)}
-val PoundPerSquareFoot = Units("psf", "Pounds per square foot",  Category.PRESSURE) { PoundForce.standardize(it).divide(SquareFoot.standardize(BigDecimal(1)), context)}
+val PoundPerSquareInch = Units("psi", "Pounds per square inch",  Category.PRESSURE) { PoundForce.standardize(it).divide(SquareInch.standardize(BigDecimal.ONE), context)}
+val KipPerSquareInch = Units("ksi", "Thousand Pounds per square inch",  Category.PRESSURE) { Kips.standardize(it).divide(SquareInch.standardize(BigDecimal.ONE), context)}
+val PoundPerSquareFoot = Units("psf", "Pounds per square foot",  Category.PRESSURE) { PoundForce.standardize(it).divide(SquareFoot.standardize(BigDecimal.ONE), context)}
 // Water column pressure: density (ρ) * length * g
 // ρH₂O @ 60F = 998.98kg/m^2
 // ρHg @ 0C = 13595.1kg/m^2
-val InchOfWater = Units("inH₂O", "Inchs of water",  Category.PRESSURE) { it * BigDecimal("998.98") * Inch.standardize(BigDecimal(1)) * EARTH_GRAVITY }
-val FootOfWater = Units("ftH₂O", "Feets of water",  Category.PRESSURE) { it * BigDecimal("998.98") * Foot.standardize(BigDecimal(1)) * EARTH_GRAVITY }
-val InchOfMercury = Units("inHg", "Inchs of mercury",  Category.PRESSURE) { it * BigDecimal("13595.1") * Inch.standardize(BigDecimal(1)) * EARTH_GRAVITY }
-val MillimeterOfMercury = Units("mmHg", "Millimeters of mercury",  Category.PRESSURE) { it * BigDecimal("13595.1") * Millimeter.standardize(BigDecimal(1)) * EARTH_GRAVITY }
+val InchOfWater = Units("inH₂O", "Inchs of water",  Category.PRESSURE) { it * BigDecimal("998.98") * Inch.standardize(BigDecimal.ONE) * EARTH_GRAVITY }
+val FootOfWater = Units("ftH₂O", "Feets of water",  Category.PRESSURE) { it * BigDecimal("998.98") * Foot.standardize(BigDecimal.ONE) * EARTH_GRAVITY }
+val InchOfMercury = Units("inHg", "Inchs of mercury",  Category.PRESSURE) { it * BigDecimal("13595.1") * Inch.standardize(BigDecimal.ONE) * EARTH_GRAVITY }
+val MillimeterOfMercury = Units("mmHg", "Millimeters of mercury",  Category.PRESSURE) { it * BigDecimal("13595.1") * Millimeter.standardize(BigDecimal.ONE) * EARTH_GRAVITY }
 
 val Pressures = arrayOf(
     Pascal, KiloPascal, MegaPascal, GigaPascal, KilogramPerSquareCentimeter,
@@ -321,10 +321,10 @@ val NewtonPerMillimeter = Units("N/mm (kN/m)", "Newtons per millimeter",  Catego
 val KilonewtonPerMillimeter = Units("kN/mm", "Kilonewtons per millimeter",  Category.STIFFNESS) { it * Mega }
 val KilogramPerMeter = Units("kgf/m", "Kilograms per meter",  Category.STIFFNESS) { it * EARTH_GRAVITY }
 val KilogramPerMillimeter = Units("kgf/mm", "Kilograms per millimeter",  Category.STIFFNESS) { it * EARTH_GRAVITY * Kilo }
-val PoundPerInch = Units("lbf/in", "Pounds per inch",  Category.STIFFNESS) { PoundForce.standardize(it).divide(Inch.standardize(BigDecimal(1)), context) }
-val PoundPerFoot = Units("lbf/ft", "Pounds per foot",  Category.STIFFNESS) { PoundForce.standardize(it).divide(Foot.standardize(BigDecimal(1)), context) }
-val KipPerInch = Units("kip/in", "Thousand pounds per inch",  Category.STIFFNESS) { Kips.standardize(it).divide(Inch.standardize(BigDecimal(1)), context) }
-val KipPerFoot = Units("kip/ft", "Thousand pounds per foot",  Category.STIFFNESS) { Kips.standardize(it).divide(Foot.standardize(BigDecimal(1)), context) }
+val PoundPerInch = Units("lbf/in", "Pounds per inch",  Category.STIFFNESS) { PoundForce.standardize(it).divide(Inch.standardize(BigDecimal.ONE), context) }
+val PoundPerFoot = Units("lbf/ft", "Pounds per foot",  Category.STIFFNESS) { PoundForce.standardize(it).divide(Foot.standardize(BigDecimal.ONE), context) }
+val KipPerInch = Units("kip/in", "Thousand pounds per inch",  Category.STIFFNESS) { Kips.standardize(it).divide(Inch.standardize(BigDecimal.ONE), context) }
+val KipPerFoot = Units("kip/ft", "Thousand pounds per foot",  Category.STIFFNESS) { Kips.standardize(it).divide(Foot.standardize(BigDecimal.ONE), context) }
 
 val Stiffnesses = arrayOf(
     NewtonPerMeter, NewtonPerCentimeter, NewtonPerMillimeter,
@@ -384,9 +384,9 @@ val Liter = Units("L", "Liters",  Category.VOLUME) { it.divide(BigDecimal(1_000)
 val Deciliter = Units("dL", "Deciliters",  Category.VOLUME) { it.divide(BigDecimal(10_000), context) }
 val CubicCentimeter = Units("CC/mL", "Centimeters cubed",  Category.VOLUME) { it.divide(Mega, context) }
 val CubicMillimeter = Units("mm³", "Millimeters cubed",  Category.VOLUME) { it.divide(Giga, context) }
-val CubicInch = Units("in³", "Inchs cubed",  Category.VOLUME) { Inch.standardize(BigDecimal(1)).pow(3) * it }
-val CubicFoot = Units("ft³", "Feet cubed",  Category.VOLUME) { Foot.standardize(BigDecimal(1)).pow(3) * it }
-val CubicYard = Units("yd³", "Yards cubed",  Category.VOLUME) { Yard.standardize(BigDecimal(1)).pow(3) * it }
+val CubicInch = Units("in³", "Inchs cubed",  Category.VOLUME) { Inch.standardize(BigDecimal.ONE).pow(3) * it }
+val CubicFoot = Units("ft³", "Feet cubed",  Category.VOLUME) { Foot.standardize(BigDecimal.ONE).pow(3) * it }
+val CubicYard = Units("yd³", "Yards cubed",  Category.VOLUME) { Yard.standardize(BigDecimal.ONE).pow(3) * it }
 val AcreFoot = Units("acre⋅ft", "Acre-feet",  Category.VOLUME) { CubicFoot.standardize(it) * BigDecimal(43_560) }
 val Gallon = Units("gal", "Gallons",  Category.VOLUME) { CubicInch.standardize(it) * BigDecimal(231) }
 val WetBarrel = Units("bbl (wet)", "Barrels (wet)",  Category.VOLUME) { Gallon.standardize(it) * BigDecimal("31.5") }
