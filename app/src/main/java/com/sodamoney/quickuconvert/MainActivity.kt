@@ -338,6 +338,15 @@ fun UnitCard(
                     }
                     keyboardController?.hide()
                 },
+                outputTransformation = GroupingsOutputTransformation(),
+                inputTransformation = GroupingsInputTransformation(
+                    onBadPaste = {
+                        scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar("Cannot parse $it. Reverting...")
+                        }
+                    }
+                ),
                 lineLimits = TextFieldLineLimits.SingleLine,
                 textStyle = MaterialTheme.typography.titleMedium.copy(
                     color = MaterialTheme.colorScheme.onSurface
@@ -526,67 +535,6 @@ fun CategorySelect(
     }
 }
 
-fun resetValues(states: Array<TextFieldState>, items: Array<out Units>) {
-    states.withIndex().forEach {
-        val value = if (it.index == 0) {
-            "1"
-        } else if (it.index < items.size) {
-            convertedOrInvalid(BigDecimal(1), items[0], items[it.index])
-        } else {
-            ""
-        }
-        it.value.setTextAndPlaceCursorAtEnd(value)
-    }
-}
-
-// Users can type or paste thousands-grouped values (e.g. "1,000" or "1 000"),
-// and the app's own output formatting (convertedOrInvalid) uses commas too,
-// so commas and whitespace (including a stray trailing newline from a
-// clipboard paste) must round-trip back into a parseable value here rather
-// than crashing with a NumberFormatException.
-private val WHITESPACE = Regex("\\s")
-
-// Matches localized separators placed as valid thousands grouping (each
-// group exactly 3 digits), e.g. "1,234,567.89". Deliberately narrow: this
-// app only ever formats output with thousands grouping (convertedOrInvalid), so
-// a comma anywhere else is either a mistyped grouping ("1,2,3") or, on a
-// locale where groupings are not in sets of 3, e.g. lakh 1,00,000 could be a typo or
-// which could be otherwise be silently misparsed as a different number
-// (123) rather than rejected. Rejecting ambiguous/malformed comma use
-// is safer than guessing.
-private val formatSymbols  = DecimalFormatSymbols()
-private val decimalSeparator = formatSymbols.decimalSeparator
-private val dec = if (decimalSeparator == '.') "\\$decimalSeparator" else decimalSeparator.toString()
-private val groupingSeparator = formatSymbols.groupingSeparator
-private val grp = if (groupingSeparator == '.') "\\$groupingSeparator" else groupingSeparator.toString()
-private val GROUPED_THOUSANDS = Regex("^-?\\d{1,3}($grp\\d{3})*($dec\\d*)?([Ee][-+]?\\d+)?$")
-//^-? start of string and optional -
-// \d{1,3} one to three digits
-// (,\d{3})* grouping separator followed by three digits, any number of times
-// (\.\d*) decimal separator followed by any number of digits
-// ([Ee][-+]?\d+)? exponent "symbol" followed by +, -
-// $ end of string
-
-fun parseUserInput(text: String): BigDecimal? {
-    // Stripped may cause a future bug if plain ASCII space is used as a separator. As for now
-    // it should be a non-issue.
-    val stripped = text.replace(WHITESPACE, "")
-    if (stripped.contains(groupingSeparator) && !GROUPED_THOUSANDS.matches(stripped)) return null
-    return try {
-        BigDecimal(stripped.replace(groupingSeparator.toString(), "").replace(decimalSeparator, '.'))
-    } catch (_: NumberFormatException) {
-        null
-    }
-}
-
-fun updateValues(index: Int, value: BigDecimal, items: Array<out Units>, states: Array<TextFieldState>) {
-    for ((ind, state) in states.withIndex()) {
-        if (ind == index) continue
-        if (ind >= items.size) break
-        state.setTextAndPlaceCursorAtEnd(convertedOrInvalid(value, items[index], items[ind]))
-    }
-}
-
 @Composable
 fun IntroDialog(onDismiss: () -> Unit) {
     AlertDialog(
@@ -636,26 +584,4 @@ private fun IntroTip(icon: ImageVector, text: String) {
         )
         Text(text = text, style = MaterialTheme.typography.bodyMedium)
     }
-}
-
-fun convertedOrInvalid(value: BigDecimal, from: Units, to: Units): String {
-    val converted =  try {
-        from.convertTo(value, to)
-    } catch (_: IllegalConversionException) {
-        return "Invalid"
-    }
-    val numberFormat = NumberFormat.getNumberInstance()
-    if (numberFormat !is DecimalFormat) {
-        return numberFormat.format(converted)
-    }
-    val absConv = converted.abs().toDouble()
-    when {
-        converted.compareTo(BigDecimal.ZERO) == 0 -> return "0"
-        absConv < 1E5 && absConv > 1E-4 -> numberFormat.applyPattern("#,##0.###")
-        else -> {
-            numberFormat.applyPattern("0.####E0")
-
-        }
-    }
-    return numberFormat.format(converted)
 }
