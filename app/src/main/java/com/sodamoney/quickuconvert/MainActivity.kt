@@ -32,6 +32,16 @@ import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
@@ -75,6 +85,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
@@ -82,6 +93,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -172,6 +184,7 @@ fun MainContent(
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets.safeDrawing.exclude(WindowInsets.ime),
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         val visibleItems = repo.visibleUnits(category)
@@ -181,6 +194,7 @@ fun MainContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
             Row(
@@ -237,7 +251,7 @@ fun ConvertItem(
         val targetCardWidth = 150.dp
         val columns = ((maxWidth + 10.dp) / (targetCardWidth + 10.dp)).toInt().coerceAtLeast(2)
         Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()),
+            modifier = Modifier.verticalScroll(rememberScrollState()).imePadding(),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             (items.indices step columns).forEach { i ->
@@ -278,7 +292,7 @@ fun ConvertItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun UnitCard(
     state: TextFieldState,
@@ -299,11 +313,33 @@ fun UnitCard(
     val textMeasurer = rememberTextMeasurer()
     val textStyle = LocalTextStyle.current
     var width by remember {mutableIntStateOf(0)}
+    var height by remember {mutableIntStateOf(0)}
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val imeVisible = WindowInsets.isImeVisible
+    val imeInsets = WindowInsets.ime
+    val density = LocalDensity.current
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(copied) {
         if (copied) {
             delay(1500.milliseconds)
             copied = false
+        }
+    }
+
+    LaunchedEffect(isFocused, imeVisible) {
+        if (isFocused && imeVisible) {
+            delay(500.milliseconds)
+            val imeBottomPx = imeInsets.getBottom(density)
+            bringIntoViewRequester.bringIntoView(
+                Rect(left=0f, top=0f, right=width.toFloat(), bottom = (height + imeBottomPx).toFloat())
+            )
+        }
+    }
+
+    LaunchedEffect(imeVisible) {
+        if (!imeVisible && isFocused) {
+            focusManager.clearFocus()
         }
     }
 
@@ -321,7 +357,9 @@ fun UnitCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp, end = 4.dp, top = 10.dp, bottom = 8.dp),
+                .padding(start = 8.dp, end = 4.dp, top = 10.dp, bottom = 8.dp)
+                .onSizeChanged {height = it.height}
+            ,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -358,7 +396,10 @@ fun UnitCard(
                 modifier = Modifier
                     .weight(1f)
                     .focusRequester(focusRequester)
-                    .onSizeChanged {width = it.width}
+                    .onSizeChanged {
+                        width = it.width
+                    }
+                    .bringIntoViewRequester(bringIntoViewRequester)
                     .onFocusChanged { focusState ->
                         val gaining = !isFocused && focusState.isFocused
                         val losing = isFocused && !focusState.isFocused
