@@ -44,6 +44,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
@@ -83,16 +84,14 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.sodamoney.quickuconvert.ui.theme.QuickUConvertTheme
 import kotlinx.coroutines.delay
-import java.text.DecimalFormat
 import kotlin.enums.EnumEntries
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.text.DecimalFormatSymbols
-import java.text.NumberFormat
 
 
 const val APP_NAME = "Quick UConvert"
@@ -262,7 +261,6 @@ fun ConvertItem(
                                         }
                                     }
                                            },
-                                onCopy = { fromUnit.convertTo(inputValue, items[idx]) },
                                 snackbarHostState = snackbarHostState,
                                 modifier = Modifier.weight(1f)
                             )
@@ -282,7 +280,6 @@ fun UnitCard(
     state: TextFieldState,
     symbol: Units,
     onUpdate: () -> String?,
-    onCopy: () -> BigDecimal,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
@@ -295,6 +292,9 @@ fun UnitCard(
     val scope = rememberCoroutineScope()
     val tooltipState = rememberTooltipState()
     val primaryColor = MaterialTheme.colorScheme.primary
+    val textMeasurer = rememberTextMeasurer()
+    val textStyle = LocalTextStyle.current
+    var width by remember {mutableIntStateOf(0)}
 
     LaunchedEffect(copied) {
         if (copied) {
@@ -338,7 +338,7 @@ fun UnitCard(
                     }
                     keyboardController?.hide()
                 },
-                outputTransformation = GroupingsOutputTransformation(),
+                outputTransformation = AdaptiveOutputTransformation(availableWidth = width, textMeasurer = textMeasurer, textStyle = textStyle),
                 inputTransformation = GroupingsInputTransformation(
                     onBadPaste = {
                         scope.launch {
@@ -354,6 +354,7 @@ fun UnitCard(
                 modifier = Modifier
                     .weight(1f)
                     .focusRequester(focusRequester)
+                    .onSizeChanged {width = it.width}
                     .onFocusChanged { focusState ->
                         val gaining = !isFocused && focusState.isFocused
                         val losing = isFocused && !focusState.isFocused
@@ -408,11 +409,10 @@ fun UnitCard(
                 }
                 IconButton(
                     onClick = {
-                        val value = onCopy()
                         scope.launch {
                             clipboardManager.setClipEntry(
                                 ClipEntry(
-                                        ClipData.newPlainText("converted", value.stripTrailingZeros().toPlainString())
+                                        ClipData.newPlainText("converted", state.text)
                                 ))
                         }
                         copied = true

@@ -8,13 +8,15 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.delete
 import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import kotlin.math.min
 
-private val FORMAT_SYMBOLS  = DecimalFormatSymbols()
+private val FORMAT_SYMBOLS = DecimalFormatSymbols()
 private val DEC_SEP = FORMAT_SYMBOLS.decimalSeparator
 private val GROUP_SEP = FORMAT_SYMBOLS.groupingSeparator
 
@@ -35,7 +37,7 @@ private val WHITESPACE = Regex("\\s")
 
 fun parseUserInput(text: String): BigDecimal? {
     return try {
-        BigDecimal(text.replace(GROUP_SEP.toString(), "").replace(DEC_SEP, '.'))
+        BigDecimal(text.replace(DEC_SEP, '.'))
     } catch (_: NumberFormatException) {
         null
     }
@@ -54,7 +56,12 @@ fun resetValues(states: Array<TextFieldState>, items: Array<out Units>) {
     }
 }
 
-fun updateValues(index: Int, value: BigDecimal, items: Array<out Units>, states: Array<TextFieldState>) {
+fun updateValues(
+    index: Int,
+    value: BigDecimal,
+    items: Array<out Units>,
+    states: Array<TextFieldState>
+) {
     for ((ind, state) in states.withIndex()) {
         if (ind == index) continue
         if (ind >= items.size) break
@@ -63,6 +70,12 @@ fun updateValues(index: Int, value: BigDecimal, items: Array<out Units>, states:
 }
 
 fun convertedOrInvalid(value: BigDecimal, from: Units, to: Units): String {
+    return try {
+        from.convertTo(value, to).stripTrailingZeros().toPlainString()
+    } catch (_: IllegalConversionException) {
+        "Invalid"
+    }
+    /*
     val converted =  try {
         from.convertTo(value, to)
     } catch (_: IllegalConversionException) {
@@ -83,19 +96,65 @@ fun convertedOrInvalid(value: BigDecimal, from: Units, to: Units): String {
         }
     }
     return numberFormat.format(converted)
+     */
 }
 
-class GroupingsOutputTransformation() : OutputTransformation {
+class AdaptiveOutputTransformation(
+    private val availableWidth: Int,
+    private val textMeasurer: TextMeasurer,
+    private val textStyle: TextStyle,
+    private val pad: Int = 10
+) : OutputTransformation {
     override fun TextFieldBuffer.transformOutput() {
-        val text = asCharSequence()
+        val text = asCharSequence().toString()
+        val value = text.toBigDecimalOrNull() ?: return
+        val formattedPlain = formatWithSeparators(text)
+        val formattedWidth = textMeasurer.measure(formattedPlain, textStyle).size.width
+        if (formattedWidth <= (availableWidth - pad)) {
+            insertGroupSeparators()
+        } else {
+            val formattedScientific = formatScientific(value)
+            replace(0, length, formattedScientific)
+        }
+    }
+    private fun formatScientific(value: BigDecimal) : String {
+        val numberFormat = NumberFormat.getNumberInstance()
+        if (numberFormat !is DecimalFormat) {
+            return numberFormat.format(value)
+        }
+        numberFormat.applyPattern("0.####E0")
+        return numberFormat.format(value)
+
+    }
+    private fun formatWithSeparators(text: String): String {
         val end = text.length
-        val signOffset = if (text.isNotEmpty() && text[0] == '-') 1 else 0
-        val decimalIndex = text.indexOf(DEC_SEP).let {if (it == -1)  end else it}
-        val exponentIndex = text.indexOf('E').let { if (it == -1)
-            text.indexOf('e').let {inner -> if (inner == -1) end else inner } else it
+        val signOffset = if (text[0] == '-') 1 else 0
+        val decimalIndex = text.indexOf(DEC_SEP).let { if (it == -1) end else it }
+        val exponentIndex = text.indexOf('E').let {
+            if (it == -1)
+                text.indexOf('e').let { inner -> if (inner == -1) end else inner } else it
+        }
+        val stringBuilder = StringBuilder(text)
+        // Start position is the furthest left of '.' and 'E', offset 3 to the first comma
+        var index = min(decimalIndex, exponentIndex) - 3
+        // Insert right to left for ease
+        while (index > signOffset) {
+            stringBuilder.insert(index, GROUP_SEP)
+            index -= 3
+        }
+        return stringBuilder.toString()
+    }
+    private fun TextFieldBuffer.insertGroupSeparators() {
+        val end = length
+        val text = asCharSequence()
+        val signOffset = if (text[0] == '-') 1 else 0
+        val decimalIndex = text.indexOf(DEC_SEP).let { if (it == -1) end else it }
+        val exponentIndex = text.indexOf('E').let {
+            if (it == -1)
+                text.indexOf('e').let { inner -> if (inner == -1) end else inner } else it
         }
         // Start position is the furthest left of '.' and 'E', offset 3 to the first comma
-        var index = min(decimalIndex,exponentIndex) - 3
+        var index = min(decimalIndex, exponentIndex) - 3
         // Insert right to left for ease
         while (index > signOffset) {
             insert(index, GROUP_SEP.toString())
@@ -125,8 +184,8 @@ class GroupingsInputTransformation(val onBadPaste: (String) -> Unit) : InputTran
             revertAllChanges()
             if (isPasted) {
                 onBadPaste(text)
-                }
             }
         }
     }
+}
 
