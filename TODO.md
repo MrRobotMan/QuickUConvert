@@ -13,4 +13,5 @@
 - ~Deal with commas~
 - ~Localization? 1,000.00 == 1.000,00~
 - Fix unit field hidden behind keyboard
+- ~Format the settings dropdown the same way as the main app~
 

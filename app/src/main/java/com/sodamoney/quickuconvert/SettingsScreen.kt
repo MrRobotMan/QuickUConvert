@@ -34,8 +34,6 @@ import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SettingsBrightness
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -135,32 +133,15 @@ fun SettingsScreen(
 
             SectionLabel("Unit visibility & order")
 
-            var catExpanded by remember { mutableStateOf(false) }
             Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
-                OutlinedButton(onClick = { catExpanded = true }) {
-                    Text(selectedCategory.name.lowercase().replaceFirstChar { it.uppercase() })
-                    Spacer(Modifier.width(4.dp))
-                    Icon(
-                        imageVector = arrow_drop_down,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-                DropdownMenu(
-                    expanded = catExpanded,
-                    onDismissRequest = { catExpanded = false }
-                ) {
-                    AllUnits.keys.forEach { cat ->
-                        DropdownMenuItem(
-                            text = { Text(cat.name.lowercase().replaceFirstChar { it.uppercase() }) },
-                            onClick = {
-                                selectedCategory = cat
-                                unitPrefs = repo.getUnitPrefs(cat)
-                                catExpanded = false
-                            }
-                        )
+                CategorySelect(
+                    categories = Category.entries,
+                    cur = selectedCategory,
+                    onChange = { cat ->
+                        selectedCategory = cat
+                        unitPrefs = repo.getUnitPrefs(cat)
                     }
-                }
+                )
             }
 
             ReorderableUnitList(
