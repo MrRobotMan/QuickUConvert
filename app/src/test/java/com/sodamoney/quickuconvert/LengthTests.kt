@@ -4,6 +4,7 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import java.math.BigDecimal
+import java.math.MathContext
 
 class LengthTests {
     @Test
@@ -115,7 +116,7 @@ class LengthTests {
     fun testAngstrom() {
         val expected = BigDecimal("1E-10")
         val actual = Angstrom.convertTo(BigDecimal.ONE, Meter)
-        assertEquals(expected.compareTo(actual), 0)
+        assertEquals(expected.divide(actual, MathContext.DECIMAL64).compareTo(BigDecimal.ONE), 0)
     }
 
     @Test

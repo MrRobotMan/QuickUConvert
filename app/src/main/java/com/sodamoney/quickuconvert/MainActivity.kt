@@ -329,7 +329,7 @@ fun UnitCard(
 
     LaunchedEffect(isFocused, imeVisible) {
         if (isFocused && imeVisible) {
-            delay(500.milliseconds)
+            delay(100.milliseconds)
             val imeBottomPx = imeInsets.getBottom(density)
             bringIntoViewRequester.bringIntoView(
                 Rect(left=0f, top=0f, right=width.toFloat(), bottom = (height + imeBottomPx).toFloat())

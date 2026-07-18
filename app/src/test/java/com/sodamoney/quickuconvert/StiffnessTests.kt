@@ -59,8 +59,6 @@ class StiffnessTests {
     fun testKipPerInch() {
         val expected = BigDecimal("175126.8352465")
         val actual = KipPerInch.convertTo(BigDecimal.ONE, NewtonPerMeter)
-        println(expected)
-        println(actual)
         assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
     
@@ -68,8 +66,6 @@ class StiffnessTests {
     fun testKipPerFoot() {
         val expected = BigDecimal("14593.9029372")
         val actual = KipPerFoot.convertTo(BigDecimal.ONE, NewtonPerMeter)
-        println(expected)
-        println(actual)
         assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
 }

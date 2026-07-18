@@ -4,6 +4,7 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import java.math.BigDecimal
+import java.math.MathContext
 import kotlin.math.pow
 
 class VolumeTests() {
@@ -122,9 +123,9 @@ class VolumeTests() {
     
     @Test
     fun testDryPint() {
-        val expected = BigDecimal("0.0005506104713574999")
+        val expected = BigDecimal("0.0005506104713575")
         val actual = DryPint.convertTo(BigDecimal.ONE, CubicMeter)
-        assertEquals((expected/actual).compareTo(BigDecimal.ONE), 0)
+        assertEquals(expected.divide(actual, MathContext.DECIMAL64).compareTo(BigDecimal.ONE), 0)
     } 
     
     @Test

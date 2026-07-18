@@ -66,8 +66,6 @@ class MomentTests {
         fun testInchPound() {
             val expected = BigDecimal("0.112984829")
             val actual = InchPound.convertTo(BigDecimal.ONE, NewtonMeter)
-            println(expected)
-            println(actual)
             assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
         }
 

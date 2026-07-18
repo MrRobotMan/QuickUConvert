@@ -40,7 +40,6 @@ class DerivedUnitsUnitTests {
         for (s in actual) {
             allSymbols.remove(s)
         }
-        println(allSymbols)
         assertEquals(expected, actual.count())
     }
 }

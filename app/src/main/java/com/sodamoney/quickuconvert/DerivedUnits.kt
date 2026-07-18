@@ -2,6 +2,7 @@ package com.sodamoney.quickuconvert
 
 import java.math.BigDecimal
 import java.math.MathContext
+import java.math.RoundingMode
 
 /*
  * Copyright 2026 David Weiss
@@ -10,7 +11,7 @@ import java.math.MathContext
  */
 
 // region constants
-private val context = MathContext.DECIMAL64
+private val context = MathContext(1024, RoundingMode.HALF_EVEN)
 val Kilo = BigDecimal(1000)
 val Mega = Kilo.multiply(Kilo)
 val Giga = Kilo.multiply(Mega)
@@ -23,9 +24,9 @@ val Gibi = Kibi.multiply(Mebi, context)
 val InchPerSecondSquared = Units("in/s²", "Inches per second squared",  Category.ACCELERATION) { Inch.convertTo(it, Meter) }
 val FootPerSecondSquared = Units("ft/s²", "Feet per second squared",  Category.ACCELERATION) { Foot.convertTo(it, Meter) }
 val CentimeterPerSecondSquared =
-    Units("cm/s²", "Centimeters per second squared",  Category.ACCELERATION) { it.divide(BigDecimal(100), context) }
+    Units("cm/s²", "Centimeters per second squared",  Category.ACCELERATION) { it.divide(BigDecimal(100)) }
 val MillimeterPerSecondSquared =
-    Units("mm/s²", "Millimeters per second squared",  Category.ACCELERATION) { it.divide(BigDecimal(1000), context) }
+    Units("mm/s²", "Millimeters per second squared",  Category.ACCELERATION) { it.divide(BigDecimal(1000)) }
 val EarthGravity = Units("g", "Earth gravity",  Category.ACCELERATION) { EARTH_GRAVITY * it }
 
 val Accelerations = arrayOf(
@@ -44,7 +45,7 @@ val SquareFoot = Units("ft²", "Square feet",  Category.AREA) { Foot.standardize
 val SquareYard = Units("yd²", "Square yards",  Category.AREA) { Yard.standardize( BigDecimal.ONE ).pow(2) * it }
 val SquareMile = Units("mi²", "Square miles",  Category.AREA) { Mile.standardize( BigDecimal.ONE ).pow(2) * it }
 val SquareKilometer = Units("km²", "Square kilometers",  Category.AREA) { it * Mega }
-val SquareCentimeter = Units("cm²", "Square centimeters",  Category.AREA) { it.divide(BigDecimal(10_000), context) }
+val SquareCentimeter = Units("cm²", "Square centimeters",  Category.AREA) { it.divide(BigDecimal(10_000)) }
 val SquareMillimeter = Units("mm²", "Square millimeters",  Category.AREA) { it.divide(Mega) }
 val Hectare = Units("ha", "Hectares",  Category.AREA) { it * BigDecimal(10_000) }
 val Acre = Units("ac", "Acres",  Category.AREA) { BigDecimal(4840) * SquareYard.standardize( it) }
@@ -60,8 +61,7 @@ val Areas = arrayOf(
 val KilogramPerLiter = Units("kg/L", "Kilograms per liter",  Category.DENSITY) { it * Kilo }
 val KilogramPerCubicCentimeter = Units("kg/cm³", "Kilograms per centimeter cubed",  Category.DENSITY) { it * Mega }
 val GramPerCubicCentimeter = Units("g/cm³", "Grams per centimeter cubed",  Category.DENSITY) { it * Kilo }
-val MilligramPerDeciliter = Units("mg/dL", "Milligrams per deciliter",  Category.DENSITY) { it.divide(BigDecimal(100),
-    context) }
+val MilligramPerDeciliter = Units("mg/dL", "Milligrams per deciliter",  Category.DENSITY) { it.divide(BigDecimal(100)) }
 val PoundPerCubicInch = Units("lb/in³", "Pounds per inch cubed",  Category.DENSITY) {
     PoundMass.standardize(BigDecimal.ONE) / CubicInch.standardize(BigDecimal.ONE) * it
  }
@@ -144,7 +144,7 @@ val Energies = arrayOf(
 // region Forces
 val Kilonewton = Units("kN", "Kilonewtons",  Category.FORCE) { Newton.standardize(it) * Kilo }
 val KilogramForce = Units("kgf", "Kilograms (force)",  Category.FORCE) { it * EARTH_GRAVITY }
-val Dyne = Units("dyn", "Dynes",  Category.FORCE) { Newton.standardize(it).divide(BigDecimal(100_000), context) }
+val Dyne = Units("dyn", "Dynes",  Category.FORCE) { Newton.standardize(it).divide(BigDecimal(100_000)) }
 val PoundForce = Units("lbf", "Pounds (force)",  Category.FORCE) { it * (EARTH_GRAVITY * PoundMass.standardize(BigDecimal.ONE)) }
 val Kips = Units("kip", "Thousand Pounds",  Category.FORCE) { PoundForce.standardize(it) * Kilo }
 val Poundal = Units(
@@ -158,15 +158,15 @@ val Forces = arrayOf(
 
 // region Length
 val Kilometer = Units("km", "Kilometers",  Category.LENGTH) { it * Kilo }
-val Centimeter = Units("cm", "Centimeters",  Category.LENGTH) { it.divide(BigDecimal(100), context) }
-val Millimeter = Units("mm", "Millimeters",  Category.LENGTH) { it.divide(Kilo, context) }
-val Micrometer = Units("μm", "Micrometers",  Category.LENGTH) { it.divide(Mega, context) }
-val Nanometer = Units("nm", "Nanometers",  Category.LENGTH) { it.divide(Giga, context) }
+val Centimeter = Units("cm", "Centimeters",  Category.LENGTH) { it.divide(BigDecimal(100)) }
+val Millimeter = Units("mm", "Millimeters",  Category.LENGTH) { it.divide(Kilo) }
+val Micrometer = Units("μm", "Micrometers",  Category.LENGTH) { it.divide(Mega) }
+val Nanometer = Units("nm", "Nanometers",  Category.LENGTH) { it.divide(Giga) }
 val Inch = Units("in", "Inches",  Category.LENGTH) { it * BigDecimal("0.0254") }
 val Foot = Units("ft", "Feet",  Category.LENGTH) { it * BigDecimal("0.3048") }
 val Yard = Units("yd", "Yards",  Category.LENGTH) { it * BigDecimal("0.3048") * BigDecimal(3) }
 val Mile = Units("mi", "Miles",  Category.LENGTH) { it * BigDecimal("0.3048") * BigDecimal(5_280) }
-val Thou = Units("mils", "Mils (Thous)",  Category.LENGTH) { it * BigDecimal("0.0254").divide(Kilo, context) }
+val Thou = Units("mils", "Mils (Thous)",  Category.LENGTH) { it * BigDecimal("0.0254").divide(Kilo) }
 val NauticalMile = Units("nmi", "Nautical miles",  Category.LENGTH) { it * BigDecimal(1852) }
 val Fathom = Units("ftm", "Fathoms",  Category.LENGTH) { Foot.standardize(it) * BigDecimal(6) }
 val Rod = Units("rd", "Rods",  Category.LENGTH) { Foot.standardize(it) * BigDecimal(16.5) }
@@ -189,7 +189,7 @@ val Lengths = arrayOf(
 val Gram = Units("gm", "Grams",  Category.MASS) { it.divide(Kilo, context) }
 val Milligram = Units("mg", "Milligrams",  Category.MASS) { it.divide(Mega, context) }
 val PoundMass = Units("lb", "Pounds (mass)",  Category.MASS) { it * BigDecimal("0.45359237") }
-val Ounce = Units("oz", "Ounces",  Category.MASS) { PoundMass.standardize(it).divide(BigDecimal(16), context) }
+val Ounce = Units("oz", "Ounces",  Category.MASS) { PoundMass.standardize(it).divide(BigDecimal(16)) }
 val Stone = Units("st", "Stones",  Category.MASS) { PoundMass.standardize(it) * BigDecimal(14) }
 val HundredweightShort = Units("cwt (short)", "Hundredweights (short)",  Category.MASS) { PoundMass.standardize(it) * BigDecimal(100) }
 val HundredweightLong = Units("cwt (long)", "Hundredweights (long)",  Category.MASS) { PoundMass.standardize(it) * BigDecimal(112) }
@@ -273,7 +273,7 @@ val MegaPascal = Units("MPa (N/mm²)", "Megapascals",  Category.PRESSURE) { it *
 val GigaPascal = Units("GPa", "Gigapascals",  Category.PRESSURE) { it * Giga } 
 val KilogramPerSquareCentimeter = Units("kg/cm²", "Kilograms per square centimeter",  Category.PRESSURE) { it * EARTH_GRAVITY } 
 val GramPerSquareCentimeter = Units("gm/cm²", "Grams per square centimeter",  Category.PRESSURE) { it * EARTH_GRAVITY * BigDecimal(10) } 
-val DynePerSquareCentimeter = Units("dyne/cm²", "Dynes per square centimeter",  Category.PRESSURE) { it.divide(BigDecimal(10), context) }
+val DynePerSquareCentimeter = Units("dyne/cm²", "Dynes per square centimeter",  Category.PRESSURE) { it.divide(BigDecimal(10)) }
 val Bar = Units("bar", "Bars",  Category.PRESSURE) { it * BigDecimal(100_000) } 
 val Atmosphere = Units("atm", "Atmospheres",  Category.PRESSURE) { it * BigDecimal(101_325) } 
 val PoundPerSquareInch = Units("psi", "Pounds per square inch",  Category.PRESSURE) { PoundForce.standardize(it).divide(SquareInch.standardize(BigDecimal.ONE), context)}
@@ -297,7 +297,7 @@ val Pressures = arrayOf(
 
 // region Speed
 val MeterPerMinute = Units("m/min", "Meters per minute",  Category.SPEED) { it.divide(BigDecimal(60), context) }
-val CentimeterPerSecond = Units("cm/s", "Centimeters per second",  Category.SPEED) { it.divide(BigDecimal(100), context) }
+val CentimeterPerSecond = Units("cm/s", "Centimeters per second",  Category.SPEED) { it.divide(BigDecimal(100)) }
 val CentimeterPerMinute = Units("cm/min", "Centimeters per minute",  Category.SPEED) { it.divide(BigDecimal(6000), context) }
 val InchPerSecond = Units("in/s", "Inches per second",  Category.SPEED) { Inch.standardize(it) }
 val InchPerMinute = Units("in/min", "Inches per minute",  Category.SPEED) { Inch.standardize(it).divide(BigDecimal(60), context) }
@@ -360,13 +360,13 @@ val Temperatures = arrayOf(Centigrade, Fahrenheit, Kelvin, Rankine)
 // endregion
 
 // region Time
-val Millisecond = Units("ms", "Milliseconds",  Category.TIME) { it.divide(Kilo, context) }
-val Microsecond = Units("μs", "Microseconds",  Category.TIME) { it.divide(Mega, context) }
-val Nanosecond = Units("ns", "Nanoseconds",  Category.TIME) { it.divide(Giga, context) }
+val Millisecond = Units("ms", "Milliseconds",  Category.TIME) { it.divide(Kilo) }
+val Microsecond = Units("μs", "Microseconds",  Category.TIME) { it.divide(Mega) }
+val Nanosecond = Units("ns", "Nanoseconds",  Category.TIME) { it.divide(Giga) }
 val Minute = Units("min", "Minutes",  Category.TIME) { it * BigDecimal(60) }
 val Hour = Units("hr", "Hours",  Category.TIME) { Minute.standardize(it) * BigDecimal(60) }
 val Day = Units("day", "Days",  Category.TIME) { Hour.standardize(it) * BigDecimal(24) }
-val Year = Units("yr", "Years",  Category.TIME) { Day.standardize(it) * BigDecimal(365.25) }
+val Year = Units("yr", "Years",  Category.TIME) { Day.standardize(it) * BigDecimal("365.25") }
 val Week = Units("wk", "Weeks",  Category.TIME) { Day.standardize(it) * BigDecimal(7) }
 val Fortnight = Units("fn", "Fortnight (14 days)", Category.TIME) {Day.standardize(it) * BigDecimal(14) }
 val Month = Units("mo", "Months",  Category.TIME) { Year.standardize(it) / BigDecimal(12) }
@@ -380,10 +380,10 @@ val Times = arrayOf(
 // endregion
 
 // region Volume
-val Liter = Units("L", "Liters",  Category.VOLUME) { it.divide(BigDecimal(1_000), context) }
-val Deciliter = Units("dL", "Deciliters",  Category.VOLUME) { it.divide(BigDecimal(10_000), context) }
-val CubicCentimeter = Units("CC/mL", "Centimeters cubed",  Category.VOLUME) { it.divide(Mega, context) }
-val CubicMillimeter = Units("mm³", "Millimeters cubed",  Category.VOLUME) { it.divide(Giga, context) }
+val Liter = Units("L", "Liters",  Category.VOLUME) { it.divide(BigDecimal(1_000)) }
+val Deciliter = Units("dL", "Deciliters",  Category.VOLUME) { it.divide(BigDecimal(10_000)) }
+val CubicCentimeter = Units("CC/mL", "Centimeters cubed",  Category.VOLUME) { it.divide(Mega) }
+val CubicMillimeter = Units("mm³", "Millimeters cubed",  Category.VOLUME) { it.divide(Giga) }
 val CubicInch = Units("in³", "Inchs cubed",  Category.VOLUME) { Inch.standardize(BigDecimal.ONE).pow(3) * it }
 val CubicFoot = Units("ft³", "Feet cubed",  Category.VOLUME) { Foot.standardize(BigDecimal.ONE).pow(3) * it }
 val CubicYard = Units("yd³", "Yards cubed",  Category.VOLUME) { Yard.standardize(BigDecimal.ONE).pow(3) * it }
@@ -394,7 +394,7 @@ val WetQuart = Units("qt (wet)", "Quarts (wet)",  Category.VOLUME) { Gallon.stan
     context) }
 val WetPint = Units("pt (wet)", "Pints (wet)",  Category.VOLUME) { Gallon.standardize(it).divide(BigDecimal(8),
     context) }
-val Cup = Units("cu", "Cups",  Category.VOLUME) { Gallon.standardize(it).divide(BigDecimal(16), context) }
+val Cup = Units("cu", "Cups",  Category.VOLUME) { Gallon.standardize(it).divide(BigDecimal(16)) }
 val FluidOunce = Units("fl oz", "Fluid ounces",  Category.VOLUME) { Gallon.standardize(it).divide(BigDecimal(128),
     context) }
 val Tablespoon = Units("tbsp", "Tablespoons",  Category.VOLUME) { FluidOunce.standardize(it).divide(BigDecimal(2),
@@ -418,7 +418,7 @@ val Volumes = arrayOf(
 // region Volumetric Flow Rates
 val CubicMeterPerMinute = Units("m³/min", "Meters cubed per minute",  Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(60), context)}
 val CubicMeterPerHour = Units("m³/hr", "Meters cubed per hour",  Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(3600), context)}
-val LiterPerSecond = Units("L/s", "Liters per second",  Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(1000), context)}
+val LiterPerSecond = Units("L/s", "Liters per second",  Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(1000))}
 val LiterPerMinute = Units("L/min", "Liters per minute",  Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(60_000), context)}
 val LiterPerHour = Units("L/hr", "Liters per hour",  Category.VOLUMETRIC_FLOW) { it.divide(BigDecimal(3_600_000), context)}
 val CubicFootPerSecond = Units("ft³/s", "Foots cubed per second",  Category.VOLUMETRIC_FLOW) { CubicFoot.standardize(it) }

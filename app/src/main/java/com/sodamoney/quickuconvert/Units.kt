@@ -2,6 +2,7 @@ package com.sodamoney.quickuconvert
 
 import java.math.BigDecimal
 import java.math.MathContext
+import java.math.RoundingMode
 
 open class Units (
     /**
@@ -34,8 +35,20 @@ open class Units (
                 "Can't convert from ${this.symbol} to ${other.symbol}. Base units are mismatched ${this.category.baseUnits()} and ${other.category.baseUnits()}"
             )
         }
-        return BigDecimal.ONE.divide(other.standardize(BigDecimal.ONE.divide(this.standardize(inputValue),
-            MathContext.DECIMAL64)), MathContext.DECIMAL64)
+        val one = BigDecimal.ONE
+        val ctx = MathContext(512, RoundingMode.HALF_EVEN)
+        val thisStandard = this.standardize(inputValue)
+        val base = try {
+            one.divide(thisStandard)
+        } catch (_: ArithmeticException) {
+            one.divide(thisStandard, ctx)
+        }
+        val otherStandard = other.standardize(base)
+        return try {
+            one.divide(otherStandard)
+        } catch (_: ArithmeticException) {
+            one.divide(otherStandard,ctx)
+        }
     }
 }
 

@@ -66,8 +66,6 @@ class PressureTests {
     fun testPoundPerSquareInch() {
         val expected = BigDecimal("6894.7572931684")
         val actual = PoundPerSquareInch.convertTo(BigDecimal.ONE, Pascal)
-        println(expected)
-        println(actual)
         assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
     
