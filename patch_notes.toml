@@ -1,3 +1,9 @@
 [2.2.0]
 Added tooltip for unit names
 Fixed alignment of copy buttons
+
+[2.5.0]
+Cards auto-scroll into view when the keyboard opens
+Numbers too long to fit the box now switch to scientific notation
+Improved conversion precision by tracking the full value instead of the rounded display text
+Settings category picker now matches the main screen's style and formatting
