@@ -284,6 +284,7 @@ val PoundPerSquareFoot = Units("psf", "Pounds per square foot",  Category.PRESSU
 // ρHg @ 0C = 13595.1kg/m^2
 val InchOfWater = Units("inH₂O", "Inchs of water",  Category.PRESSURE) { it * BigDecimal("998.98") * Inch.standardize(BigDecimal.ONE) * EARTH_GRAVITY }
 val FootOfWater = Units("ftH₂O", "Feets of water",  Category.PRESSURE) { it * BigDecimal("998.98") * Foot.standardize(BigDecimal.ONE) * EARTH_GRAVITY }
+val MillimeterOfWater = Units("mmH₂O", "Millimeters of water",  Category.PRESSURE) { it * BigDecimal("998.98") * Millimeter.standardize(BigDecimal.ONE) * EARTH_GRAVITY }
 val InchOfMercury = Units("inHg", "Inchs of mercury",  Category.PRESSURE) { it * BigDecimal("13595.1") * Inch.standardize(BigDecimal.ONE) * EARTH_GRAVITY }
 val MillimeterOfMercury = Units("mmHg", "Millimeters of mercury",  Category.PRESSURE) { it * BigDecimal("13595.1") * Millimeter.standardize(BigDecimal.ONE) * EARTH_GRAVITY }
 
@@ -291,7 +292,7 @@ val Pressures = arrayOf(
     Pascal, KiloPascal, MegaPascal, GigaPascal, KilogramPerSquareCentimeter,
     GramPerSquareCentimeter, DynePerSquareCentimeter, Bar, Atmosphere,
     PoundPerSquareInch, KipPerSquareInch, PoundPerSquareFoot, InchOfWater,
-    FootOfWater, InchOfMercury, MillimeterOfMercury
+    FootOfWater, MillimeterOfWater, InchOfMercury, MillimeterOfMercury
 )
 // endregion
 

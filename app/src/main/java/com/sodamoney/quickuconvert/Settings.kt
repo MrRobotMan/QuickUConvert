@@ -5,7 +5,7 @@ import androidx.core.content.edit
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
 
-data class UnitPref(val symbol: String, val visible: Boolean)
+data class UnitPref(val symbol: String, val name: String, val visible: Boolean)
 data class CatPref(val name: String, val visible: Boolean)
 
 val AllUnits: Map<Category, Array<out Units>> = mapOf(
@@ -47,7 +47,8 @@ class SettingsRepository(private val prefs: SharedPreferences) {
             val known = order.toSet()
             order + allSymbols.filter { it !in known }
         }
-        return ordered.map { UnitPref(it, it !in hidden) }
+        val namesBySymbol = allUnits.associate { it.symbol to it.name }
+        return ordered.map { UnitPref(it, namesBySymbol[it] ?: it, it !in hidden) }
     }
 
     fun getCatPrefs(): List<CatPref> {
