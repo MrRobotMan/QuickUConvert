@@ -7,3 +7,7 @@ Cards auto-scroll into view when the keyboard opens
 Numbers too long to fit the box now switch to scientific notation
 Improved conversion precision by tracking the full value instead of the rounded display text
 Settings category picker now matches the main screen's style and formatting
+
+[2.6.0]
+Settings now show each unit's full name alongside its abbreviation
+Added millimeters of water (mmH2O) to the Pressure category

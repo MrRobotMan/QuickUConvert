@@ -31,8 +31,8 @@ android {
         applicationId = "com.quc.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = 8
-        versionName = "2.5.1"
+        versionCode = 9
+        versionName = "2.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
