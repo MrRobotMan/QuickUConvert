@@ -110,5 +110,12 @@ class PressureTests {
         val actual = MillimeterOfMercury.convertTo(BigDecimal.ONE, Pascal)
         assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
     }
+
+    @Test
+    fun testMillimeterOfWater() {
+        val expected = BigDecimal("9.80665")
+        val actual = MillimeterOfWater.convertTo(BigDecimal.ONE, Pascal)
+        assertEquals((expected / actual).compareTo(BigDecimal.ONE), 0)
+    }
 }
  

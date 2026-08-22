@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
@@ -71,32 +72,10 @@ fun updateValues(
 
 fun convertedOrInvalid(value: BigDecimal, from: Units, to: Units): String {
     return try {
-        from.convertTo(value, to).stripTrailingZeros().toPlainString()
+        from.convertTo(value, to).setScale(128, RoundingMode.HALF_EVEN).stripTrailingZeros().toPlainString()
     } catch (_: IllegalConversionException) {
         "Invalid"
     }
-    /*
-    val converted =  try {
-        from.convertTo(value, to)
-    } catch (_: IllegalConversionException) {
-        return "Invalid"
-    }
-    val numberFormat = NumberFormat.getNumberInstance()
-    if (numberFormat !is DecimalFormat) {
-        return numberFormat.format(converted)
-    }
-    val absConv = converted.abs().toDouble()
-    when {
-        converted.compareTo(BigDecimal.ZERO) == 0 -> return "0"
-        // No commas added here. Taken care of in the output transformation.
-        absConv < 1E5 && absConv > 1E-4 -> numberFormat.applyPattern("0.###")
-        else -> {
-            numberFormat.applyPattern("0.####E0")
-
-        }
-    }
-    return numberFormat.format(converted)
-     */
 }
 
 class AdaptiveOutputTransformation(
@@ -108,8 +87,12 @@ class AdaptiveOutputTransformation(
     override fun TextFieldBuffer.transformOutput() {
         val text = asCharSequence().toString()
         val value = text.toBigDecimalOrNull() ?: return
-        val formattedPlain = formatWithSeparators(text)
-        val formattedWidth = textMeasurer.measure(formattedPlain, textStyle).size.width
+        val formattedWidth = if (value.abs() >= BigDecimal.ONE) {
+            // If the magnitude is greater than 1, check if the integer value can fit
+            formatMagnitudeGreaterThanOne(value)
+        } else {
+            formatMagnitudeLessThanOne(value)
+        }
         if (formattedWidth <= (availableWidth - pad)) {
             insertGroupSeparators()
         } else {
@@ -117,6 +100,29 @@ class AdaptiveOutputTransformation(
             replace(0, length, formattedScientific)
         }
     }
+
+    private fun TextFieldBuffer.formatMagnitudeGreaterThanOne(value: BigDecimal) : Int {
+        val text = value.toInt().toString()
+        val formattedPlain = formatWithSeparators(text)
+        return textMeasurer.measure(formattedPlain, textStyle).size.width
+    }
+
+    private fun TextFieldBuffer.formatMagnitudeLessThanOne(value: BigDecimal) : Int {
+        var i = 0
+        if (asCharSequence().isEmpty()){
+            return 0
+        }
+        for (c in asCharSequence()) {
+            if ("123456789".contains(c)) {
+                break
+            }
+            i++
+        }
+        val firstNumber = i
+        val formattedPlain = asCharSequence().subSequence(0, firstNumber).toString()
+        return textMeasurer.measure(formattedPlain, textStyle).size.width
+    }
+
     private fun formatScientific(value: BigDecimal) : String {
         val numberFormat = NumberFormat.getNumberInstance()
         if (numberFormat !is DecimalFormat) {
