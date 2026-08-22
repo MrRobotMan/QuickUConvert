@@ -216,7 +216,7 @@ fun SettingsScreen(
                     // order) without a fresh SharedPreferences read.
                     val visibility = unitPrefs.associate { it.symbol to it.visible }
                     unitPrefs = (AllUnits[cat] ?: emptyArray()).map {
-                        UnitPref(it.symbol, visibility[it.symbol] ?: true)
+                        UnitPref(it.symbol, it.name, visibility[it.symbol] ?: true)
                     }
                     resetConfirmCategory = null
                 }) {
@@ -509,7 +509,7 @@ private fun ReorderableUnitList(
                         )
                         Spacer(Modifier.width(16.dp))
                         Text(
-                            text = unit.symbol,
+                            text = "${unit.name} (${unit.symbol})",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.weight(1f)
