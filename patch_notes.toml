@@ -11,3 +11,8 @@ Settings category picker now matches the main screen's style and formatting
 [2.6.0]
 Settings now show each unit's full name alongside its abbreviation
 Added millimeters of water (mmH2O) to the Pressure category
+
+[2.6.1]
+Corrected mmH2O to use the standard 4°C water density; water/mercury units now show their reference temperature
+Improved number formatting so values fit as plain numbers more often before switching to scientific notation
+The app now reopens to whichever unit category you were last using instead of always starting on Length
