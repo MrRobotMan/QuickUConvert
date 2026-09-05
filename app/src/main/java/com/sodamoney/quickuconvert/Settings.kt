@@ -38,6 +38,12 @@ class SettingsRepository(private val prefs: SharedPreferences) {
         )
         set(value) = prefs.edit { putString(KEY_THEME, value.name) }
 
+    var lastCategory: Category
+        get() = Category.valueOf(
+            prefs.getString(KEY_LAST_CATEGORY, Category.LENGTH.name) ?: Category.LENGTH.name
+        )
+        set(value) = prefs.edit { putString(KEY_LAST_CATEGORY, value.name) }
+
     fun getUnitPrefs(category: Category): List<UnitPref> {
         val allUnits = AllUnits[category] ?: return emptyList()
         val allSymbols = allUnits.map { it.symbol }
@@ -103,6 +109,7 @@ class SettingsRepository(private val prefs: SharedPreferences) {
     companion object {
         private const val KEY_THEME = "theme_mode"
         private const val KEY_INTRO_SEEN = "intro_seen"
+        private const val KEY_LAST_CATEGORY = "last_category"
         const val PREFS_NAME = "quickconvert_settings"
     }
 }

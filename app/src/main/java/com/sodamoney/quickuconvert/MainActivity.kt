@@ -129,7 +129,7 @@ fun Convert() {
     var themeMode by remember { mutableStateOf(repo.themeMode) }
     var settingsOpen by remember { mutableStateOf(false) }
     var showIntro by remember { mutableStateOf(!repo.hasSeenIntro) }
-    var category by rememberSaveable { mutableStateOf(Category.LENGTH) }
+    var category by rememberSaveable { mutableStateOf(repo.lastCategory) }
 
     val maxCount = AllUnits.values.maxOf { it.size }
     val states = Array(maxCount) { rememberTextFieldState("") }
@@ -160,6 +160,7 @@ fun Convert() {
                 onCategoryChange = { newCat ->
                     resetValues(states, repo.visibleUnits(newCat))
                     category = newCat
+                    repo.lastCategory = newCat
                 },
                 onSettingsClick = { settingsOpen = true }
             )
