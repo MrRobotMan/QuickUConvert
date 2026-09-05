@@ -78,10 +78,15 @@ val OuncePerCubicGallon = Units("oz/gal", "Ounces per gallon cubed",  Category.D
     Ounce.standardize(BigDecimal.ONE) / Gallon.standardize(BigDecimal.ONE) * it
  }
 
+val SpecificGravity = Units("SG", "Specific Gravity", Category.DENSITY) {
+    it * BigDecimal(1000)
+}
+
 val Densities = arrayOf(
     KilogramPerCubicMeter, KilogramPerLiter, KilogramPerCubicCentimeter,
     GramPerCubicCentimeter, MilligramPerDeciliter, PoundPerCubicInch,
-    PoundPerCubicFoot, PoundPerCubicYard, PoundPerCubicGallon,OuncePerCubicGallon
+    PoundPerCubicFoot, PoundPerCubicYard, PoundPerCubicGallon,OuncePerCubicGallon,
+    SpecificGravity
 )
 // endregion
 

@@ -4,7 +4,6 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import java.math.BigDecimal
-import kotlin.math.pow
 
 class DensityTests() {
 
@@ -70,6 +69,12 @@ class DensityTests() {
         val actual = OuncePerCubicGallon.convertTo(BigDecimal.ONE, KilogramPerCubicMeter)
         assertEquals((expected/actual).compareTo(BigDecimal.ONE), 0)
     }
-    
+
+    @Test
+    fun testSpecificGravity() {
+        val expected = BigDecimal(1000)
+        val actual = SpecificGravity.convertTo(BigDecimal.ONE, KilogramPerCubicMeter)
+        assertEquals((expected/actual).compareTo(BigDecimal.ONE), 0)
+    }
 }
     
